@@ -1,4 +1,4 @@
-# [Udacity DAND](https://www.udacity.com/course/data-analyst-nanodegree--nd002)
+# [Udacity Data Analyst Nanodegree](https://www.udacity.com/course/data-analyst-nanodegree--nd002)
 Projects for my Udacity Data Analyst Nanodegree
 
 ### P0: Find the Optimal Chopstick Length
