@@ -56,19 +56,25 @@
   	H<sub>A</sub>: μ<sub>C</sub> &#60; μ<sub>I</sub>
   </p>
   <p class="answer">
-  	where the subscript "C" represents the congruent words condition and the subscript "I" represents the incongruent words condition.
+  	where μ is a population mean, the subscript "C" represents the congruent words condition, and the subscript "I" represents the incongruent words condition.
   </p>
   <p class="answer">
-    A one-tailed, dependent samples t-test comparing the difference in means (the time to name the ink colors for congruent words and incongruent words) should be performed.
+    A one-tailed, dependent samples t-test comparing the difference in means (the time to name the ink colors for congruent words and incongruent words) should be performed. With this test, we seek to determine whether there is enough evidence in the provided sample of data to infer that the congruent words mean colour recognition time is less than the incongruent words mean colour recognition time for the entire population and not just the sample data.
   </p>
   <p class="answer">
-    A t-test is appropriate because the population variance is unknown and the sample size is less than 30. When the sample size is less than 30, the sample data no longer approximate a normal distribution, which makes the use of a Z-value inappropriate.<sup><a href="http://stattrek.com/probability-distributions/t-distribution.aspx" target="_blank">1</a></sup>
+    A t-test is appropriate because the population variance is unknown and the sample size is less than 30. When the sample size is less than 30, the sample data no longer approximate a normal distribution, which makes the use of a Z-value inappropriate.<sup><a href="http://stattrek.com/probability-distributions/t-distribution.aspx" target="_blank">1</a></sup> The following assumptions are required for t-tests for dependent means:<sup><a href="http://www.psychology.emory.edu/clinical/bliwise/Tutorials/TOM/meanstests/assump.htm" target="_blank">2</a></sup>
+    <ul class="answer">
+      <li>Interval or ratio scale of measurement (approximately interval)</li>
+      <li>Random sampling from a defined population</li>
+      <li>Samples or sets of data used to produce the difference scores are linked in the population through repeated measurement, natural association, or matching</li>
+      <li>Scores are normally distributed in the population; difference scores are normally distributed</li>
+    </ul>
   </p>
   <p class="answer">
     A one-tailed test is appropriate under the assumption that incongruent word conditions will not improve recognition times, which is intuitive. The one-tailed test allows for a more scrutinous examination of the negative impact of incongruent word conditions on recognition times.
   </p>
   <p class="answer">
-    The t-test should be of the dependent samples variety because the same subject is exposed to two conditions and tested for each, which are the defining criteria for "within-subjects" or "repeated-measures" statistical tests.<sup><a href="https://statistics.laerd.com/statistical-guides/dependent-t-test-statistical-guide.php" target="_blank">2</a></sup>
+    The t-test should be of the dependent samples variety because the same subject is exposed to two conditions and tested for each, which are the defining criteria for "within-subjects" or "repeated-measures" statistical tests.<sup><a href="https://statistics.laerd.com/statistical-guides/dependent-t-test-statistical-guide.php" target="_blank">3</a></sup>
   </p>
   <p>
   	Now it’s your chance to try out the Stroop task for yourself. Go to <a href="https://faculty.washington.edu/chudler/java/ready.html" target="_blank">this link</a>, which has a Java-based applet for performing the Stroop task. Record the times that you received on the task (you do not need to submit your times to the site.) Now, download <a href="https://drive.google.com/file/d/0B9Yf01UaIbUgQXpYb2NhZ29yX1U/view" target="_blank">this dataset</a> which contains results from a number of participants in the task. Each row of the dataset contains the performance for one participant, with the first number their results on the congruent task and the second number their performance on the incongruent task.
@@ -133,7 +139,7 @@
   	5. Now, perform the statistical test and report your results. What is your confidence level and your critical statistic value? Do you reject the null hypothesis or fail to reject it? Come to a conclusion in terms of the experiment task. Did the results match up with your expectations?
   </p>
   <p class="answer">
-    α = 0.01
+    α = .01
   </p>
   <p class="answer">
     df = 23
@@ -148,10 +154,10 @@
     p-value = &#60; .0001
   </p>
   <p class="answer">
-    At the 99% confidence level (α = 0.01) and 23 degrees of freedom, the critical statistic value for a one-tailed test in the negative direction is -2.5. The calculated t-statistic for the difference in colour recognition time means of the congruent and incongruent word data is -8.02. Since the t-statistic is in the critical region, the null hypothesis is rejected. With the data presented, it is very unlikely that the 7.96 second difference in mean time for colour recognition for the congruent data vs. the incongruent data is obtained if the two means are actually the same (or if μ<sub>C</sub> > μ<sub>I</sub>). By conventional criteria, this difference is considered to be extremely statistically significant.
+    At the 99% confidence level (α = .01) and 23 degrees of freedom, the critical statistic value for a one-tailed test in the negative direction is -2.5. The calculated t-statistic for the difference in colour recognition time means of the congruent and incongruent word data is -8.02. Since the t-statistic is in the critical region, the null hypothesis is rejected. With the data presented, it is very unlikely that the 7.96 second difference in mean time for colour recognition for the congruent data vs. the incongruent data is obtained if the two means are actually the same (or if μ<sub>C</sub> > μ<sub>I</sub>). By conventional criteria, this difference is considered to be extremely statistically significant.
   </p>
   <p class="answer">
-    There is sufficient evidence at the α = 0.01 level of significance to support the claim that it takes less time to recognize the colour of words with the congruent condition compared to words with the incongruent condition.
+    There is sufficient evidence at the α = .01 level of significance to support the claim that it takes less time to recognize the colour of words with the congruent condition compared to words with the incongruent condition.
   </p>
   <p>
   	6. Optional: What do you think is responsible for the effects observed? Can you think of an alternative or similar task that would result in a similar effect? Some research about the problem will be helpful for thinking about these two questions!
@@ -160,16 +166,17 @@
   	My hypothesis for the effects observed is that the brain dominantly focuses on reading the word rather than recognizing a colour when the eyes are presented with a coloured word. To recognize a colour, one has to override the brain's natural tendency of reading the word. This override takes time and is likely not always successful, which means re-analyzing a word after the error is recognized, which costs more time.
   </p>
   <p class="answer">
-    Numerical/Physical size Stroop tasks, where numerical values and physical size are the factors that contribute to congruency/incongruency, results in a similar effect. It takes longer to recognize the number and physical size (two separate tasks) of small numbers that have a large physical size and large numbers that have a small physical size.<sup><a href="https://en.wikipedia.org/wiki/Numerical_Stroop_effect" target="_blank">3</a></sup>
+    Numerical/Physical size Stroop tasks, where numerical values and physical size are the factors that contribute to congruency/incongruency, results in a similar effect. It takes longer to recognize the number and physical size (two separate tasks) of small numbers that have a large physical size and large numbers that have a small physical size.<sup><a href="https://en.wikipedia.org/wiki/Numerical_Stroop_effect" target="_blank">4</a></sup>
   </p>
 </div>
 <div class="container">
   <h3>Sources</h3>
-  <ul>
-    <li>1. <a href="http://stattrek.com/probability-distributions/t-distribution.aspx">Stat Trek: Student's t Distribution</a></li>
-    <li>2. <a href="https://statistics.laerd.com/statistical-guides/dependent-t-test-statistical-guide.php">Laerd Statistics: Dependent T-Test for Paired Samples</a></li>
-    <li>3. <a href="https://en.wikipedia.org/wiki/Numerical_Stroop_effect">Wikipedia: Numerical Stroop effect</a></li>
-  </ul>
+  <ol>
+    <li><a href="http://stattrek.com/probability-distributions/t-distribution.aspx">Stat Trek: Student's t Distribution</a></li>
+    <li><a href="http://www.psychology.emory.edu/clinical/bliwise/Tutorials/TOM/meanstests/assump.htm">Emory Psychology: Test Assumptions</a></li>
+    <li><a href="https://statistics.laerd.com/statistical-guides/dependent-t-test-statistical-guide.php">Laerd Statistics: Dependent T-Test for Paired Samples</a></li>
+    <li><a href="https://en.wikipedia.org/wiki/Numerical_Stroop_effect">Wikipedia: Numerical Stroop effect</a></li>
+  </ol>
 </div>
 <br>
 </body>
