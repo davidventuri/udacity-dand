@@ -11,6 +11,9 @@
   .answer {
   	margin-left: 30px;
   }
+  td, tr {
+    padding: 3px;
+  }
   </style>
 </head>
 <body>
@@ -44,16 +47,7 @@
   	2. What is an appropriate set of hypotheses for this task? What kind of statistical test do you expect to perform? Justify your choices.
   </p>
   <p class="answer">
-  	A one-tailed, dependent samples t-test comparing the difference in means (the time to name the ink colors for congruent words and incongruent words) should be performed.
-  </p>
-  <p class="answer">
-  	A t-test is appropriate because the population variance is unknown and the sample size is less than 30. When the sample size is less than 30, the sample data no longer approximate a normal distribution, which makes the use of a Z-value inappropriate.<sup><a href="http://stattrek.com/probability-distributions/t-distribution.aspx" target="_blank">1</a></sup>
-  </p>
-  <p class="answer">
-  	A one-tailed test is appropriate under the assumption that incongruent word conditions will not improve recognition times, which is intuitive. The one-tailed test allows for a more scrutinous examination of the negative impact of incongruent word conditions on recognition times.
-  </p>
-  <p class="answer">
-    The t-test should be of the dependent samples variety because the same subject is exposed to two conditions and tested for each, which is the defining criteria for "within-subjects" or "repeated-measures" statistical tests.<sup><a href="https://statistics.laerd.com/statistical-guides/dependent-t-test-statistical-guide.php" target="_blank">2</a></sup>
+    The null hypothesis should be that the mean time for colour recognition for congruent words is equal to or greater than the mean time for incongruent words, therefore implying a one-tailed test. The alternative hypothesis should be that the congruent words mean is less than the incongruent words mean.
   </p>
   <p class="answer">
   	H<sub>0</sub>: μ<sub>C</sub> ≥ μ<sub>I</sub>
@@ -64,68 +58,69 @@
   <p class="answer">
   	where the subscript "C" represents the congruent words condition and the subscript "I" represents the incongruent words condition.
   </p>
+  <p class="answer">
+    A one-tailed, dependent samples t-test comparing the difference in means (the time to name the ink colors for congruent words and incongruent words) should be performed.
+  </p>
+  <p class="answer">
+    A t-test is appropriate because the population variance is unknown and the sample size is less than 30. When the sample size is less than 30, the sample data no longer approximate a normal distribution, which makes the use of a Z-value inappropriate.<sup><a href="http://stattrek.com/probability-distributions/t-distribution.aspx" target="_blank">1</a></sup>
+  </p>
+  <p class="answer">
+    A one-tailed test is appropriate under the assumption that incongruent word conditions will not improve recognition times, which is intuitive. The one-tailed test allows for a more scrutinous examination of the negative impact of incongruent word conditions on recognition times.
+  </p>
+  <p class="answer">
+    The t-test should be of the dependent samples variety because the same subject is exposed to two conditions and tested for each, which are the defining criteria for "within-subjects" or "repeated-measures" statistical tests.<sup><a href="https://statistics.laerd.com/statistical-guides/dependent-t-test-statistical-guide.php" target="_blank">2</a></sup>
+  </p>
   <p>
   	Now it’s your chance to try out the Stroop task for yourself. Go to <a href="https://faculty.washington.edu/chudler/java/ready.html" target="_blank">this link</a>, which has a Java-based applet for performing the Stroop task. Record the times that you received on the task (you do not need to submit your times to the site.) Now, download <a href="https://drive.google.com/file/d/0B9Yf01UaIbUgQXpYb2NhZ29yX1U/view" target="_blank">this dataset</a> which contains results from a number of participants in the task. Each row of the dataset contains the performance for one participant, with the first number their results on the congruent task and the second number their performance on the incongruent task.
   </p>
   <p>
   	3. Report some descriptive statistics regarding this dataset. Include at least one measure of central tendency and at least one measure of variability.
   </p>
-  <h5 class="answer">Congruent (C)</h5>
-  <p class="answer">
-  	n<sub>C</sub>: 24
-  </p>
-  <p class="answer">
-  	x&#772;<sub>C</sub>: 14.05
-  </p>
-  <p class="answer">
-    Median<sub>C</sub>: 14.36
-  </p>
-  <p class="answer">
-    s<sub>C</sub><sup>2</sup>: 12.67
-  </p>
-  <p class="answer">
-    s<sub>C</sub>: 3.56
-  </p>
-  <p class="answer">
-    SE<sub>C</sub>: 0.73
-  </p>
-  <h5 class="answer">Incongruent (I)</h5>
-  <p class="answer">
-    n<sub>I</sub>: 24
-  </p>
-  <p class="answer">
-    x&#772;<sub>I</sub>: 22.02
-  </p>
-  <p class="answer">
-    Median<sub>I</sub>: 21.02
-  </p>
-  <p class="answer">
-    s<sub>I</sub><sup>2</sup>: 23.01
-  </p>
-  <p class="answer">
-    s<sub>I</sub>: 4.80
-  </p>
-  <p class="answer">
-    SE<sub>I</sub>: 0.98
-  </p>
-  <h5 class="answer">Difference (C-I)</h5>
-  <p class="answer">
-    n<sub>D</sub>: 24
-  </p>
-  <p class="answer">
-    x&#772;<sub>D</sub>: -7.96
-  </p>
-  <p class="answer">
-    Median<sub>D</sub>: -7.67
-  </p>
-  <p class="answer">
-    s<sub>D</sub><sup>2</sup>: 23.67
-  </p>
-  <p class="answer">
-    s<sub>D</sub>: 4.86
-  </p>
-  <p class="answer">
-    SE<sub>D</sub>: 0.99
+  <p>
+    <table border="1">
+      <tr>
+        <td><b>Statistic</b></td>
+        <td><b>Congruent</b></td>
+        <td><b>Incongruent</b></td>
+        <td><b>Difference (C-I)</b></td>
+      </tr>
+      <tr>
+        <td>n</td>
+        <td>24</td>
+        <td>24</td>
+        <td>24</td>
+      </tr>
+      <tr>
+        <td>x&#772;</td>
+        <td>14.05</td>
+        <td>22.02</td>
+        <td>-7.96</td>
+      </tr>
+      <tr>
+        <td>Median</td>
+        <td>14.36</td>
+        <td>21.02</td>
+        <td>-7.67</td>
+      </tr>
+      <tr>
+        <td>s<sup>2</sup></td>
+        <td>12.67</td>
+        <td>23.01</td>
+        <td>23.67</td>
+      </tr>
+      <tr>
+        <td>s</td>
+        <td>3.56</td>
+        <td>4.80</td>
+        <td>4.86</td>
+      </tr>
+      <tr>
+        <td>SE</td>
+        <td>0.73</td>
+        <td>0.98</td>
+        <td>0.99</td>
+      </tr>
+    </table>
   </p>
   <p>
   	4. Provide one or two visualizations that show the distribution of the sample data. Write one or two sentences noting what you observe about the plot or plots.
@@ -150,7 +145,10 @@
     t = -8.02
   </p>
   <p class="answer">
-    At the 99% confidence level (α = 0.01) and 23 degrees of freedom, the critical statistic value for a one-tailed test in the negative direction is -2.5. The calculated t-statistic for the difference in colour recognition time means of the congruent and incongruent word data is -8.02. Since the t-statistic is in the critical region, the null hypothesis is rejected. With the data presented, it is very unlikely that the 7.96 second difference in mean time for colour recognition for the congruent data vs. the incongruent data is obtained if the two means are actually the same (or if μ<sub>C</sub> > μ<sub>I</sub>).
+    p-value = &#60; .0001
+  </p>
+  <p class="answer">
+    At the 99% confidence level (α = 0.01) and 23 degrees of freedom, the critical statistic value for a one-tailed test in the negative direction is -2.5. The calculated t-statistic for the difference in colour recognition time means of the congruent and incongruent word data is -8.02. Since the t-statistic is in the critical region, the null hypothesis is rejected. With the data presented, it is very unlikely that the 7.96 second difference in mean time for colour recognition for the congruent data vs. the incongruent data is obtained if the two means are actually the same (or if μ<sub>C</sub> > μ<sub>I</sub>). By conventional criteria, this difference is considered to be extremely statistically significant.
   </p>
   <p class="answer">
     There is sufficient evidence at the α = 0.01 level of significance to support the claim that it takes less time to recognize the colour of words with the congruent condition compared to words with the incongruent condition.
