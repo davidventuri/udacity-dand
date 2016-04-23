@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>P1: Test a Perceptual Phenomenon</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.0/jquery.min.js"></script>
+  <script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
+  <style>
+  .answer {
+  	margin-left: 30px;
+  }
+  </style>
+</head>
+<body>
+<div class="container">
+  <h1>Udacity Data Analyst Nanodegree</h1>
+  <h3>P1: Test a Perceptual Phenomenon</h3>
+  <h5>Author: David Venturi</h5>
+  <h5>Date: April 22, 2016</h5>
+</div>
+<div class="container">
+  <h3>Background Information</h3>
+  <p>
+  	In a Stroop task, participants are presented with a list of words, with each word displayed in a color of ink. The participant’s task is to say out loud the color of the ink in which the word is printed. The task has two conditions: a congruent words condition, and an incongruent words condition. In the congruent words condition, the words being displayed are color words whose names match the colors in which they are printed: for example <span style="color:red;">RED</span>, <span style="color:blue;">BLUE</span>. In the incongruent words condition, the words displayed are color words whose names do not match the colors in which they are printed: for example <span style="color:green;">PURPLE</span>, <span style="color:purple;">ORANGE</span>. In each case, we measure the time it takes to name the ink colors in equally-sized lists. Each participant will go through and record a time from each condition.
+  </p>
+</div>
+<div class="container">
+  <h3>Questions For Investigation</h3>
+  <p>
+  	As a general note, be sure to keep a record of any resources that you use or refer to in the creation of your project. You will need to report your sources as part of the project submission.
+  </p>
+  <p>
+  	1. What is our independent variable? What is our dependent variable?
+  </p>
+  <p class="answer">
+  	Independent variable: the words condition (congruent words or incongruent words)
+  </p>
+  <p class="answer">
+  	Dependent variable: the time it takes to name the ink colors in equally-sized lists
+  </p>
+  <p>
+  	2. What is an appropriate set of hypotheses for this task? What kind of statistical test do you expect to perform? Justify your choices.
+  </p>
+  <p class="answer">
+  	A one-tailed, dependent samples t-test comparing the difference in means (the time to name the ink colors for congruent words and incongruent words) should be performed.
+  </p>
+  <p class="answer">
+  	A t-test is appropriate because the population variance is unknown and the sample size is less than 30. When the sample size is less than 30, the sample data no longer approximate a normal distribution, which makes the use of a Z-value inappropriate.<sup><a href="http://stattrek.com/probability-distributions/t-distribution.aspx" target="_blank">1</a></sup>
+  </p>
+  <p class="answer">
+  	A one-tailed test is appropriate under the assumption that incongruent word conditions will not improve recognition times, which is intuitive. The one-tailed test allows for a more scrutinous examination of the negative impact of incongruent word conditions on recognition times.
+  </p>
+  <p class="answer">
+    The t-test should be of the dependent samples variety because the same subject is exposed to two conditions and tested for each, which is the defining criteria for "within-subjects" or "repeated-measures" statistical tests.<sup><a href="https://statistics.laerd.com/statistical-guides/dependent-t-test-statistical-guide.php" target="_blank">2</a></sup>
+  </p>
+  <p class="answer">
+  	H<sub>0</sub>: μ<sub>C</sub> ≥ μ<sub>I</sub>
+  </p>
+  <p class="answer">
+  	H<sub>A</sub>: μ<sub>C</sub> &#60; μ<sub>I</sub>
+  </p>
+  <p class="answer">
+  	where the subscript "C" represents the congruent words condition and the subscript "I" represents the incongruent words condition.
+  </p>
+  <p>
+  	Now it’s your chance to try out the Stroop task for yourself. Go to <a href="https://faculty.washington.edu/chudler/java/ready.html" target="_blank">this link</a>, which has a Java-based applet for performing the Stroop task. Record the times that you received on the task (you do not need to submit your times to the site.) Now, download <a href="https://drive.google.com/file/d/0B9Yf01UaIbUgQXpYb2NhZ29yX1U/view" target="_blank">this dataset</a> which contains results from a number of participants in the task. Each row of the dataset contains the performance for one participant, with the first number their results on the congruent task and the second number their performance on the incongruent task.
+  </p>
+  <p>
+  	3. Report some descriptive statistics regarding this dataset. Include at least one measure of central tendency and at least one measure of variability.
+  </p>
+  <h5 class="answer">Congruent (C)</h5>
+  <p class="answer">
+  	n<sub>C</sub>: 24
+  </p>
+  <p class="answer">
+  	x&#772;<sub>C</sub>: 14.05
+  </p>
+  <p class="answer">
+    Median<sub>C</sub>: 14.36
+  </p>
+  <p class="answer">
+    s<sub>C</sub><sup>2</sup>: 12.67
+  </p>
+  <p class="answer">
+    s<sub>C</sub>: 3.56
+  </p>
+  <p class="answer">
+    SE<sub>C</sub>: 0.73
+  </p>
+  <h5 class="answer">Incongruent (I)</h5>
+  <p class="answer">
+    n<sub>I</sub>: 24
+  </p>
+  <p class="answer">
+    x&#772;<sub>I</sub>: 22.02
+  </p>
+  <p class="answer">
+    Median<sub>I</sub>: 21.02
+  </p>
+  <p class="answer">
+    s<sub>I</sub><sup>2</sup>: 23.01
+  </p>
+  <p class="answer">
+    s<sub>I</sub>: 4.80
+  </p>
+  <p class="answer">
+    SE<sub>I</sub>: 0.98
+  </p>
+  <h5 class="answer">Difference (C-I)</h5>
+  <p class="answer">
+    n<sub>D</sub>: 24
+  </p>
+  <p class="answer">
+    x&#772;<sub>D</sub>: -7.96
+  </p>
+  <p class="answer">
+    Median<sub>D</sub>: -7.67
+  </p>
+  <p class="answer">
+    s<sub>D</sub><sup>2</sup>: 23.67
+  </p>
+  <p class="answer">
+    s<sub>D</sub>: 4.86
+  </p>
+  <p class="answer">
+    SE<sub>D</sub>: 0.99
+  </p>
+  <p>
+  	4. Provide one or two visualizations that show the distribution of the sample data. Write one or two sentences noting what you observe about the plot or plots.
+  </p>
+  <img src="http://i.imgur.com/01xzUdX.png" alt="Histogram of Colour Recognition Times">
+  <p class="answer">
+    The bucket range of the congruent words condition data is 8 seconds to 24 seconds. The bucket range of the incongruent words condition data is 12 seconds to 36 seconds, i.e., noticeably to the right of the congruent words condition data.
+  </p>
+  <p>
+  	5. Now, perform the statistical test and report your results. What is your confidence level and your critical statistic value? Do you reject the null hypothesis or fail to reject it? Come to a conclusion in terms of the experiment task. Did the results match up with your expectations?
+  </p>
+  <p class="answer">
+    α = 0.01
+  </p>
+  <p class="answer">
+    df = 23
+  </p>
+  <p class="answer">
+    t<sub>crit</sub> = -2.50
+  </p>
+  <p class="answer">
+    t = -8.02
+  </p>
+  <p class="answer">
+    At the 99% confidence level (α = 0.01) and 23 degrees of freedom, the critical statistic value for a one-tailed test in the negative direction is -2.5. The calculated t-statistic for the difference in colour recognition time means of the congruent and incongruent word data is -8.02. Since the t-statistic is in the critical region, the null hypothesis is rejected. With the data presented, it is very unlikely that the 7.96 second difference in mean time for colour recognition for the congruent data vs. the incongruent data is obtained if the two means are actually the same (or if μ<sub>C</sub> > μ<sub>I</sub>).
+  </p>
+  <p class="answer">
+    There is sufficient evidence at the α = 0.01 level of significance to support the claim that it takes less time to recognize the colour of words with the congruent condition compared to words with the incongruent condition.
+  </p>
+  <p>
+  	6. Optional: What do you think is responsible for the effects observed? Can you think of an alternative or similar task that would result in a similar effect? Some research about the problem will be helpful for thinking about these two questions!
+  </p>
+  <p class="answer">
+  	My hypothesis for the effects observed is that the brain dominantly focuses on reading the word rather than recognizing a colour when the eyes are presented with a coloured word. To recognize a colour, one has to override the brain's natural tendency of reading the word. This override takes time and is likely not always successful, which means re-analyzing a word after the error is recognized, which costs more time.
+  </p>
+  <p class="answer">
+    Numerical/Physical size Stroop tasks, where numerical values and physical size are the factors that contribute to congruency/incongruency, results in a similar effect. It takes longer to recognize the number and physical size (two separate tasks) of small numbers that have a large physical size and large numbers that have a small physical size.<sup><a href="https://en.wikipedia.org/wiki/Numerical_Stroop_effect" target="_blank">3</a></sup>
+  </p>
+  <br>
+</div>
+</body>
+</html>
