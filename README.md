@@ -11,6 +11,8 @@ Set up iPython notebook and commonly used data analysis libraries on your own co
 
 Use descriptive statistics and a statistical test to analyze the Stroop effect, a classic result of experimental psychology. Give your readers a good intuition for the data and use statistical inference to draw a conclusion based on the results.
 
+[Link to report](http://venturidb.github.io/udacity-dand-p1/)
+
 ### P2: Investigate a Dataset
 
 Choose one of Udacity's curated datasets and investigate it using NumPy and Pandas. Go through the entire data analysis process, starting by posing a question and finishing by sharing your findings.
