@@ -3,6 +3,7 @@
 # as JSON or another serialized format.
 
 schema = {
+    # CREATE TABLE Nodes(id INTEGER PRIMARY KEY, lat REAL, lon REAL, user TEXT, uid INTEGER, version INTEGER, changeset INTEGER, timestamp DATETIME);
     'node': {
         'type': 'dict',
         'schema': {
@@ -16,6 +17,7 @@ schema = {
             'timestamp': {'required': True, 'type': 'string'}
         }
     },
+    # CREATE TABLE nodeTags(id INTEGER PRIMARY KEY, key TEXT, value TEXT, type TEXT);
     'node_tags': {
         'type': 'list',
         'schema': {
@@ -28,6 +30,7 @@ schema = {
             }
         }
     },
+    # CREATE TABLE Ways(id INTEGER PRIMARY KEY, user TEXT, uid INTEGER, version INTEGER, changeset INTEGER, timestamp DATETIME);
     'way': {
         'type': 'dict',
         'schema': {
@@ -39,6 +42,7 @@ schema = {
             'timestamp': {'required': True, 'type': 'string'}
         }
     },
+    # CREATE TABLE wayNodes(id INTEGER PRIMARY KEY, FOREIGN KEY(node_id) REFERENCES Nodes(id), position INTEGER);
     'way_nodes': {
         'type': 'list',
         'schema': {
@@ -50,6 +54,7 @@ schema = {
             }
         }
     },
+    # CREATE TABLE wayTags (id INTEGER PRIMARY KEY, key TEXT, value TEXT, type TEXT);
     'way_tags': {
         'type': 'list',
         'schema': {
