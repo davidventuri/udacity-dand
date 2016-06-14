@@ -17,7 +17,7 @@ schema = {
             'timestamp': {'required': True, 'type': 'string'}
         }
     },
-    # CREATE TABLE nodeTags(id INTEGER PRIMARY KEY, key TEXT, value TEXT, type TEXT);
+    # CREATE TABLE nodesTags(id INTEGER, key TEXT, value TEXT, type TEXT, FOREIGN KEY (id) REFERENCES Nodes (id));
     'node_tags': {
         'type': 'list',
         'schema': {
@@ -42,7 +42,7 @@ schema = {
             'timestamp': {'required': True, 'type': 'string'}
         }
     },
-    # CREATE TABLE wayNodes(id INTEGER PRIMARY KEY, FOREIGN KEY(node_id) REFERENCES Nodes(id), position INTEGER);
+    # CREATE TABLE waysNodes(id INTEGER, node_id INTEGER, position INTEGER, FOREIGN KEY(id) REFERENCES Nodes(id));
     'way_nodes': {
         'type': 'list',
         'schema': {
@@ -54,7 +54,7 @@ schema = {
             }
         }
     },
-    # CREATE TABLE wayTags (id INTEGER PRIMARY KEY, key TEXT, value TEXT, type TEXT);
+    # CREATE TABLE waysTags(id INTEGER, key TEXT, value TEXT, type TEXT, FOREIGN KEY(id) REFERENCES Ways(id));
     'way_tags': {
         'type': 'list',
         'schema': {
