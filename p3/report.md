@@ -30,7 +30,8 @@ Spell out all street types and directions.
 nth_re = re.compile(r'\d\d?(st|nd|rd|th|)', re.IGNORECASE)
 nesw_re = re.compile(r'\s(North|East|South|West)$')
 
-mapping = { "St": "Street",
+mapping = { 
+            "St": "Street",
             "St.": "Street",
             "Ave": "Avenue",
             "Ave.": "Avenue",
@@ -42,7 +43,7 @@ mapping = { "St": "Street",
           }
 
 street_mapping = {
-					# same as above, minus North, East, South, West
+				   # same as above, minus North, East, South, West
 				 }
 ...
 
@@ -71,7 +72,8 @@ Spell "Lines" numbered ten and under.
 ```python
 num_line_street_re = re.compile(r'\d0?(st|nd|rd|th|)\s(Line)$', re.IGNORECASE)
 
-num_line_mapping = { "1st": "First",
+num_line_mapping = {
+                     "1st": "First",
                      "2nd": "Second",
                      "3rd": "Third",
                      ...
