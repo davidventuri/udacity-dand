@@ -164,10 +164,6 @@ import cerberus
 import schema
 
 from audit import update_name, is_street_name
- # Why don't i need to import mapping, street_mapping, 
- # and num_line_mapping dicts from audit street?
-
-# How is code structure (between two files)?
 
 OSM_PATH = "toronto_canada.osm"
 
