@@ -6,15 +6,15 @@ from num2words import num2words
 
 OSMFILE = "toronto_canada.osm"
 street_type_re = re.compile(r'\b\S+\.?$', re.IGNORECASE)
-num_line_street_re = re.compile(r'\d0?(st|nd|rd|th|)\s(Line)$', re.IGNORECASE) # spell lines ten and under
+num_line_street_re = re.compile(r'\d0?(st|nd|rd|th|)\s(Line)$', re.IGNORECASE) # Spell lines ten and under
 nth_re = re.compile(r'\d\d?(st|nd|rd|th|)', re.IGNORECASE)
-nesw_re = re.compile(r'\s(North|East|South|West)$') # don't need because works in update name
-
+nesw_re = re.compile(r'\s(North|East|South|West)$')
 
 expected = ["Street", "Avenue", "Boulevard", "Drive", "Court", "Place", "Square", "Lane", "Road", 
             "Trail", "Parkway", "Commons", "Circle", "Crescent", "Gate", "Terrace", "Grove", "Way"]
 
-mapping = { "St": "Street",
+mapping = { 
+            "St": "Street",
             "St.": "Street",
             "STREET": "Street",
             "Ave": "Avenue",
@@ -42,34 +42,35 @@ mapping = { "St": "Street",
             "S": "South",
             "W.": "West",
             "W": "West"
-            }
+          }
 
 street_mapping = {
-            "St": "Street",
-            "St.": "Street",
-            "ST": "Street",
-            "STREET": "Street",
-            "Ave": "Avenue",
-            "Ave.": "Avenue",
-            "Rd.": "Road",
-            "Dr.": "Drive",
-            "Dr": "Drive",
-            "Rd": "Road",
-            "Rd.": "Road",
-            "Blvd": "Boulevard",
-            "Blvd.": "Boulevard",
-            "Ehs": "EHS",
-            "Trl": "Trail",
-            "Cir": "Circle",
-            "Cir.": "Circle",
-            "Ct": "Court",
-            "Ct.": "Court",
-            "Crt": "Court",
-            "Crt.": "Court",
-            "By-pass": "Bypass"
+                   "St": "Street",
+                   "St.": "Street",
+                   "ST": "Street",
+                   "STREET": "Street",
+                   "Ave": "Avenue",
+                   "Ave.": "Avenue",
+                   "Rd.": "Road",
+                   "Dr.": "Drive",
+                   "Dr": "Drive",
+                   "Rd": "Road",
+                   "Rd.": "Road",
+                   "Blvd": "Boulevard",
+                   "Blvd.": "Boulevard",
+                   "Ehs": "EHS",
+                   "Trl": "Trail",
+                   "Cir": "Circle",
+                   "Cir.": "Circle",
+                   "Ct": "Court",
+                   "Ct.": "Court",
+                   "Crt": "Court",
+                   "Crt.": "Court",
+                   "By-pass": "Bypass"
                 }
 
-num_line_mapping = { "1st": "First",
+num_line_mapping = {
+                     "1st": "First",
                      "2nd": "Second",
                      "3rd": "Third",
                      "4th": "Fourth",
@@ -79,7 +80,7 @@ num_line_mapping = { "1st": "First",
                      "8th": "Eighth",
                      "9th": "Ninth",
                      "10th": "Tenth"
-                    }
+                   }
 
 
 def audit_street_type(street_types, street_name):
@@ -108,6 +109,9 @@ def audit_street(osmfile):
 
 
 def update_name(name):
+    """
+    Clean street name for insertion into SQL database
+    """
     if num_line_street_re.match(name):
         nth = nth_re.search(name)
         name = num_line_mapping[nth.group(0)] + " Line"
@@ -128,10 +132,10 @@ def update_name(name):
                     # Do not update correct names like St. Clair Avenue West
                     dir_fix_name = re.sub(r'\s' + re.escape(key) + re.escape(nesw.group(0)), " " + street_mapping[key] + nesw.group(0), type_fix_name)
                     if dir_fix_name != type_fix_name:
-                        print original_name + "=>" + type_fix_name + "=>" + dir_fix_name
+                        # print original_name + "=>" + type_fix_name + "=>" + dir_fix_name
                         return dir_fix_name
             if type_fix_name != original_name:
-                print original_name + "=>" + type_fix_name
+                # print original_name + "=>" + type_fix_name
                 return type_fix_name
     # Check if avenue, road, street, etc. are capitalized
     last_word = original_name.rsplit(None, 1)[-1]

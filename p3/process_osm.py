@@ -192,6 +192,9 @@ WAY_TAGS_FIELDS = ['id', 'key', 'value', 'type']
 WAY_NODES_FIELDS = ['id', 'node_id', 'position']
 
 def update_phone_num(phone_num):
+    """
+    Clean phone number for insertion into SQL database
+    """
     # Check for valid phone number format
     m = PHONENUM.match(phone_num)
     if m is None:
