@@ -370,4 +370,4 @@ One way to improve this number is to leverage the public data provided by [Acces
 ![AccessTO](http://i.imgur.com/tHShXvX.jpg)
 
 # Conclusion
-The Toronto OpenStreetMap dataset is a quite large and quite messy. While it is clear that the data is not 100% clean, I believe it was sufficiently cleaned for the purposes of this project. Via SQL query, I learned a few new things about my hometown. Though areas for improvement exist, the dataset is still very useful.
+The Toronto OpenStreetMap dataset is a quite large and quite messy. While it is clear that the data is not 100% clean, I believe it was sufficiently cleaned for the purposes of this project. Via SQL query, I learned a few new things about my hometown. The dataset is very useful, though areas for improvement exist.
