@@ -1,5 +1,4 @@
-# Developing Data Scientists:
-# Exploring Free Code Camp's "2016 New Coder Survey"
+# Developing Data Scientists: Exploring Free Code Camp's "2016 New Coder Survey"
 By [David Venturi](http://davidventuri.com/)
 --------------------------------------------
 
