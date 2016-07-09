@@ -1,0 +1,156 @@
+Exploring US Consumer Finance Complaints by David Venturi
+========================================================
+
+```{r echo=FALSE, message=FALSE, warning=FALSE, packages}
+# Load all of the packages that you end up using
+# in your analysis in this code chunk.
+
+# Notice that the parameter "echo" was set to FALSE for this code chunk.
+# This prevents the code from displaying in the knitted HTML output.
+# You should set echo=FALSE for all code chunks in your file.
+
+library(ggplot2)
+library(countrycode)
+library(dplyr)
+```
+
+```{r echo=FALSE, Load_the_Data}
+# Load the Data
+setwd('~/Documents/CS/DAND/udacity-dand/p4')
+fcc <- read.csv('2016-FCC-New-Coders-Survey-Data.csv')
+fcc$ContinentCitizen <- countrycode(fcc$CountryCitizen, 'country.name', 'continent')
+fcc$ContinentLive <- countrycode(fcc$CountryLive, 'country.name', 'continent')
+
+# Move newly created variables to their alphabetical position
+fcc <- fcc[,c(1:29,114,30,115,31:113)]
+
+# 66 countries with no assigned continent
+problem_countries <- subset(fcc[,29:32], (!is.na(fcc$CountryCitizen) & is.na(fcc$ContinentCitizen) | !is.na(fcc$CountryLive) & is.na(fcc$ContinentLive)))
+
+# Problem country/continent names
+fix_cont <- c('Africa', 'Asia', 'Europe', 'Europe', 'Europe', 'Oceania')
+names(fix_cont) <- c('Nambia', 'Taiwan', 'Canary Islands', 'Kosovo', 'Channel Islands', 'Hawaii')
+# "Hawaii is generally included in Oceania, even though it is a part of the United States" http://cs.mcgill.ca/~rwest/wikispeedia/wpcd/wp/o/Oceania.htm
+
+# Assign continents to problem countries
+fcc$ContinentCitizen <- ifelse(fcc$CountryCitizen %in% names(fix_cont), fix_cont[as.character(fcc$CountryCitizen)], fcc$ContinentCitizen)
+fcc$ContinentLive <- ifelse(fcc$CountryLive %in% names(fix_cont), fix_cont[as.character(fcc$CountryLive)], fcc$ContinentLive)
+
+# Countries in South America in dataset
+s_america <- c('Argentina', 'Bolivia', 'Brazil', 'Chile', 'Colombia', 'Ecuador', 'Guyana', 'Netherland Antilles', 'Paraguay', 'Peru', 'Uruguay', 'Venezuela')
+
+# Separate Americas into North and South
+make_s_america <- function(continent, country) {
+  return(ifelse(continent == 'Americas' & country %in% s_america, 'South America', continent))
+}
+
+make_n_america <- function(continent, country) {
+  return(ifelse(continent == 'Americas' & !(country %in% s_america), 'North America', continent))
+}
+
+fcc$ContinentCitizen <- make_s_america(fcc$ContinentCitizen, fcc$CountryCitizen)
+fcc$ContinentCitizen <- make_n_america(fcc$ContinentCitizen, fcc$CountryCitizen)
+fcc$ContinentLive <- make_s_america(fcc$ContinentLive, fcc$CountryLive)
+fcc$ContinentLive <- make_n_america(fcc$ContinentLive, fcc$CountryLive)
+
+# TEST
+#table(fcc$ContinentLive)
+#table(fcc$ContinentCitizen)
+
+# Make continents factor variables
+fcc$ContinentCitizen <- factor(fcc$ContinentCitizen)
+fcc$ContinentLive <- factor(fcc$ContinentLive)
+
+# "Which one of these roles are you most interested in?"
+# Select those who answered "Data Scientist/Data Engineer""
+fcc_data <- subset(fcc, JobRoleInterest == '  Data Scientist / Data Engineer')
+```
+
+# Univariate Plots Section
+```{r echo=FALSE, Univariate_Plots}
+dim(fcc)
+dim(fcc_data)
+str(fcc_data)
+summary(fcc_data)
+
+table(fcc_data$CountryLive)
+table(fcc_data$ContinentLive)
+
+# need to say "11130 out of 15620 people answered this question"
+# percentages are based on these 11130 people (exclude NAs)
+```
+
+# Univariate Analysis
+
+### What is the structure of your dataset?
+
+### What is/are the main feature(s) of interest in your dataset?
+
+### What other features in the dataset do you think will help support your investigation into your feature(s) of interest?
+
+### Did you create any new variables from existing variables in the dataset?
+
+### Of the features you investigated, were there any unusual distributions? Did you perform any operations on the data to tidy, adjust, or change the form of the data? If so, why did you do this?
+
+
+
+# Bivariate Plots Section
+```{r echo=FALSE, Bivariate_Plots}
+
+```
+
+# Bivariate Analysis
+
+### Talk about some of the relationships you observed in this part of the investigation. How did the feature(s) of interest vary with other features in the dataset?
+
+### Did you observe any interesting relationships between the other features (not the main feature(s) of interest)?
+
+### What was the strongest relationship you found?
+
+
+
+
+# Multivariate Plots Section
+
+```{r echo=FALSE, Multivariate_Plots}
+
+```
+
+# Multivariate Analysis
+
+### Talk about some of the relationships you observed in this part of the investigation. Were there features that strengthened each other in terms of looking at your feature(s) of interest?
+
+### Were there any interesting or surprising interactions between features?
+
+### OPTIONAL: Did you create any models with your dataset? Discuss the strengths and limitations of your model.
+
+------
+
+# Final Plots and Summary
+
+### Plot One
+```{r echo=FALSE, Plot_One}
+
+```
+
+### Description One
+
+
+### Plot Two
+```{r echo=FALSE, Plot_Two}
+
+```
+
+### Description Two
+
+
+### Plot Three
+```{r echo=FALSE, Plot_Three}
+
+```
+
+### Description Three
+
+------
+
+# Reflection
