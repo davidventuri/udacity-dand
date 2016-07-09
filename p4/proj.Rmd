@@ -12,20 +12,23 @@
 library(ggplot2)
 library(countrycode)
 library(dplyr)
+library(ggthemes)
+library(scales)
 ```
 
 ```{r echo=FALSE, Load_the_Data}
 # Load the Data
 setwd('~/Documents/CS/DAND/udacity-dand/p4')
 fcc <- read.csv('2016-FCC-New-Coders-Survey-Data.csv')
+
+# Create new continent variables and move them to their alphabetical position
 fcc$ContinentCitizen <- countrycode(fcc$CountryCitizen, 'country.name', 'continent')
 fcc$ContinentLive <- countrycode(fcc$CountryLive, 'country.name', 'continent')
+fcc <- subset(fcc, select = c(Age:CountryCitizen, ContinentCitizen, CountryLive, ContinentLive, EmploymentField:StudentDebtOwe))
 
-# Move newly created variables to their alphabetical position
-fcc <- fcc[,c(1:29,114,30,115,31:113)]
-
-# 66 countries with no assigned continent
-problem_countries <- subset(fcc[,29:32], (!is.na(fcc$CountryCitizen) & is.na(fcc$ContinentCitizen) | !is.na(fcc$CountryLive) & is.na(fcc$ContinentLive)))
+# 66 countries with no assigned continent via countrycode()
+cit_live_cols <- subset(fcc, select = c(CountryCitizen:ContinentLive))
+problem_countries <- subset(cit_live_cols, (!is.na(fcc$CountryCitizen) & is.na(fcc$ContinentCitizen) | !is.na(fcc$CountryLive) & is.na(fcc$ContinentLive)))
 
 # Problem country/continent names
 fix_cont <- c('Africa', 'Asia', 'Europe', 'Europe', 'Europe', 'Oceania')
@@ -36,7 +39,7 @@ names(fix_cont) <- c('Nambia', 'Taiwan', 'Canary Islands', 'Kosovo', 'Channel Is
 fcc$ContinentCitizen <- ifelse(fcc$CountryCitizen %in% names(fix_cont), fix_cont[as.character(fcc$CountryCitizen)], fcc$ContinentCitizen)
 fcc$ContinentLive <- ifelse(fcc$CountryLive %in% names(fix_cont), fix_cont[as.character(fcc$CountryLive)], fcc$ContinentLive)
 
-# Countries in South America in dataset
+# South American countries in dataset
 s_america <- c('Argentina', 'Bolivia', 'Brazil', 'Chile', 'Colombia', 'Ecuador', 'Guyana', 'Netherland Antilles', 'Paraguay', 'Peru', 'Uruguay', 'Venezuela')
 
 # Separate Americas into North and South
@@ -54,27 +57,53 @@ fcc$ContinentLive <- make_s_america(fcc$ContinentLive, fcc$CountryLive)
 fcc$ContinentLive <- make_n_america(fcc$ContinentLive, fcc$CountryLive)
 
 # TEST
-#table(fcc$ContinentLive)
-#table(fcc$ContinentCitizen)
+# table(fcc$ContinentLive)
+# table(fcc$ContinentCitizen)
 
 # Make continents factor variables
 fcc$ContinentCitizen <- factor(fcc$ContinentCitizen)
 fcc$ContinentLive <- factor(fcc$ContinentLive)
+```
 
+## Full Dataset
+The original survey dataset consists of 113 variables. Most of these variables are answers to survey questions, though a few are computer-generated (e.g. respondent ID and survey start/end times). **Over 15,000 observations** (i.e. respondents) exist.
+
+I created two new variables, *ContinentCitizen* and *ContinentLive*, for a new total of **115 variables**.
+
+```{r echo=FALSE, Full_Dataset}
+dim(fcc)
+```
+
+The [```str``` function](http://www.r-bloggers.com/str-implementation-for-data-frames/) output is long and messy, so I won't print it here. Please consult Free Code Camp's [list of survey questions and possible answers](https://github.com/FreeCodeCamp/2016-new-coder-survey/blob/master/survey-data-dictionary.md).
+
+## Data Science Subset
+646 respondents answered "*Data Scientist/Data Engineer*" to the question: "*Which one of these roles are you most interested in?*"
+
+```{r echo=FALSE, DS_Dataset}
 # "Which one of these roles are you most interested in?"
-# Select those who answered "Data Scientist/Data Engineer""
 fcc_data <- subset(fcc, JobRoleInterest == '  Data Scientist / Data Engineer')
+dim(fcc_data)
 ```
 
 ## Univariate Plots Section
 ```{r echo=FALSE, Univariate_Plots}
-dim(fcc)
-dim(fcc_data)
-str(fcc_data)
-summary(fcc_data)
+# Histograms, Frequency Polygons, Boxplots
 
-# need to say "11130 out of 15620 people answered this question"
-# percentages are based on these 11130 people (exclude NAs)
+# Learner goals and approaches
+table(fcc_data$JobPref)
+JobPref_table <- table(fcc_data$JobPref)
+JobPref_levels <- names(JobPref_table)[order(JobPref_table)]
+fcc_data$JobPref <- factor(fcc_data$JobPref, levels = JobPref_levels)
+
+ggplot(aes(x=JobPref, fill=JobPref), data = subset(fcc_data, !is.na(fcc_data$JobPref))) +
+  geom_bar() +
+  scale_x_discrete(drop=FALSE) +
+  scale_fill_discrete(name="Job Preference", drop=FALSE, guide = guide_legend(reverse=TRUE)) +
+  labs(title = "Would you prefer to...", y = "641 out of 646 developing data scientists/engineers answered this question") +
+  coord_flip() +
+  scale_y_continuous() +
+  theme(axis.title.y=element_blank(), axis.title.x=element_text(size=8.5)) +
+  geom_text(aes(label = sprintf("%1.1f%%", ..count../sum(..count..)*100)), stat="count", hjust = 1.25, color="white")
 ```
 
 ## Univariate Analysis
