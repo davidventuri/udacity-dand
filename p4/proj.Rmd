@@ -1,4 +1,4 @@
-Exploring US Consumer Finance Complaints by David Venturi
+Developing Data Scientists: Exploring Free Code Camp's "2016 New Coder Survey" by David Venturi
 ========================================================
 
 ```{r echo=FALSE, message=FALSE, warning=FALSE, packages}
