@@ -80,7 +80,12 @@ fcc$CountryLive <- factor(fcc$CountryLive)
 # Fix Math/Mathematics (SchoolMajor)
 fcc$SchoolMajor <- ifelse(fcc$SchoolMajor == "Math", "Mathematics", as.character(fcc$SchoolMajor))
 fcc$SchoolMajor <- factor(fcc$SchoolMajor)
-table(fcc_data$SchoolMajor)
+
+# Change 0 to No, 1 to Yes for two plots
+fcc$JobRelocateYesNo <- factor(fcc$JobRelocateYesNo)
+fcc$JobRelocateYesNo <- revalue(fcc$JobRelocateYesNo, c("0"="No", "1"="Yes"))
+fcc$IsEthnicMinority <- factor(fcc$IsEthnicMinority)
+fcc$IsEthnicMinority <- revalue(fcc$IsEthnicMinority, c("0"="No", "1"="Yes"))
 ```
 
 ## Full Dataset
@@ -104,7 +109,7 @@ dim(fcc_data)
 ```
 
 ## Univariate Plots Section
-```{r echo=FALSE, Univariate_Plots}
+```{r echo=FALSE, Univariate_Plot_Functions}
 # Order factor based on the survey's data science subset results (ascending)
 order_factor <- function(fcc_data_var) {
   table(fcc_data_var)
@@ -146,37 +151,51 @@ nice_bar_plot <- function(col, question, num_answers, lab_size, lab_cut) {
   plot <- arrangeGrob(plot, top = title.grob)
   return(plot)
 }
+```
 
-# LEARNER GOALS AND APPROACHES
+#### Who Participated
+CodeNewbie and Free Code Camp designed the survey, and dozens of coding-related organizations publicized it to their members.
 
+Of the 646 developing data scientists/engineers who responded to the survey:
+
+- 25% are women
+- Their median age is 26
+- They started programming an average of 16 months ago
+```{r echo=FALSE, Who_Participated}
+# Gender
+table(fcc_data$Gender)['female'] / sum(table(fcc_data$Gender))
+
+# Age
+median(fcc_data$Age, na.rm = TRUE)
+
+# MonthsProgramming
+mean(fcc_data$MonthsProgramming, na.rm = TRUE)
+```
+
+#### Learner Goals and Approaches
+```{r echo=FALSE, message=FALSE, Learner_Goals_Approaches}
 # JobPref
 fcc_data$JobPref <- order_factor(fcc_data$JobPref)
 job_pref_na_rm <- with(fcc_data, fcc_data[!is.na(JobPref), ])
 g_job_pref <- grid.arrange(nice_bar_plot(job_pref_na_rm$JobPref, "Would you prefer to...", nrow(job_pref_na_rm), 7, 0))
-g_job_pref
 ggsave(file="JobPref.png", g_job_pref)
 
 # JobApplyWhen
 fcc_data$JobApplyWhen <- order_factor(fcc_data$JobApplyWhen)
 job_apply_when_na_rm <- with(fcc_data, fcc_data[!is.na(JobApplyWhen), ])
 g_job_apply_when <- grid.arrange(nice_bar_plot(job_apply_when_na_rm$JobApplyWhen, "When do you plan to start applying for jobs?", nrow(job_apply_when_na_rm), 7, 0))
-g_job_apply_when
 ggsave(file="JobApplyWhen.png", g_job_apply_when)
 
 # JobWherePref
 fcc_data$JobWherePref <- order_factor(fcc_data$JobWherePref)
 job_where_pref_na_rm <- with(fcc_data, fcc_data[!is.na(JobWherePref), ])
 g_job_where_pref <- grid.arrange(nice_bar_plot(job_where_pref_na_rm$JobWherePref, "Would you prefer to work...", nrow(job_where_pref_na_rm), 9, 0))
-g_job_where_pref
 ggsave(file="JobWherePref.png", g_job_where_pref)
 
 # JobRelocateYesNo
-levels(fcc_data$JobRelocateYesNo)[levels(fcc_data$JobRelocateYesNo)=="0"] <- "No"
-levels(fcc_data$JobRelocateYesNo)[levels(fcc_data$JobRelocateYesNo)=="1"] <- "Yes"
 fcc_data$JobRelocateYesNo <- order_factor(fcc_data$JobRelocateYesNo)
 job_relo_na_rm <- with(fcc_data, fcc_data[!is.na(JobRelocateYesNo), ])
-g_job_relo <- grid.arrange(nice_bar_plot(job_relo_na_rm$JobRelocateYesNo, "Are you willing to relocate for a job?", nrow(job_relo_na_rm), 9, 0))
-g_job_relo
+g_job_relo <- grid.arrange(nice_bar_plot(job_relo_na_rm$JobRelocateYesNo, "Are you willing to relocate for a job?", nrow(job_relo_na_rm), 11, 0))
 ggsave(file="JobRelocateYesNo.png", g_job_relo)
 
 # LEARN TO USE LAZYEVAL TO MAKE A FUNCTION FOR THE NEXT THREE WRANGLING SEQUENCES (CodeEvent, Resource, Podcast) IN THE FUTURE
@@ -197,8 +216,7 @@ code_event_factor <- as.data.frame(rep(code_event_sum_long$event,
                                        code_event_sum_long$num_yes))
 colnames(code_event_factor) <- "event"
 code_event_factor$event <- order_factor(code_event_factor$event)
-g_code_event <- grid.arrange(nice_bar_plot(code_event_factor$event, "Which types of in-person coding events have you attended?", num_answers_code_event, 3.5, 2.9))
-g_code_event
+g_code_event <- grid.arrange(nice_bar_plot(code_event_factor$event, "Which types of in-person coding events have you attended?", num_answers_code_event, 3.8, 2.9))
 ggsave(file="CodeEvent.png", g_code_event)
 
 # Resource
@@ -214,8 +232,8 @@ resource_factor <- as.data.frame(rep(resource_sum_long$resource,
                                        resource_sum_long$num_yes))
 colnames(resource_factor) <- "resource"
 resource_factor$resource <- order_factor(resource_factor$resource)
-g_resource <- grid.arrange(nice_bar_plot(resource_factor$resource, "Which learning resources have you found helpful?", num_answers_resource, 3.5, 1.5))
-g_resource
+resource_factor_lim <- resource_factor %>% group_by(resource) %>% filter(n() > 4)
+g_resource <- grid.arrange(nice_bar_plot(droplevels(resource_factor_lim$resource), "Which learning resources have you found helpful?", num_answers_resource, 4, 5))
 ggsave(file="Resource.png", g_resource)
 
 # Podcast
@@ -231,15 +249,13 @@ podcast_factor <- as.data.frame(rep(podcast_sum_long$podcast,
                                        podcast_sum_long$num_yes))
 colnames(podcast_factor) <- "podcast"
 podcast_factor$podcast <- order_factor(podcast_factor$podcast)
-g_podcast <- grid.arrange(nice_bar_plot(podcast_factor$podcast, "Which coding-related podcasts have you found helpful?", num_answers_podcast, 3.5, 7))
-g_podcast
+g_podcast <- grid.arrange(nice_bar_plot(podcast_factor$podcast, "Which coding-related podcasts have you found helpful?", num_answers_podcast, 4.5, 7))
 ggsave(file="podcast.png", g_podcast)
 
 # Bootcamp
 fcc_data$BootcampName <- order_factor(fcc_data$BootcampName)
 bootcamp_name_na_rm <- with(fcc_data, fcc_data[!is.na(BootcampName), ])
-g_bootcamp_name <- grid.arrange(nice_bar_plot(droplevels(bootcamp_name_na_rm$BootcampName), "If you have attended a full-time coding bootcamp, which one?", nrow(bootcamp_name_na_rm), 4, 0))
-g_bootcamp_name
+g_bootcamp_name <- grid.arrange(nice_bar_plot(droplevels(bootcamp_name_na_rm$BootcampName), "If you have attended a full-time coding bootcamp, which one?", nrow(bootcamp_name_na_rm), 6, 0))
 ggsave(file="BootcampName.png", g_bootcamp_name)
 
 # DEMOGRAPHICS
@@ -247,16 +263,14 @@ ggsave(file="BootcampName.png", g_bootcamp_name)
 # ContinentCitizen
 fcc_data$ContinentCitizen <- order_factor(fcc_data$ContinentCitizen)
 continent_citizen_na_rm <- with(fcc_data, fcc_data[!is.na(ContinentCitizen), ])
-g_continent_citizen <- grid.arrange(nice_bar_plot(droplevels(continent_citizen_na_rm$ContinentCitizen), "Which continent are you a citizen of?", nrow(continent_citizen_na_rm), 4, 4))
-g_continent_citizen
+g_continent_citizen <- grid.arrange(nice_bar_plot(droplevels(continent_citizen_na_rm$ContinentCitizen), "Which continent are you a citizen of?", nrow(continent_citizen_na_rm), 8, 4))
 ggsave(file="ContinentCitizen.png", g_continent_citizen)
 
 # CountryCitizen
 fcc_data$CountryCitizen <- order_factor(fcc_data$CountryCitizen)
 country_citizen_na_rm <- with(fcc_data, fcc_data[!is.na(CountryCitizen), ])
 country_citizen_na_rm_lim <- country_citizen_na_rm %>% group_by(CountryCitizen) %>% filter(n() > 4)
-g_country_citizen <- grid.arrange(nice_bar_plot(droplevels(country_citizen_na_rm_lim$CountryCitizen), "Which country are you a citizen of?", nrow(country_citizen_na_rm), 2.5, 3))
-g_country_citizen
+g_country_citizen <- grid.arrange(nice_bar_plot(droplevels(country_citizen_na_rm_lim$CountryCitizen), "Which country are you a citizen of?", nrow(country_citizen_na_rm), 3.3, 3))
 ggsave(file="CountryCitizen.png", g_country_citizen)
 
 # CountryLive
@@ -264,38 +278,31 @@ ggsave(file="CountryCitizen.png", g_country_citizen)
 # country_live_na_rm <- with(fcc_data, fcc_data[!is.na(CountryLive), ])
 # country_live_na_rm_lim <- country_live_na_rm %>% group_by(CountryLive) %>% filter(n() > 4)
 # g_country_live <- grid.arrange(nice_bar_plot(droplevels(country_live_na_rm_lim$CountryLive), "Which country do you currently live in?", nrow(country_live_na_rm), 2.5, 3))
-#g_country_live
 # ggsave(file="CountryLive.png", g_country_live)
 
 # CityPopulation
 fcc_data$CityPopulation <- order_factor(fcc_data$CityPopulation)
 city_pop_na_rm <- with(fcc_data, fcc_data[!is.na(CityPopulation), ])
 g_city_pop <- grid.arrange(nice_bar_plot(city_pop_na_rm$CityPopulation, "About how many people live in your city?", nrow(city_pop_na_rm), 9, 0))
-g_city_pop
 ggsave(file="CityPopulation.png", g_city_pop)
 
 # Ethnic Minority
-levels(fcc_data$IsEthnicMinority)[levels(fcc_data$IsEthnicMinority)=="0"] <- "No"
-levels(fcc_data$IsEthnicMinority)[levels(fcc_data$IsEthnicMinority)=="1"] <- "Yes"
 fcc_data$IsEthnicMinority <- order_factor(fcc_data$IsEthnicMinority)
 ethnic_minority_na_rm <- with(fcc_data, fcc_data[!is.na(IsEthnicMinority), ])
-g_ethnic_minority <- grid.arrange(nice_bar_plot(ethnic_minority_na_rm$IsEthnicMinority, "Are you an ethnic minority in your country?", nrow(ethnic_minority_na_rm), 9, 0))
-g_ethnic_minority
+g_ethnic_minority <- grid.arrange(nice_bar_plot(ethnic_minority_na_rm$IsEthnicMinority, "Are you an ethnic minority in your country?", nrow(ethnic_minority_na_rm), 11, 0))
 ggsave(file="IsEthnicMinority.png", g_ethnic_minority)
 
 # LanguageAtHome
 fcc_data$LanguageAtHome <- order_factor(fcc_data$LanguageAtHome)
 language_na_rm <- with(fcc_data, fcc_data[!is.na(LanguageAtHome), ])
 language_na_rm_lim <- language_na_rm %>% group_by(LanguageAtHome) %>% filter(n() > 5)
-g_language <- grid.arrange(nice_bar_plot(droplevels(language_na_rm_lim$LanguageAtHome), "Which language do you speak at home with your family?", nrow(language_na_rm), 3, 3))
-g_language
+g_language <- grid.arrange(nice_bar_plot(droplevels(language_na_rm_lim$LanguageAtHome), "Which language do you speak at home with your family?", nrow(language_na_rm), 3.5, 3.6))
 ggsave(file="LanguageAtHome.png", g_language)
 
 # SchoolDegree
 fcc_data$SchoolDegree <- order_factor(fcc_data$SchoolDegree)
 school_degree_na_rm <- with(fcc_data, fcc_data[!is.na(SchoolDegree), ])
 g_school_degree <- grid.arrange(nice_bar_plot(school_degree_na_rm$SchoolDegree, "What's the highest degree of level of school you have completed?", nrow(school_degree_na_rm), 3.5, 4))
-g_school_degree
 ggsave(file="SchoolDegree.png", g_school_degree)
 
 # SchoolMajor
@@ -303,14 +310,16 @@ fcc_data$SchoolMajor <- order_factor(fcc_data$SchoolMajor)
 school_major_na_rm <- with(fcc_data, fcc_data[!is.na(SchoolMajor), ])
 school_major_na_rm_lim <- school_major_na_rm %>% group_by(SchoolMajor) %>% filter(n() > 5)
 g_school_major <- grid.arrange(nice_bar_plot(droplevels(school_major_na_rm_lim$SchoolMajor), "What was the main subject your studied in university?", nrow(school_major_na_rm), 3, 0))
-g_school_major
 ggsave(file="SchoolMajor.png", g_school_major)
 
 # EmploymentStatus
+fcc_data$EmploymentStatus <- as.character(fcc_data$EmploymentStatus)
+# Change "NA" to "other" if respondent provided EmploymentStatusOther
+fcc_data$EmploymentStatus <- with(fcc_data, ifelse(is.na(EmploymentStatus) & !is.na(EmploymentStatusOther), 'Other', EmploymentStatus))
+fcc_data$EmploymentStatus <- as.factor(fcc_data$EmploymentStatus)
 fcc_data$EmploymentStatus <- order_factor(fcc_data$EmploymentStatus)
 employment_status_na_rm <- with(fcc_data, fcc_data[!is.na(EmploymentStatus), ])
-g_employment_status <- grid.arrange(nice_bar_plot(employment_status_na_rm$EmploymentStatus, "Regarding employment status, are you currently...", nrow(employment_status_na_rm), 3.5, 4))
-g_employment_status
+g_employment_status <- grid.arrange(nice_bar_plot(employment_status_na_rm$EmploymentStatus, "Regarding employment status, are you currently...", nrow(employment_status_na_rm), 6, 4))
 ggsave(file="EmploymentStatus.png", g_employment_status)
 
 # EmploymentField
@@ -318,11 +327,9 @@ fcc_data$EmploymentField <- as.character(fcc_data$EmploymentField)
 # Change "NA" to "other" if respondent provided EmploymentFieldOther
 fcc_data$EmploymentField <- with(fcc_data, ifelse(is.na(EmploymentField) & !is.na(EmploymentFieldOther), 'other', EmploymentField))
 fcc_data$EmploymentField <- as.factor(fcc_data$EmploymentField)
-
 fcc_data$EmploymentField <- order_factor(fcc_data$EmploymentField)
 employment_field_na_rm <- with(fcc_data, fcc_data[!is.na(EmploymentField), ])
-g_employment_field <- grid.arrange(nice_bar_plot(droplevels(employment_field_na_rm$EmploymentField), "Which field do you work in?", nrow(employment_field_na_rm), 3.5, 2))
-g_employment_field
+g_employment_field <- grid.arrange(nice_bar_plot(droplevels(employment_field_na_rm$EmploymentField), "Which field do you work in?", nrow(employment_field_na_rm), 4, 2))
 ggsave(file="EmploymentField.png", g_employment_field)
 ```
 
