@@ -11,9 +11,16 @@
 
 library(ggplot2)
 library(countrycode)
+library(plyr)
 library(dplyr)
 library(ggthemes)
 library(scales)
+library(grid)
+library(gridExtra)
+library(extrafont)
+library(extrafontdb)
+library(tidyr)
+library(stringr)
 ```
 
 ```{r echo=FALSE, Load_the_Data}
@@ -24,11 +31,11 @@ fcc <- read.csv('2016-FCC-New-Coders-Survey-Data.csv')
 # Create new continent variables and move them to their alphabetical position
 fcc$ContinentCitizen <- countrycode(fcc$CountryCitizen, 'country.name', 'continent')
 fcc$ContinentLive <- countrycode(fcc$CountryLive, 'country.name', 'continent')
-fcc <- subset(fcc, select = c(Age:CountryCitizen, ContinentCitizen, CountryLive, ContinentLive, EmploymentField:StudentDebtOwe))
+fcc <- select(fcc, Age:CountryCitizen, ContinentCitizen, CountryLive, ContinentLive, EmploymentField:StudentDebtOwe)
 
 # 66 countries with no assigned continent via countrycode()
-cit_live_cols <- subset(fcc, select = c(CountryCitizen:ContinentLive))
-problem_countries <- subset(cit_live_cols, (!is.na(fcc$CountryCitizen) & is.na(fcc$ContinentCitizen) | !is.na(fcc$CountryLive) & is.na(fcc$ContinentLive)))
+cit_live_cols <- select(fcc, CountryCitizen:ContinentLive)
+problem_countries <- with(cit_live_cols, cit_live_cols[(!is.na(CountryCitizen) & is.na(ContinentCitizen)) | (!is.na(CountryLive) & is.na(ContinentLive)), ])
 
 # Problem country/continent names
 fix_cont <- c('Africa', 'Asia', 'Europe', 'Europe', 'Europe', 'Oceania')
@@ -56,7 +63,7 @@ fcc$ContinentCitizen <- make_n_america(fcc$ContinentCitizen, fcc$CountryCitizen)
 fcc$ContinentLive <- make_s_america(fcc$ContinentLive, fcc$CountryLive)
 fcc$ContinentLive <- make_n_america(fcc$ContinentLive, fcc$CountryLive)
 
-# TEST
+# TEST CONTINENT VARS
 # table(fcc$ContinentLive)
 # table(fcc$ContinentCitizen)
 
@@ -81,29 +88,165 @@ The [```str``` function](http://www.r-bloggers.com/str-implementation-for-data-f
 
 ```{r echo=FALSE, DS_Dataset}
 # "Which one of these roles are you most interested in?"
-fcc_data <- subset(fcc, JobRoleInterest == '  Data Scientist / Data Engineer')
+fcc_data <- with(fcc, fcc[JobRoleInterest == '  Data Scientist / Data Engineer' & !is.na(JobRoleInterest), ])
 dim(fcc_data)
 ```
 
 ## Univariate Plots Section
 ```{r echo=FALSE, Univariate_Plots}
-# Histograms, Frequency Polygons, Boxplots
+# Order factor based on the survey's data science subset results (ascending)
+order_factor <- function(fcc_data_var) {
+  table(fcc_data_var)
+  var_table <- table(fcc_data_var)
+  var_levels <- names(var_table)[order(var_table)]
+  return(factor(fcc_data_var, levels = var_levels))
+}
 
-# Learner goals and approaches
-table(fcc_data$JobPref)
-JobPref_table <- table(fcc_data$JobPref)
-JobPref_levels <- names(JobPref_table)[order(JobPref_table)]
-fcc_data$JobPref <- factor(fcc_data$JobPref, levels = JobPref_levels)
+# Pretty bar chart
+nice_bar_plot <- function(col, question, num_answers, lab_size, lab_cut) {
+  df <- as.data.frame(col)
+  colnames(df)[1] <- "x"
+  
+  title.grob <- textGrob(
+    label = paste(question, sep=" "),
+    x = unit(0.3, "lines"), 
+    y = unit(-0.3, "lines"),
+    hjust = 0, vjust = 0,
+    gp = gpar(fontsize = 16, fontface="bold"))
+  
+  dfTab <- as.data.frame(table(df))
+  colnames(dfTab)[1] <- "x"
+  
+  dfTab$lab <- 100 * dfTab$Freq / num_answers
+  dfTab$lab <- ifelse(dfTab$lab >= lab_cut, sprintf("%1.1f%%", dfTab$lab), "")
+  dfTab$lab <- as.character(dfTab$lab)
+  
+  plot <- ggplot(df) +
+    geom_bar(aes(x), color="#02b3e4", fill="#02b3e4") +
+    theme_minimal() +
+    scale_x_discrete(drop=FALSE) +
+    labs(title="", x=NULL, y=paste(as.character(num_answers), "out of 646 developing data scientists/engineers answered")) +
+    theme(axis.text=element_text(size=10),
+          axis.title.x=element_text(colour="#02b3e4", margin=margin(15,0,9,0))) +
+    geom_text(data=dfTab, aes(x=x,y=Freq,label=lab), hjust = 1, nudge_y = -num_answers/300,
+              color="white", size=lab_size, fontface=2) +
+    coord_flip()
+  
+  plot <- arrangeGrob(plot, top = title.grob)
+  return(plot)
+}
 
-ggplot(aes(x=JobPref, fill=JobPref), data = subset(fcc_data, !is.na(fcc_data$JobPref))) +
-  geom_bar() +
-  scale_x_discrete(drop=FALSE) +
-  scale_fill_discrete(name="Job Preference", drop=FALSE, guide = guide_legend(reverse=TRUE)) +
-  labs(title = "Would you prefer to...", y = "641 out of 646 developing data scientists/engineers answered this question") +
-  coord_flip() +
-  scale_y_continuous() +
-  theme(axis.title.y=element_blank(), axis.title.x=element_text(size=8.5)) +
-  geom_text(aes(label = sprintf("%1.1f%%", ..count../sum(..count..)*100)), stat="count", hjust = 1.25, color="white")
+# LEARNER GOALS AND APPROACHES
+
+# JobPref
+fcc_data$JobPref <- order_factor(fcc_data$JobPref)
+job_pref_na_rm <- with(fcc_data, fcc_data[!is.na(JobPref), ])
+g_job_pref <- grid.arrange(nice_bar_plot(job_pref_na_rm$JobPref, "Would you prefer to...", nrow(job_pref_na_rm), 7, 0))
+g_job_pref
+ggsave(file="JobPref.png", g_job_pref)
+
+# JobApplyWhen
+fcc_data$JobApplyWhen <- order_factor(fcc_data$JobApplyWhen)
+job_apply_when_na_rm <- with(fcc_data, fcc_data[!is.na(JobApplyWhen), ])
+g_job_apply_when <- grid.arrange(nice_bar_plot(job_apply_when_na_rm$JobApplyWhen, "When do you plan to start applying for jobs?", nrow(job_apply_when_na_rm), 7, 0))
+g_job_apply_when
+ggsave(file="JobApplyWhen.png", g_job_apply_when)
+
+# JobWherePref
+fcc_data$JobWherePref <- order_factor(fcc_data$JobWherePref)
+job_where_pref_na_rm <- with(fcc_data, fcc_data[!is.na(JobWherePref), ])
+g_job_where_pref <- grid.arrange(nice_bar_plot(job_where_pref_na_rm$JobWherePref, "Would you prefer to work...", nrow(job_where_pref_na_rm), 9, 0))
+g_job_where_pref
+ggsave(file="JobWherePref.png", g_job_where_pref)
+
+# JobRelocateYesNo
+levels(fcc_data$JobRelocateYesNo)[levels(fcc_data$JobRelocateYesNo)=="0"] <- "No"
+levels(fcc_data$JobRelocateYesNo)[levels(fcc_data$JobRelocateYesNo)=="1"] <- "Yes"
+fcc_data$JobRelocateYesNo <- order_factor(fcc_data$JobRelocateYesNo)
+job_relo_na_rm <- with(fcc_data, fcc_data[!is.na(JobRelocateYesNo), ])
+g_job_relo <- grid.arrange(nice_bar_plot(job_relo_na_rm$JobRelocateYesNo, "Are you willing to relocate for a job?", nrow(job_relo_na_rm), 9, 0))
+g_job_relo
+ggsave(file="JobRelocateYesNo.png", g_job_relo)
+
+# LEARN TO USE LAZYEVAL TO MAKE A FUNCTION FOR THE NEXT THREE WRANGLING SEQUENCES (CodeEvent, Resource, Podcast) IN THE FUTURE
+
+# CodeEvent
+code_event_cols <- select(fcc_data, CodeEventBootcamp:CodeEventWorkshop)
+code_event_cols$CodeEventOther <-
+  ifelse(!is.na(code_event_cols$CodeEventOther),
+         as.integer(1), NA)
+code_event_cols$answered <-
+  ifelse(rowSums(code_event_cols, na.rm = TRUE) != 0, 1, 0)
+num_answers_code_event <- sum(code_event_cols[,'answered'])
+code_event_sum <- code_event_cols %>% summarise_each(funs(sum(., na.rm=TRUE)))
+code_event_sum_long <- gather(code_event_sum, event, num_yes, CodeEventBootcamp:CodeEventWorkshop) %>%
+  arrange(desc(num_yes)) %>%
+  mutate(event = str_sub(event, nchar("CodeEvent") + 1, -1))
+code_event_factor <- as.data.frame(rep(code_event_sum_long$event,
+                                       code_event_sum_long$num_yes))
+colnames(code_event_factor) <- "event"
+code_event_factor$event <- order_factor(code_event_factor$event)
+g_code_event <- grid.arrange(nice_bar_plot(code_event_factor$event, "Which types of in-person coding events have you attended?", num_answers_code_event, 3.5, 2.9))
+g_code_event
+ggsave(file="CodeEvent.png", g_code_event)
+
+# Resource
+resource_cols <- select(fcc_data, ResourceBlogs:ResourceYouTube)
+resource_cols$ResourceOther <- ifelse(!is.na(resource_cols$ResourceOther), as.integer(1), NA)
+resource_cols$answered <- ifelse(rowSums(resource_cols, na.rm = TRUE) != 0, 1, 0)
+num_answers_resource <- sum(resource_cols[,'answered'])
+resource_sum <- resource_cols %>% summarise_each(funs(sum(., na.rm=TRUE)))
+resource_sum_long <- gather(resource_sum, resource, num_yes, ResourceBlogs:ResourceYouTube) %>%
+  arrange(desc(num_yes)) %>%
+  mutate(resource = str_sub(resource, nchar("Resource") + 1, -1))
+resource_factor <- as.data.frame(rep(resource_sum_long$resource,
+                                       resource_sum_long$num_yes))
+colnames(resource_factor) <- "resource"
+resource_factor$resource <- order_factor(resource_factor$resource)
+g_resource <- grid.arrange(nice_bar_plot(resource_factor$resource, "Which learning resources have you found helpful?", num_answers_resource, 3.5, 1.5))
+g_resource
+ggsave(file="Resource.png", g_resource)
+
+# Podcast
+podcast_cols <- select(fcc_data, PodcastChangeLog:PodcastWebAhead)
+podcast_cols$PodcastOther <- ifelse(!is.na(podcast_cols$PodcastOther), as.integer(1), NA)
+podcast_cols$answered <- ifelse(rowSums(podcast_cols, na.rm = TRUE) != 0, 1, 0)
+num_answers_podcast <- sum(podcast_cols[,'answered'])
+podcast_sum <- podcast_cols %>% summarise_each(funs(sum(., na.rm=TRUE)))
+podcast_sum_long <- gather(podcast_sum, podcast, num_yes, PodcastChangeLog:PodcastWebAhead) %>%
+  arrange(desc(num_yes)) %>%
+  mutate(podcast = str_sub(podcast, nchar("Podcast") + 1, -1))
+podcast_factor <- as.data.frame(rep(podcast_sum_long$podcast,
+                                       podcast_sum_long$num_yes))
+colnames(podcast_factor) <- "podcast"
+podcast_factor$podcast <- order_factor(podcast_factor$podcast)
+g_podcast <- grid.arrange(nice_bar_plot(podcast_factor$podcast, "Which coding-related podcasts have you found helpful?", num_answers_podcast, 3.5, 7))
+g_podcast
+ggsave(file="podcast.png", g_podcast)
+
+# Bootcamp
+fcc_data$BootcampName <- order_factor(fcc_data$BootcampName)
+bootcamp_name_na_rm <- with(fcc_data, fcc_data[!is.na(BootcampName), ])
+g_bootcamp_name <- grid.arrange(nice_bar_plot(droplevels(bootcamp_name_na_rm$BootcampName), "If you have attended a full-time coding bootcamp, which one?", nrow(bootcamp_name_na_rm), 4, 0))
+g_bootcamp_name
+ggsave(file="BootcampName.png", g_bootcamp_name)
+
+# DEMOGRAPHICS
+
+# ContinentCitizen
+fcc_data$ContinentCitizen <- order_factor(fcc_data$ContinentCitizen)
+continent_citizen_na_rm <- with(fcc_data, fcc_data[!is.na(ContinentCitizen), ])
+g_continent_citizen <- grid.arrange(nice_bar_plot(droplevels(continent_citizen_na_rm$ContinentCitizen), "Which continent are you a citizen of?", nrow(continent_citizen_na_rm), 4, 4))
+g_continent_citizen
+ggsave(file="ContinentCitizen.png", g_continent_citizen)
+
+# CountryCitizen
+fcc_data$CountryCitizen <- order_factor(fcc_data$CountryCitizen)
+country_citizen_na_rm <- with(fcc_data, fcc_data[!is.na(CountryCitizen), ])
+country_citizen_na_rm_lim <- country_citizen_na_rm %>% group_by(CountryCitizen) %>% filter(n() > 4)
+g_country_citizen <- grid.arrange(nice_bar_plot(droplevels(country_citizen_na_rm_lim$CountryCitizen), "Which country are you a citizen of?", nrow(country_citizen_na_rm), 2.5, 3))
+g_country_citizen
+ggsave(file="CountryCitizen.png", g_country_citizen)
 ```
 
 ## Univariate Analysis
