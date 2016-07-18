@@ -70,6 +70,17 @@ fcc$ContinentLive <- make_n_america(fcc$ContinentLive, fcc$CountryLive)
 # Make continents factor variables
 fcc$ContinentCitizen <- factor(fcc$ContinentCitizen)
 fcc$ContinentLive <- factor(fcc$ContinentLive)
+
+# Fix Netherlands (Country...)
+fcc$CountryCitizen <- ifelse(fcc$CountryCitizen == "Netherlands (Holland, Europe)", "Netherlands", as.character(fcc$CountryCitizen))
+fcc$CountryLive <- ifelse(fcc$CountryLive == "Netherlands (Holland, Europe)", "Netherlands", as.character(fcc$CountryLive))
+fcc$CountryCitizen <- factor(fcc$CountryCitizen)
+fcc$CountryLive <- factor(fcc$CountryLive)
+
+# Fix Math/Mathematics (SchoolMajor)
+fcc$SchoolMajor <- ifelse(fcc$SchoolMajor == "Math", "Mathematics", as.character(fcc$SchoolMajor))
+fcc$SchoolMajor <- factor(fcc$SchoolMajor)
+table(fcc_data$SchoolMajor)
 ```
 
 ## Full Dataset
@@ -128,7 +139,7 @@ nice_bar_plot <- function(col, question, num_answers, lab_size, lab_cut) {
     labs(title="", x=NULL, y=paste(as.character(num_answers), "out of 646 developing data scientists/engineers answered")) +
     theme(axis.text=element_text(size=10),
           axis.title.x=element_text(colour="#02b3e4", margin=margin(15,0,9,0))) +
-    geom_text(data=dfTab, aes(x=x,y=Freq,label=lab), hjust = 1, nudge_y = -num_answers/300,
+    geom_text(data=dfTab, aes(x=x,y=Freq,label=lab), hjust = 1,
               color="white", size=lab_size, fontface=2) +
     coord_flip()
   
@@ -247,9 +258,77 @@ country_citizen_na_rm_lim <- country_citizen_na_rm %>% group_by(CountryCitizen) 
 g_country_citizen <- grid.arrange(nice_bar_plot(droplevels(country_citizen_na_rm_lim$CountryCitizen), "Which country are you a citizen of?", nrow(country_citizen_na_rm), 2.5, 3))
 g_country_citizen
 ggsave(file="CountryCitizen.png", g_country_citizen)
+
+# CountryLive
+# fcc_data$CountryLive <- order_factor(fcc_data$CountryLive)
+# country_live_na_rm <- with(fcc_data, fcc_data[!is.na(CountryLive), ])
+# country_live_na_rm_lim <- country_live_na_rm %>% group_by(CountryLive) %>% filter(n() > 4)
+# g_country_live <- grid.arrange(nice_bar_plot(droplevels(country_live_na_rm_lim$CountryLive), "Which country do you currently live in?", nrow(country_live_na_rm), 2.5, 3))
+#g_country_live
+# ggsave(file="CountryLive.png", g_country_live)
+
+# CityPopulation
+fcc_data$CityPopulation <- order_factor(fcc_data$CityPopulation)
+city_pop_na_rm <- with(fcc_data, fcc_data[!is.na(CityPopulation), ])
+g_city_pop <- grid.arrange(nice_bar_plot(city_pop_na_rm$CityPopulation, "About how many people live in your city?", nrow(city_pop_na_rm), 9, 0))
+g_city_pop
+ggsave(file="CityPopulation.png", g_city_pop)
+
+# Ethnic Minority
+levels(fcc_data$IsEthnicMinority)[levels(fcc_data$IsEthnicMinority)=="0"] <- "No"
+levels(fcc_data$IsEthnicMinority)[levels(fcc_data$IsEthnicMinority)=="1"] <- "Yes"
+fcc_data$IsEthnicMinority <- order_factor(fcc_data$IsEthnicMinority)
+ethnic_minority_na_rm <- with(fcc_data, fcc_data[!is.na(IsEthnicMinority), ])
+g_ethnic_minority <- grid.arrange(nice_bar_plot(ethnic_minority_na_rm$IsEthnicMinority, "Are you an ethnic minority in your country?", nrow(ethnic_minority_na_rm), 9, 0))
+g_ethnic_minority
+ggsave(file="IsEthnicMinority.png", g_ethnic_minority)
+
+# LanguageAtHome
+fcc_data$LanguageAtHome <- order_factor(fcc_data$LanguageAtHome)
+language_na_rm <- with(fcc_data, fcc_data[!is.na(LanguageAtHome), ])
+language_na_rm_lim <- language_na_rm %>% group_by(LanguageAtHome) %>% filter(n() > 5)
+g_language <- grid.arrange(nice_bar_plot(droplevels(language_na_rm_lim$LanguageAtHome), "Which language do you speak at home with your family?", nrow(language_na_rm), 3, 3))
+g_language
+ggsave(file="LanguageAtHome.png", g_language)
+
+# SchoolDegree
+fcc_data$SchoolDegree <- order_factor(fcc_data$SchoolDegree)
+school_degree_na_rm <- with(fcc_data, fcc_data[!is.na(SchoolDegree), ])
+g_school_degree <- grid.arrange(nice_bar_plot(school_degree_na_rm$SchoolDegree, "What's the highest degree of level of school you have completed?", nrow(school_degree_na_rm), 3.5, 4))
+g_school_degree
+ggsave(file="SchoolDegree.png", g_school_degree)
+
+# SchoolMajor
+fcc_data$SchoolMajor <- order_factor(fcc_data$SchoolMajor)
+school_major_na_rm <- with(fcc_data, fcc_data[!is.na(SchoolMajor), ])
+school_major_na_rm_lim <- school_major_na_rm %>% group_by(SchoolMajor) %>% filter(n() > 5)
+g_school_major <- grid.arrange(nice_bar_plot(droplevels(school_major_na_rm_lim$SchoolMajor), "What was the main subject your studied in university?", nrow(school_major_na_rm), 3, 0))
+g_school_major
+ggsave(file="SchoolMajor.png", g_school_major)
+
+# EmploymentStatus
+fcc_data$EmploymentStatus <- order_factor(fcc_data$EmploymentStatus)
+employment_status_na_rm <- with(fcc_data, fcc_data[!is.na(EmploymentStatus), ])
+g_employment_status <- grid.arrange(nice_bar_plot(employment_status_na_rm$EmploymentStatus, "Regarding employment status, are you currently...", nrow(employment_status_na_rm), 3.5, 4))
+g_employment_status
+ggsave(file="EmploymentStatus.png", g_employment_status)
+
+# EmploymentField
+fcc_data$EmploymentField <- as.character(fcc_data$EmploymentField)
+# Change "NA" to "other" if respondent provided EmploymentFieldOther
+fcc_data$EmploymentField <- with(fcc_data, ifelse(is.na(EmploymentField) & !is.na(EmploymentFieldOther), 'other', EmploymentField))
+fcc_data$EmploymentField <- as.factor(fcc_data$EmploymentField)
+
+fcc_data$EmploymentField <- order_factor(fcc_data$EmploymentField)
+employment_field_na_rm <- with(fcc_data, fcc_data[!is.na(EmploymentField), ])
+g_employment_field <- grid.arrange(nice_bar_plot(droplevels(employment_field_na_rm$EmploymentField), "Which field do you work in?", nrow(employment_field_na_rm), 3.5, 2))
+g_employment_field
+ggsave(file="EmploymentField.png", g_employment_field)
 ```
 
 ## Univariate Analysis
+
+# Change levels 0 > no, 1>yes for fcc and not fcc_data?
 
 #### What is the structure of your dataset?
 
