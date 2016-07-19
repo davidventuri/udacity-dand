@@ -157,7 +157,7 @@ nice_bar_plot <- function(col, question, num_answers, lab_size, lab_cut) {
   dfTab$lab <- as.character(dfTab$lab)
   
   plot <- ggplot(df) +
-    geom_bar(aes(x, alpha=factor(x)), fill="#02b3e4") +
+    geom_bar(aes(x, alpha=factor(..count..)), fill="#02b3e4") +
     theme_minimal() +
     scale_x_discrete(drop=FALSE) +
     labs(title="", x=NULL, y=paste(as.character(num_answers), "out of 646 developing data scientists/engineers answered")) +
