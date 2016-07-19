@@ -157,12 +157,12 @@ nice_bar_plot <- function(col, question, num_answers, lab_size, lab_cut) {
   dfTab$lab <- as.character(dfTab$lab)
   
   plot <- ggplot(df) +
-    geom_bar(aes(x), color="#02b3e4", fill="#02b3e4") +
+    geom_bar(aes(x, alpha=factor(x)), fill="#02b3e4") +
     theme_minimal() +
     scale_x_discrete(drop=FALSE) +
     labs(title="", x=NULL, y=paste(as.character(num_answers), "out of 646 developing data scientists/engineers answered")) +
     theme(axis.text=element_text(size=10),
-          axis.title.x=element_text(colour = "#02b3e4", margin=margin(15,0,9,0))) +
+          axis.title.x=element_text(colour="#02b3e4", size=10, margin=margin(15,0,9,0)), legend.position="none") +
     geom_text(data=dfTab, aes(x=x,y=Freq,label=lab), hjust = 1,
               color="white", size=lab_size, fontface=2) +
     coord_flip()
@@ -199,7 +199,7 @@ Nobody wants to freelance or start their own business. Compared to 40% for the f
 # JobPref
 fcc_data$JobPref <- order_factor(fcc_data$JobPref)
 job_pref_na_rm <- with(fcc_data, fcc_data[!is.na(JobPref), ])
-g_job_pref <- grid.arrange(nice_bar_plot(job_pref_na_rm$JobPref, "Would you prefer to...", nrow(job_pref_na_rm), 7, 0))
+g_job_pref <- grid.arrange(nice_bar_plot(job_pref_na_rm$JobPref, "Would you prefer to...", nrow(job_pref_na_rm), 11, 0))
 ggsave(file="JobPref.png", g_job_pref)
 ```
 
@@ -209,7 +209,7 @@ ggsave(file="JobPref.png", g_job_pref)
 # JobApplyWhen
 fcc_data$JobApplyWhen <- order_factor(fcc_data$JobApplyWhen)
 job_apply_when_na_rm <- with(fcc_data, fcc_data[!is.na(JobApplyWhen), ])
-g_job_apply_when <- grid.arrange(nice_bar_plot(job_apply_when_na_rm$JobApplyWhen, "When do you plan to start applying for jobs?", nrow(job_apply_when_na_rm), 7, 0))
+g_job_apply_when <- grid.arrange(nice_bar_plot(job_apply_when_na_rm$JobApplyWhen, "When do you plan to start applying for jobs?", nrow(job_apply_when_na_rm), 11, 0))
 ggsave(file="JobApplyWhen.png", g_job_apply_when)
 ```
 
@@ -219,7 +219,7 @@ Most of them want to work in an office, as opposed to remotely.
 # JobWherePref
 fcc_data$JobWherePref <- order_factor(fcc_data$JobWherePref)
 job_where_pref_na_rm <- with(fcc_data, fcc_data[!is.na(JobWherePref), ])
-g_job_where_pref <- grid.arrange(nice_bar_plot(job_where_pref_na_rm$JobWherePref, "Would you prefer to work...", nrow(job_where_pref_na_rm), 9, 0))
+g_job_where_pref <- grid.arrange(nice_bar_plot(job_where_pref_na_rm$JobWherePref, "Would you prefer to work...", nrow(job_where_pref_na_rm), 11, 0))
 ggsave(file="JobWherePref.png", g_job_where_pref)
 ```
 
@@ -254,7 +254,8 @@ code_event_factor <- as.data.frame(rep(code_event_sum_long$event,
                                        code_event_sum_long$num_yes))
 colnames(code_event_factor) <- "event"
 code_event_factor$event <- order_factor(code_event_factor$event)
-g_code_event <- grid.arrange(nice_bar_plot(code_event_factor$event, "Which types of in-person coding events have you attended?", num_answers_code_event, 3.8, 2.9))
+code_event_factor_lim <- code_event_factor %>% group_by(event) %>% filter(n() > 2)
+g_code_event <- grid.arrange(nice_bar_plot(droplevels(code_event_factor_lim$event), "Which types of in-person coding events have you attended?", num_answers_code_event, 5.2, 5))
 ggsave(file="CodeEvent.png", g_code_event)
 ```
 
@@ -301,7 +302,7 @@ g_podcast <- grid.arrange(nice_bar_plot(podcast_factor$podcast, "Which coding-re
 ggsave(file="podcast.png", g_podcast)
 ```
 
-Only 11 of the 954 respondents that attended a bootcamp in the full new coder survey are developing data scientists/engineers.
+Only 11 of the 954 respondents that attended a bootcamp in the full new coder survey are pursuing data science/engineering.
 
 ```{r echo=FALSE, message=FALSE, Bootcamp}
 # Bootcamp
@@ -313,7 +314,7 @@ ggsave(file="BootcampName.png", g_bootcamp_name)
 
 
 ### Demographics and Socioeconomics
-They data science/engineering subset of the survey had respondents from 166 countries.
+Data-focused respondents represent 166 countries.
 
 ```{r echo=FALSE, message=FALSE, Country}
 # CountryCitizen
@@ -333,7 +334,7 @@ ggsave(file="CountryCitizen.png", g_country_citizen)
 # ggsave(file="CountryLive.png", g_country_live)
 ```
 
-More than 90% of respondents are from North America, Europe, and Asia.
+More than 90% are from North America, Europe, and Asia.
 
 ```{r echo=FALSE, message=FALSE, Continent}
 # ContinentCitizen
@@ -376,7 +377,7 @@ g_language <- grid.arrange(nice_bar_plot(droplevels(language_na_rm_lim$LanguageA
 ggsave(file="LanguageAtHome.png", g_language)
 ```
 
-67% have earned at least a bachelor’s degree. Compared to 58% for the full new coder survey, the data science/engineering subset is more skewed towards graduate studies.
+67% have earned at least a bachelor’s degree. Compared to 58% for the full new coder survey, the data-focused subset is more skewed towards graduate studies.
 
 ```{r echo=FALSE, message=FALSE, SchoolDegree}
 # SchoolDegree
