@@ -467,19 +467,25 @@ g_employment_field <- grid.arrange(nice_bar_plot(droplevels(employment_field_na_
 ggsave(file="EmploymentField.png", g_employment_field)
 ```
 
+7% have served in their country’s military.
+
 ```{r echo=FALSE, message=FALSE, HasServedInMilitary}
 # HasServedInMilitary
 has_served <- table(fcc_data$HasServedInMilitary)['1']
 names(has_served) = c("has served in military")
 has_served / nrow(fcc_data)
+```
 
+13% have children, and another 3% financially support an elderly or disabled relative. And one fifth of them are doing this without the help of a spouse.
+
+```{r echo=FALSE, message=FALSE, Home_Life}
 # HasChildren
 has_children <- table(fcc_data$HasChildren)['1']
 names(has_children) = c("has children")
 has_children / nrow(fcc_data)
 
 # FinanciallySupporting
-fin_supporting <- table(fcc_data$FinanciallySupporting)['1'] / nrow(fcc_data)
+fin_supporting <- table(fcc_data$FinanciallySupporting)['1']
 names(fin_supporting) = c("financially supporting")
 fin_supporting / nrow(fcc_data)
 
@@ -490,34 +496,58 @@ no_spouse <- (table(fcc_data$MaritalStatus)['widowed'] +
   table(fcc_data$MaritalStatus)['separated'])
 names(no_spouse) = c("no spouse")
 no_spouse / sum(table(fcc_data$MaritalStatus))
+```
 
+47% consider themselves under-employed (working a job that is below their education level).
+
+```{r echo=FALSE, message=FALSE, IsUnderEmployed}
 # IsUnderEmployed
 is_under_emp <- table(fcc_data$IsUnderEmployed)['1']
 names(is_under_emp) = c("is under employed")
 is_under_emp / sum(table(fcc_data$IsUnderEmployed))
+```
 
+If they have a home mortgage, they owe an average of $194k.
+
+```{r echo=FALSE, message=FALSE, HomeMortgageOwe}
 # HomeMortgageOwe
 mean(fcc_data$HomeMortgageOwe, na.rm = TRUE)
 home_mort_owe.grob <- plot_title("About how much do you owe on your home mortgage in US Dollars?")
 home_mort_owe_na_rm <- with(fcc_data, fcc_data[!is.na(HomeMortgageOwe), ])
 g_home_mort_owe <- grid.arrange(nice_histogram(home_mort_owe_na_rm$HomeMortgageOwe, 100000, "HomeMortgageOwe"), top = home_mort_owe.grob)
+```
 
+If they have student loans, they owe an average of $37k.
+
+```{r echo=FALSE, message=FALSE, StudentDebtOwe_1}
 # StudentDebtOwe
 mean(fcc_data$StudentDebtOwe, na.rm = TRUE)
 stud_debt_owe.grob <- plot_title("About how much do you owe in student debt loans in US Dollars?")
 stud_debt_owe_na_rm <- with(fcc_data, fcc_data[!is.na(StudentDebtOwe), ])
 g_stud_debt_owe <- grid.arrange(nice_histogram(stud_debt_owe_na_rm$StudentDebtOwe, 10000, "StudentDebtOwe"), top = stud_debt_owe.grob)
+```
 
+Removing the million dollar outlier, the distribution is much more clear with the majority of debt under $100k. I hope that outlier is a joke.
+
+```{r echo=FALSE, message=FALSE, StudentDebtOwe_2}
 # StudentDebtOwe without 1 million outlier (joke?)
 stud_debt_owe.grob <- plot_title("About how much do you owe in student debt loans in US Dollars?")
 stud_debt_owe_na_rm <- with(fcc_data, fcc_data[!is.na(StudentDebtOwe) & StudentDebtOwe < 1000000, ])
 g_stud_debt_owe <- grid.arrange(nice_histogram(stud_debt_owe_na_rm$StudentDebtOwe, 10000, "StudentDebtOwe"), top = stud_debt_owe.grob)
+```
 
+14% don’t yet have high speed internet at home.
+
+```{r echo=FALSE, message=FALSE, HasHighSpdInternet}
 # HasHighSpdInternet
 has_hs_int <- table(fcc_data$HasHighSpdInternet)['1']
 names(has_hs_int) = c("has high speed internet")
 has_hs_int / sum(table(fcc_data$HasHighSpdInternet))
+```
 
+And 3% are currently receiving disability benefits from their government.
+
+```{r echo=FALSE, message=FALSE, IsReceiveDiabilitiesBenefits}
 # IsReceiveDiabilitiesBenefits
 disability_bfts <- table(fcc_data$IsReceiveDiabilitiesBenefits)['1']
 names(disability_bfts) = c("is receiving disability benefits")
