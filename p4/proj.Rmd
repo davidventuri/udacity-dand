@@ -104,21 +104,26 @@ fcc$EmploymentStatus <- as.factor(fcc$EmploymentStatus)
 fcc$EmploymentField <- as.character(fcc$EmploymentField)
 fcc$EmploymentField <- with(fcc, ifelse(is.na(EmploymentField) & !is.na(EmploymentFieldOther), 'other', EmploymentField))
 fcc$EmploymentField <- as.factor(fcc$EmploymentField)
-
 ```
 
-## Full Dataset
-The original survey dataset consists of 113 variables. Most of these variables are answers to survey questions, though a few are computer-generated (e.g. respondent ID and survey start/end times). **Over 15,000 observations** (i.e. respondents) exist.
+## Structure of Dataset
+The original ["2016 New Coder Survey"](https://www.kaggle.com/freecodecamp/2016-new-coder-survey-) dataset consists of 113 variables. Most of these variables are answers to survey questions, though a few are computer-generated (e.g. respondent ID and survey start/end times). **Over 15,000 observations** (i.e. respondents) exist.
 
-I created five new variables, *ContinentCitizen*, *ContinentLive*, *PodcastPartiallyDerivative*, *PodcastBecomingDataSci*, and *PodcastTalkingMachines* for a new total of **118 variables**.
+The [```str``` function](http://www.r-bloggers.com/str-implementation-for-data-frames/) output is long and messy, so I won't print it here. Please consult Free Code Camp's [list of survey questions and possible answers](https://github.com/FreeCodeCamp/2016-new-coder-survey/blob/master/survey-data-dictionary.md). Boolean, numeric, and categorical types are the majority.
+
+## New Variables
+I created five new variables from existing variables:
+
+- *ContinentCitizen* and *ContinentLive* from *CountryCitizen* and *CountryLive* using Vincent Arel-Bundock's [countrycode](https://github.com/vincentarelbundock/countrycode) R package
+- *PodcastPartiallyDerivative*, *PodcastBecomingDataSci*, and *PodcastTalkingMachines* from *PodcastOther* using [ifelse()](http://www.programiz.com/r-programming/ifelse-function) statements
+
+These new variables bring our total to **118 variables**.
 
 ```{r echo=FALSE, Full_Dataset}
 dim(fcc)
 ```
 
-The [```str``` function](http://www.r-bloggers.com/str-implementation-for-data-frames/) output is long and messy, so I won't print it here. Please consult Free Code Camp's [list of survey questions and possible answers](https://github.com/FreeCodeCamp/2016-new-coder-survey/blob/master/survey-data-dictionary.md).
-
-## Data Science Subset
+## Data Science/Engineering Subset
 646 respondents answered "*Data Scientist/Data Engineer*" to the question: "*Which one of these roles are you most interested in?*"
 
 ```{r echo=FALSE, Data_Science_Dataset}
@@ -126,6 +131,9 @@ The [```str``` function](http://www.r-bloggers.com/str-implementation-for-data-f
 fcc_data <- with(fcc, fcc[JobRoleInterest == '  Data Scientist / Data Engineer' & !is.na(JobRoleInterest), ])
 dim(fcc_data)
 ```
+
+#### <span style="color:#377bb5">The following analysis explores the characteristics of these developing data scientists and engineers.</span>
+Additional comments are included where the results significantly differ from the full new coder survey dataset.
 
 ## Univariate Plots Section
 ```{r echo=FALSE, Univariate_Plot_Functions}
@@ -144,7 +152,7 @@ plot_title <- function(question) {
     x = unit(0.3, "lines"), 
     y = unit(-0.3, "lines"),
     hjust = 0, vjust = 0,
-    gp = gpar(fontsize = 14, fontface="bold", col="#02b3e4"))
+    gp = gpar(fontsize = 12, col="#454545"))
   return(title.grob)
 }
 
@@ -154,10 +162,11 @@ nice_histogram <- function(col, bw, xlab) {
   colnames(df)[1] <- "x"
 
   plot <- ggplot(aes(x), data = df) +
-    geom_histogram(binwidth=bw, color = '#02b3e4', fill = '#02b3e4') +
+    geom_histogram(binwidth=bw, color = '#377bb5', fill = '#377bb5') +
     theme_minimal() +
     labs(title="", x=paste("\n",xlab), y="Count\n") +
-    theme(axis.text=element_text(size=10))
+    theme(axis.text=element_text(size=10, color="#454545"),
+          axis.title=element_text(color="#454545"))
   return(plot)
 }
 
@@ -176,16 +185,17 @@ nice_bar_plot <- function(col, question, num_answers, lab_size, lab_cut) {
   dfTab$lab <- as.character(dfTab$lab)
   
   plot <- ggplot(df) +
-    geom_bar(aes(x, alpha=factor(..count..)), fill="#02b3e4") +
+    geom_bar(aes(x, alpha=factor(..count..)), fill="#377bb5") +
     theme_minimal() +
     scale_x_discrete(drop=FALSE) +
     labs(title="", x=NULL,
          y=paste(as.character(num_answers),
                  "out of 646 developing data scientists/engineers answered")) +
-    theme(axis.text=element_text(size=10),
-          axis.title.x=element_text(colour="#02b3e4", size=10,
+    theme(axis.text=element_text(size=10, color="#454545"),
+          axis.title.x=element_text(colour="#377bb5", size=10,
                                     margin=margin(15,0,9,0)),
-                                    legend.position="none") +
+          axis.title.y=element_text(color="#454545"),
+          legend.position="none") +
     geom_text(data=dfTab, aes(x=x,y=Freq,label=lab), hjust = 1,
               color="white", size=lab_size, fontface=2) +
     coord_flip()
@@ -198,9 +208,9 @@ nice_bar_plot <- function(col, question, num_answers, lab_size, lab_cut) {
 ### Who Participated
 CodeNewbie and Free Code Camp designed the survey, and dozens of coding-related organizations publicized it to their members.
 
-Of the 646 *developing data scientists/engineers* who responded to the survey:
+Of the 646 *developing data scientists and data engineers* who responded to the survey:
 
-A quarter are women.
+#### <span style="color:#377bb5">A quarter are women.</span>
 
 ```{r echo=FALSE, message=FALSE, Gender}
 # Gender
@@ -211,7 +221,7 @@ g_gender <- grid.arrange(nice_bar_plot(gender_na_rm$Gender, "What's your gender?
 ggsave(file="Gender.png", g_gender)
 ```
 
-Their median age is 26.
+#### <span style="color:#377bb5">Their median age is 26.</span>
 
 ```{r echo=FALSE, message=FALSE, Age}
 # Age
@@ -221,7 +231,7 @@ age_na_rm <- with(fcc_data, fcc_data[!is.na(Age), ])
 g_age <- grid.arrange(nice_histogram(age_na_rm$Age, 1, "Age"), top = age.grob)
 ```
 
-They started programming an average of 16 months ago.
+#### <span style="color:#377bb5">They started programming an average of 16 months ago.</span>
 
 ```{r echo=FALSE, message=FALSE, MonthsProgramming}
 # MonthsProgramming
@@ -241,7 +251,8 @@ ggsave(file="MonthsProgrammingLog10.png", g_months_prog_log10)
 ```
 
 ### Learner Goals and Approaches
-Nobody wants to freelance or start their own business. Compared to 40% for the full new coder survey, this is somewhat shocking.
+#### <span style="color:#377bb5">Nobody wants to freelance or start their own business.</span>
+Compared to 40% for the full new coder survey, this is somewhat shocking.
 
 ```{r echo=FALSE, message=FALSE, JobPref}
 # JobPref
@@ -251,7 +262,7 @@ g_job_pref <- grid.arrange(nice_bar_plot(job_pref_na_rm$JobPref, "Would you pref
 ggsave(file="JobPref.png", g_job_pref)
 ```
 
-52% percent are already applying for jobs, or will start applying within the next year.
+#### <span style="color:#377bb5">52% percent are already applying for jobs, or will start applying within the next year.</span>
 
 ```{r echo=FALSE, message=FALSE, JobApplyWhen}
 # JobApplyWhen
@@ -261,7 +272,7 @@ g_job_apply_when <- grid.arrange(nice_bar_plot(job_apply_when_na_rm$JobApplyWhen
 ggsave(file="JobApplyWhen.png", g_job_apply_when)
 ```
 
-Most of them want to work in an office, as opposed to remotely.
+#### <span style="color:#377bb5">Most of them want to work in an office, as opposed to remotely.</span>
 
 ```{r echo=FALSE, message=FALSE, JobWherePref}
 # JobWherePref
@@ -271,7 +282,7 @@ g_job_where_pref <- grid.arrange(nice_bar_plot(job_where_pref_na_rm$JobWherePref
 ggsave(file="JobWherePref.png", g_job_where_pref)
 ```
 
-And a majority are willing to relocate.
+#### <span style="color:#377bb5">And a majority are willing to relocate.</span>
 
 ```{r echo=FALSE, message=FALSE, JobRelocateYesNo}
 # JobRelocateYesNo
@@ -281,7 +292,7 @@ g_job_relo <- grid.arrange(nice_bar_plot(job_relo_na_rm$JobRelocateYesNo, "Are y
 ggsave(file="JobRelocateYesNo.png", g_job_relo)
 ```
 
-Most of them have not yet attended any in-person coding events.
+#### <span style="color:#377bb5">Most of them have not yet attended any in-person coding events.</span>
 
 ```{r echo=FALSE, message=FALSE, CodeEvent}
 # LEARN TO USE LAZYEVAL TO MAKE A FUNCTION FOR THE NEXT THREE WRANGLING SEQUENCES (CodeEvent, Resource, Podcast) IN THE FUTURE
@@ -307,7 +318,7 @@ g_code_event <- grid.arrange(nice_bar_plot(droplevels(code_event_factor_lim$even
 ggsave(file="CodeEvent.png", g_code_event)
 ```
 
-On average, they use at least three different resources for learning.
+#### <span style="color:#377bb5">On average, they use at least three different resources for learning.</span>
 
 ```{r echo=FALSE, message=FALSE, Resource}
 # Resource
@@ -330,7 +341,8 @@ g_resource <- grid.arrange(nice_bar_plot(droplevels(resource_factor_lim$resource
 ggsave(file="Resource.png", g_resource)
 ```
 
-Less than 20% listen to coding-related podcasts. Of them, Partially Derivative, Becoming A Data Scientist, and Talking Machines are the only domain-specific podcasts noted.
+#### <span style="color:#377bb5">Less than 20% listen to coding-related podcasts.</span>
+Of them, Partially Derivative, Becoming A Data Scientist, and Talking Machines are the only domain-specific podcasts noted.
 
 ```{r echo=FALSE, message=FALSE, Podcast}
 # Podcast
@@ -350,7 +362,7 @@ g_podcast <- grid.arrange(nice_bar_plot(podcast_factor$podcast, "Which coding-re
 ggsave(file="podcast.png", g_podcast)
 ```
 
-Only 11 of the 954 respondents that attended a bootcamp in the full new coder survey are pursuing data science/engineering.
+#### <span style="color:#377bb5">Only 11 of the 954 respondents that attended a bootcamp in the full survey are pursuing data science/engineering.</span>
 
 ```{r echo=FALSE, message=FALSE, Bootcamp}
 # Bootcamp
@@ -361,7 +373,7 @@ ggsave(file="BootcampName.png", g_bootcamp_name)
 ```
 
 ### Demographics and Socioeconomics
-Data-focused respondents represent 166 countries.
+#### <span style="color:#377bb5">Data-focused respondents represent 166 countries.</span>
 
 ```{r echo=FALSE, message=FALSE, Country}
 # CountryCitizen
@@ -381,7 +393,7 @@ ggsave(file="CountryCitizen.png", g_country_citizen)
 # ggsave(file="CountryLive.png", g_country_live)
 ```
 
-More than 90% are from North America, Europe, and Asia.
+#### <span style="color:#377bb5">More than 90% are from North America, Europe, and Asia.</span>
 
 ```{r echo=FALSE, message=FALSE, Continent}
 # ContinentCitizen
@@ -391,7 +403,7 @@ g_continent_citizen <- grid.arrange(nice_bar_plot(droplevels(continent_citizen_n
 ggsave(file="ContinentCitizen.png", g_continent_citizen)
 ```
 
-Their cities span a wide range of urbanization levels, with a distribution that is nearly identical to the full new coder survey.
+#### <span style="color:#377bb5">Their cities span a wide range of urbanization levels.</span>
 
 ```{r echo=FALSE, message=FALSE, CityPopulation}
 # CityPopulation
@@ -401,7 +413,7 @@ g_city_pop <- grid.arrange(nice_bar_plot(city_pop_na_rm$CityPopulation, "About h
 ggsave(file="CityPopulation.png", g_city_pop)
 ```
 
-Just under a quarter of respondents are ethnic minorities in their country.
+#### <span style="color:#377bb5">Just under a quarter of respondents are ethnic minorities in their country.</span>
 
 ```{r echo=FALSE, message=FALSE, IsEthnicMinority}
 # Ethnic Minority
@@ -411,7 +423,7 @@ g_ethnic_minority <- grid.arrange(nice_bar_plot(ethnic_minority_na_rm$IsEthnicMi
 ggsave(file="IsEthnicMinority.png", g_ethnic_minority)
 ```
 
-And nearly half are non-native English speakers. They grew up speaking one of 148 languages.
+#### <span style="color:#377bb5">And nearly half are non-native English speakers. They grew up speaking one of 148 languages.</span>
 
 ```{r echo=FALSE, message=FALSE, LanguageAtHome}
 # LanguageAtHome
@@ -424,7 +436,8 @@ g_language <- grid.arrange(nice_bar_plot(droplevels(language_na_rm_lim$LanguageA
 ggsave(file="LanguageAtHome.png", g_language)
 ```
 
-67% have earned at least a bachelor’s degree. Compared to 58% for the full new coder survey, the data-focused subset is more skewed towards graduate studies.
+#### <span style="color:#377bb5">67% have earned at least a bachelor’s degree.</span>
+Compared to 58% for the full new coder survey, the data-focused subset is more skewed towards graduate studies.
 
 ```{r echo=FALSE, message=FALSE, SchoolDegree}
 # SchoolDegree
@@ -434,7 +447,8 @@ g_school_degree <- grid.arrange(nice_bar_plot(school_degree_na_rm$SchoolDegree, 
 ggsave(file="SchoolDegree.png", g_school_degree)
 ```
 
-They studied 425 different majors. Computer Science and Mathematics were the two most popular majors, and an additional 16% studied some form of engineering.
+#### <span style="color:#377bb5">They studied 425 different majors. Computer Science and Mathematics were the two most popular majors, and an additional 16% studied some form of engineering.</span>
+Diversity amongst majors is greater compared to the full survey, where Computer Science and Information Technology checked in at #1 and #2 with 17% and 5%, respectively.
 
 ```{r echo=FALSE, message=FALSE, SchoolMajor}
 # SchoolMajor
@@ -447,7 +461,7 @@ g_school_major <- grid.arrange(nice_bar_plot(droplevels(school_major_na_rm_lim$S
 ggsave(file="SchoolMajor.png", g_school_major)
 ```
 
-Just over one half are currently working.
+#### <span style="color:#377bb5">Just over one half are currently working.</span>
 
 ```{r echo=FALSE, message=FALSE, EmploymentStatus}
 # EmploymentStatus
@@ -457,6 +471,7 @@ g_employment_status <- grid.arrange(nice_bar_plot(employment_status_na_rm$Employ
 ggsave(file="EmploymentStatus.png", g_employment_status)
 ```
 
+#### <span style="color:#377bb5">A quarter work in the tech industry.</span>
 Employment fields are more spread compared to the full new coder survey, where 50% of respondents work in software development and IT.
 
 ```{r echo=FALSE, message=FALSE, EmploymentField}
@@ -467,7 +482,7 @@ g_employment_field <- grid.arrange(nice_bar_plot(droplevels(employment_field_na_
 ggsave(file="EmploymentField.png", g_employment_field)
 ```
 
-7% have served in their country’s military.
+#### <span style="color:#377bb5">7% have served in their country’s military.</span>
 
 ```{r echo=FALSE, message=FALSE, HasServedInMilitary}
 # HasServedInMilitary
@@ -476,7 +491,7 @@ names(has_served) = c("has served in military")
 has_served / nrow(fcc_data)
 ```
 
-13% have children, and another 3% financially support an elderly or disabled relative. And one fifth of them are doing this without the help of a spouse.
+#### <span style="color:#377bb5">13% have children, and another 3% financially support an elderly or disabled relative. And one fifth of them are doing this without the help of a spouse.</span>
 
 ```{r echo=FALSE, message=FALSE, Home_Life}
 # HasChildren
@@ -498,7 +513,7 @@ names(no_spouse) = c("no spouse")
 no_spouse / sum(table(fcc_data$MaritalStatus))
 ```
 
-47% consider themselves under-employed (working a job that is below their education level).
+#### <span style="color:#377bb5">47% consider themselves under-employed (working a job that is below their education level).</span>
 
 ```{r echo=FALSE, message=FALSE, IsUnderEmployed}
 # IsUnderEmployed
@@ -507,7 +522,7 @@ names(is_under_emp) = c("is under employed")
 is_under_emp / sum(table(fcc_data$IsUnderEmployed))
 ```
 
-If they have a home mortgage, they owe an average of $194k.
+#### <span style="color:#377bb5">If they have a home mortgage, they owe an average of $194k.</span>
 
 ```{r echo=FALSE, message=FALSE, HomeMortgageOwe}
 # HomeMortgageOwe
@@ -517,7 +532,7 @@ home_mort_owe_na_rm <- with(fcc_data, fcc_data[!is.na(HomeMortgageOwe), ])
 g_home_mort_owe <- grid.arrange(nice_histogram(home_mort_owe_na_rm$HomeMortgageOwe, 100000, "HomeMortgageOwe"), top = home_mort_owe.grob)
 ```
 
-If they have student loans, they owe an average of $37k.
+#### <span style="color:#377bb5">If they have student loans, they owe an average of $37k.</span>
 
 ```{r echo=FALSE, message=FALSE, StudentDebtOwe_1}
 # StudentDebtOwe
@@ -536,7 +551,7 @@ stud_debt_owe_na_rm <- with(fcc_data, fcc_data[!is.na(StudentDebtOwe) & StudentD
 g_stud_debt_owe <- grid.arrange(nice_histogram(stud_debt_owe_na_rm$StudentDebtOwe, 10000, "StudentDebtOwe"), top = stud_debt_owe.grob)
 ```
 
-14% don’t yet have high speed internet at home.
+#### <span style="color:#377bb5">14% don’t yet have high speed internet at home.</span>
 
 ```{r echo=FALSE, message=FALSE, HasHighSpdInternet}
 # HasHighSpdInternet
@@ -545,7 +560,7 @@ names(has_hs_int) = c("has high speed internet")
 has_hs_int / sum(table(fcc_data$HasHighSpdInternet))
 ```
 
-And 3% are currently receiving disability benefits from their government.
+#### <span style="color:#377bb5">And 3% are currently receiving disability benefits from their government.</span>
 
 ```{r echo=FALSE, message=FALSE, IsReceiveDiabilitiesBenefits}
 # IsReceiveDiabilitiesBenefits
@@ -554,17 +569,13 @@ names(disability_bfts) = c("is receiving disability benefits")
 disability_bfts / sum(table(fcc_data$IsReceiveDiabilitiesBenefits))
 ```
 
-These are the people who are learning data science and engineering. Free, self-paced learning resources are clearly important.
+These are the people who are learning data science and engineering. It is clear that free, self-paced learning resources are important.
 
 ## Univariate Analysis
-
-#### What is the structure of your dataset?
 
 #### What is/are the main feature(s) of interest in your dataset?
 
 #### What other features in the dataset do you think will help support your investigation into your feature(s) of interest?
-
-#### Did you create any new variables from existing variables in the dataset?
 
 #### Of the features you investigated, were there any unusual distributions? Did you perform any operations on the data to tidy, adjust, or change the form of the data? If so, why did you do this?
 
@@ -573,12 +584,12 @@ These are the people who are learning data science and engineering. Free, self-p
 ## Bivariate Plots Section
 ```{r echo=FALSE, Bivariate_Plots}
 # int vars not used
-
-names(fcc_data)
 # ExpectedEarning
 # Income
 # HoursLearning
 # MoneyForLearning
+
+# note univariate where things differ from new coder survey
 ```
 
 ## Bivariate Analysis
