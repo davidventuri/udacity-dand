@@ -110,7 +110,7 @@ fcc$EmploymentField <- as.factor(fcc$EmploymentField)
 ## Full Dataset
 The original survey dataset consists of 113 variables. Most of these variables are answers to survey questions, though a few are computer-generated (e.g. respondent ID and survey start/end times). **Over 15,000 observations** (i.e. respondents) exist.
 
-I created two new variables, *ContinentCitizen* and *ContinentLive*, for a new total of **115 variables**.
+I created five new variables, *ContinentCitizen*, *ContinentLive*, *PodcastPartiallyDerivative*, *PodcastBecomingDataSci*, and *PodcastTalkingMachines* for a new total of **118 variables**.
 
 ```{r echo=FALSE, Full_Dataset}
 dim(fcc)
@@ -137,17 +137,36 @@ order_factor <- function(fcc_data_var) {
   return(factor(fcc_data_var, levels = var_levels))
 }
 
+# Text grob for plot title
+plot_title <- function(question) {
+  title.grob <- textGrob(
+    label = question,
+    x = unit(0.3, "lines"), 
+    y = unit(-0.3, "lines"),
+    hjust = 0, vjust = 0,
+    gp = gpar(fontsize = 14, fontface="bold", col="#02b3e4"))
+  return(title.grob)
+}
+
+# Pretty histogram
+nice_histogram <- function(col, bw, xlab) {
+  df <- as.data.frame(col)
+  colnames(df)[1] <- "x"
+
+  plot <- ggplot(aes(x), data = df) +
+    geom_histogram(binwidth=bw, color = '#02b3e4', fill = '#02b3e4') +
+    theme_minimal() +
+    labs(title="", x=paste("\n",xlab), y="Count\n") +
+    theme(axis.text=element_text(size=10))
+  return(plot)
+}
+
 # Pretty bar chart
 nice_bar_plot <- function(col, question, num_answers, lab_size, lab_cut) {
   df <- as.data.frame(col)
   colnames(df)[1] <- "x"
   
-  title.grob <- textGrob(
-    label = paste(question, sep=" "),
-    x = unit(0.3, "lines"), 
-    y = unit(-0.3, "lines"),
-    hjust = 0, vjust = 0,
-    gp = gpar(fontsize = 16, fontface="bold", col="#02b3e4"))
+  title.grob <- plot_title(question)
   
   dfTab <- as.data.frame(table(df))
   colnames(dfTab)[1] <- "x"
@@ -160,9 +179,13 @@ nice_bar_plot <- function(col, question, num_answers, lab_size, lab_cut) {
     geom_bar(aes(x, alpha=factor(..count..)), fill="#02b3e4") +
     theme_minimal() +
     scale_x_discrete(drop=FALSE) +
-    labs(title="", x=NULL, y=paste(as.character(num_answers), "out of 646 developing data scientists/engineers answered")) +
+    labs(title="", x=NULL,
+         y=paste(as.character(num_answers),
+                 "out of 646 developing data scientists/engineers answered")) +
     theme(axis.text=element_text(size=10),
-          axis.title.x=element_text(colour="#02b3e4", size=10, margin=margin(15,0,9,0)), legend.position="none") +
+          axis.title.x=element_text(colour="#02b3e4", size=10,
+                                    margin=margin(15,0,9,0)),
+                                    legend.position="none") +
     geom_text(data=dfTab, aes(x=x,y=Freq,label=lab), hjust = 1,
               color="white", size=lab_size, fontface=2) +
     coord_flip()
@@ -175,21 +198,46 @@ nice_bar_plot <- function(col, question, num_answers, lab_size, lab_cut) {
 ### Who Participated
 CodeNewbie and Free Code Camp designed the survey, and dozens of coding-related organizations publicized it to their members.
 
-Of the 646 developing data scientists/engineers who responded to the survey:
+Of the 646 *developing data scientists/engineers* who responded to the survey:
 
-- 25% are women
-- Their median age is 26
-- They started programming an average of 16 months ago
+A quarter are women.
 
-```{r echo=FALSE, Who_Participated}
+```{r echo=FALSE, message=FALSE, Gender}
 # Gender
 table(fcc_data$Gender)['female'] / sum(table(fcc_data$Gender))
+fcc_data$Gender <- order_factor(fcc_data$Gender)
+gender_na_rm <- with(fcc_data, fcc_data[!is.na(Gender), ])
+g_gender <- grid.arrange(nice_bar_plot(gender_na_rm$Gender, "What's your gender?", nrow(gender_na_rm), 11, 1))
+ggsave(file="Gender.png", g_gender)
+```
 
+Their median age is 26.
+
+```{r echo=FALSE, message=FALSE, Age}
 # Age
 median(fcc_data$Age, na.rm = TRUE)
+age.grob <- plot_title("How old are you?")
+age_na_rm <- with(fcc_data, fcc_data[!is.na(Age), ])
+g_age <- grid.arrange(nice_histogram(age_na_rm$Age, 1, "Age"), top = age.grob)
+```
 
+They started programming an average of 16 months ago.
+
+```{r echo=FALSE, message=FALSE, MonthsProgramming}
 # MonthsProgramming
 mean(fcc_data$MonthsProgramming, na.rm = TRUE)
+months_prog.grob <- plot_title("About how many [years] have you been programming for?")
+months_prog_na_rm <- with(fcc_data, fcc_data[!is.na(MonthsProgramming), ])
+g_months_prog <- grid.arrange(nice_histogram(months_prog_na_rm$MonthsProgramming/12, 0.25, "Years Programming"), top = months_prog.grob)
+ggsave(file="MonthsProgramming.png", g_months_prog)
+```
+
+Logarithmically transforming the long tail data to better understand the distribution, programming experience peaks around one year.
+
+```{r echo=FALSE, message=FALSE, MonthsProgrammingLog10}
+# Add 3/5 of a month to ease log10(0)=-inf issue
+g_months_prog_log10 <- grid.arrange(nice_histogram((months_prog_na_rm$MonthsProgramming+0.6)/12, 0.25, "Years Programming") + scale_x_log10(breaks=c(0.1,0.5,1,2.5,5,10,25,50)), top = months_prog.grob)
+ggsave(file="MonthsProgrammingLog10.png", g_months_prog_log10)
 ```
 
 ### Learner Goals and Approaches
@@ -282,7 +330,7 @@ g_resource <- grid.arrange(nice_bar_plot(droplevels(resource_factor_lim$resource
 ggsave(file="Resource.png", g_resource)
 ```
 
-Less than 20% listen to coding-related podcasts. Partially Derivative, Becoming A Data Scientist, and Talking Machines are data science/machine learning-specific podcasts.
+Less than 20% listen to coding-related podcasts. Of them, Partially Derivative, Becoming A Data Scientist, and Talking Machines are the only domain-specific podcasts noted.
 
 ```{r echo=FALSE, message=FALSE, Podcast}
 # Podcast
@@ -311,7 +359,6 @@ bootcamp_name_na_rm <- with(fcc_data, fcc_data[!is.na(BootcampName), ])
 g_bootcamp_name <- grid.arrange(nice_bar_plot(droplevels(bootcamp_name_na_rm$BootcampName), "If you have attended a full-time coding bootcamp, which one?", nrow(bootcamp_name_na_rm), 6, 0))
 ggsave(file="BootcampName.png", g_bootcamp_name)
 ```
-
 
 ### Demographics and Socioeconomics
 Data-focused respondents represent 166 countries.
@@ -420,9 +467,66 @@ g_employment_field <- grid.arrange(nice_bar_plot(droplevels(employment_field_na_
 ggsave(file="EmploymentField.png", g_employment_field)
 ```
 
-## Univariate Analysis
+```{r echo=FALSE, message=FALSE, HasServedInMilitary}
+# HasServedInMilitary
+has_served <- table(fcc_data$HasServedInMilitary)['1']
+names(has_served) = c("has served in military")
+has_served / nrow(fcc_data)
 
-# Change levels 0 > no, 1>yes for fcc and not fcc_data?
+# HasChildren
+has_children <- table(fcc_data$HasChildren)['1']
+names(has_children) = c("has children")
+has_children / nrow(fcc_data)
+
+# FinanciallySupporting
+fin_supporting <- table(fcc_data$FinanciallySupporting)['1'] / nrow(fcc_data)
+names(fin_supporting) = c("financially supporting")
+fin_supporting / nrow(fcc_data)
+
+# MaritalStatus
+no_spouse <- (table(fcc_data$MaritalStatus)['widowed'] +
+  table(fcc_data$MaritalStatus)['single, never married'] +
+  table(fcc_data$MaritalStatus)['divorced'] +
+  table(fcc_data$MaritalStatus)['separated'])
+names(no_spouse) = c("no spouse")
+no_spouse / sum(table(fcc_data$MaritalStatus))
+
+# IsUnderEmployed
+is_under_emp <- table(fcc_data$IsUnderEmployed)['1']
+names(is_under_emp) = c("is under employed")
+is_under_emp / sum(table(fcc_data$IsUnderEmployed))
+
+# HomeMortgageOwe
+mean(fcc_data$HomeMortgageOwe, na.rm = TRUE)
+home_mort_owe.grob <- plot_title("About how much do you owe on your home mortgage in US Dollars?")
+home_mort_owe_na_rm <- with(fcc_data, fcc_data[!is.na(HomeMortgageOwe), ])
+g_home_mort_owe <- grid.arrange(nice_histogram(home_mort_owe_na_rm$HomeMortgageOwe, 100000, "HomeMortgageOwe"), top = home_mort_owe.grob)
+
+# StudentDebtOwe
+mean(fcc_data$StudentDebtOwe, na.rm = TRUE)
+stud_debt_owe.grob <- plot_title("About how much do you owe in student debt loans in US Dollars?")
+stud_debt_owe_na_rm <- with(fcc_data, fcc_data[!is.na(StudentDebtOwe), ])
+g_stud_debt_owe <- grid.arrange(nice_histogram(stud_debt_owe_na_rm$StudentDebtOwe, 10000, "StudentDebtOwe"), top = stud_debt_owe.grob)
+
+# StudentDebtOwe without 1 million outlier (joke?)
+stud_debt_owe.grob <- plot_title("About how much do you owe in student debt loans in US Dollars?")
+stud_debt_owe_na_rm <- with(fcc_data, fcc_data[!is.na(StudentDebtOwe) & StudentDebtOwe < 1000000, ])
+g_stud_debt_owe <- grid.arrange(nice_histogram(stud_debt_owe_na_rm$StudentDebtOwe, 10000, "StudentDebtOwe"), top = stud_debt_owe.grob)
+
+# HasHighSpdInternet
+has_hs_int <- table(fcc_data$HasHighSpdInternet)['1']
+names(has_hs_int) = c("has high speed internet")
+has_hs_int / sum(table(fcc_data$HasHighSpdInternet))
+
+# IsReceiveDiabilitiesBenefits
+disability_bfts <- table(fcc_data$IsReceiveDiabilitiesBenefits)['1']
+names(disability_bfts) = c("is receiving disability benefits")
+disability_bfts / sum(table(fcc_data$IsReceiveDiabilitiesBenefits))
+```
+
+These are the people who are learning data science and engineering. Free, self-paced learning resources are clearly important.
+
+## Univariate Analysis
 
 #### What is the structure of your dataset?
 
@@ -438,7 +542,13 @@ ggsave(file="EmploymentField.png", g_employment_field)
 
 ## Bivariate Plots Section
 ```{r echo=FALSE, Bivariate_Plots}
+# int vars not used
 
+names(fcc_data)
+# ExpectedEarning
+# Income
+# HoursLearning
+# MoneyForLearning
 ```
 
 ## Bivariate Analysis
