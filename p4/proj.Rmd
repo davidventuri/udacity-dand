@@ -248,7 +248,7 @@ Of the 646 *developing data scientists and data engineers* who responded to the 
 # Gender
 table(fcc_data$Gender)['female'] / sum(table(fcc_data$Gender))
 fcc_data$Gender <- order_factor(fcc_data$Gender)
-g_gender <- grid.arrange(nice_bar_plot(gender_na_rm$Gender, "What's your gender?", 11, 1))
+g_gender <- grid.arrange(nice_bar_plot(fcc_data$Gender, "What's your gender?", 11, 1))
 # ggsave(file="Gender.png", g_gender)
 ```
 
@@ -435,7 +435,7 @@ g_continent_citizen <- grid.arrange(nice_bar_plot(droplevels(fcc_data$ContinentC
 ```{r echo=FALSE, message=FALSE, CityPopulation}
 # CityPopulation
 fcc_data$CityPopulation <- order_factor(fcc_data$CityPopulation)
-g_city_pop <- grid.arrange(nice_bar_plot(city_pop_na_rm$CityPopulation, "About how many people live in your city?", 11, 0))
+g_city_pop <- grid.arrange(nice_bar_plot(fcc_data$CityPopulation, "About how many people live in your city?", 11, 0))
 # ggsave(file="CityPopulation.png", g_city_pop)
 ```
 
