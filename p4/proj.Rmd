@@ -160,8 +160,11 @@ plot_title <- function(question) {
 nice_histogram <- function(col, bw, xlab) {
   df <- as.data.frame(col)
   colnames(df)[1] <- "x"
-
-  plot <- ggplot(aes(x), data = df) +
+  
+  df_na_rm <- as.data.frame(with(df, df[!is.na(x), ]))
+  colnames(df_na_rm)[1] <- "x"
+  
+  plot <- ggplot(aes(x), data = df_na_rm) +
     geom_histogram(binwidth=bw, color = '#377bb5', fill = '#377bb5') +
     theme_minimal() +
     labs(title="", x=paste("\n",xlab), y="Count\n") +
@@ -171,20 +174,27 @@ nice_histogram <- function(col, bw, xlab) {
 }
 
 # Pretty bar chart
-nice_bar_plot <- function(col, question, num_answers, lab_size, lab_cut) {
+nice_bar_plot <- function(col, question, lab_size, lab_cut, num_answers) {
   df <- as.data.frame(col)
   colnames(df)[1] <- "x"
   
+  df_na_rm <- as.data.frame(with(df, df[!is.na(x), ]))
+  colnames(df_na_rm)[1] <- "x"
+  
+  if (missing(num_answers)) {
+    num_answers <- nrow(df_na_rm)
+  }
+  
   title.grob <- plot_title(question)
   
-  dfTab <- as.data.frame(table(df))
+  dfTab <- as.data.frame(table(df_na_rm))
   colnames(dfTab)[1] <- "x"
   
   dfTab$lab <- 100 * dfTab$Freq / num_answers
   dfTab$lab <- ifelse(dfTab$lab >= lab_cut, sprintf("%1.1f%%", dfTab$lab), "")
   dfTab$lab <- as.character(dfTab$lab)
   
-  plot <- ggplot(df) +
+  plot <- ggplot(df_na_rm) +
     geom_bar(aes(x, alpha=factor(..count..)), fill="#377bb5") +
     theme_minimal() +
     scale_x_discrete(drop=FALSE) +
@@ -238,8 +248,7 @@ Of the 646 *developing data scientists and data engineers* who responded to the 
 # Gender
 table(fcc_data$Gender)['female'] / sum(table(fcc_data$Gender))
 fcc_data$Gender <- order_factor(fcc_data$Gender)
-gender_na_rm <- with(fcc_data, fcc_data[!is.na(Gender), ])
-g_gender <- grid.arrange(nice_bar_plot(gender_na_rm$Gender, "What's your gender?", nrow(gender_na_rm), 11, 1))
+g_gender <- grid.arrange(nice_bar_plot(gender_na_rm$Gender, "What's your gender?", 11, 1))
 # ggsave(file="Gender.png", g_gender)
 ```
 
@@ -249,8 +258,7 @@ g_gender <- grid.arrange(nice_bar_plot(gender_na_rm$Gender, "What's your gender?
 # Age
 summary(fcc_data$Age, na.rm = TRUE)
 age.grob <- plot_title("How old are you?")
-age_na_rm <- with(fcc_data, fcc_data[!is.na(Age), ])
-g_age <- grid.arrange(nice_histogram(age_na_rm$Age, 1, "Age"), top = age.grob)
+g_age <- grid.arrange(nice_histogram(fcc_data$Age, 1, "Age"), top = age.grob)
 ```
 
 #### <span style="color:#377bb5">They started programming an average of 16 months ago.</span>
@@ -259,8 +267,7 @@ g_age <- grid.arrange(nice_histogram(age_na_rm$Age, 1, "Age"), top = age.grob)
 # MonthsProgramming
 summary(fcc_data$MonthsProgramming, na.rm = TRUE)
 months_prog.grob <- plot_title("About how many [years] have you been programming for?")
-months_prog_na_rm <- with(fcc_data, fcc_data[!is.na(MonthsProgramming), ])
-g_months_prog <- grid.arrange(nice_histogram(months_prog_na_rm$MonthsProgramming/12, 0.5, "Years Programming"), top = months_prog.grob)
+g_months_prog <- grid.arrange(nice_histogram(fcc_data$MonthsProgramming/12, 0.5, "Years Programming"), top = months_prog.grob)
 # ggsave(file="MonthsProgramming.png", g_months_prog)
 ```
 
@@ -268,7 +275,7 @@ Logarithmically transforming the long tail data to better understand the distrib
 
 ```{r echo=FALSE, message=FALSE, MonthsProgrammingLog10}
 # Add 3/5 of a month to ease log10(0)=-inf issue
-g_months_prog_log10 <- grid.arrange(nice_histogram((months_prog_na_rm$MonthsProgramming+0.6)/12, 0.25, "Years Programming") + scale_x_log10(breaks=c(0.1,0.5,1,2.5,5,10,25,50)), top = months_prog.grob)
+g_months_prog_log10 <- grid.arrange(nice_histogram((fcc_data$MonthsProgramming+0.6)/12, 0.25, "Years Programming") + scale_x_log10(breaks=c(0.1,0.5,1,2.5,5,10,25,50)), top = months_prog.grob)
 # ggsave(file="MonthsProgrammingLog10.png", g_months_prog_log10)
 ```
 
@@ -279,8 +286,7 @@ g_months_prog_log10 <- grid.arrange(nice_histogram((months_prog_na_rm$MonthsProg
 # HoursLearning
 summary(fcc_data$HoursLearning, na.rm = TRUE)
 hours_learn.grob <- plot_title("About how many hours do you spend learning each week?")
-hours_learn_na_rm <- with(fcc_data, fcc_data[!is.na(HoursLearning), ])
-g_hours_learn <- grid.arrange(nice_histogram(hours_learn_na_rm$HoursLearning, 5, "HoursLearning"), top = hours_learn.grob)
+g_hours_learn <- grid.arrange(nice_histogram(fcc_data$HoursLearning, 5, "HoursLearning"), top = hours_learn.grob)
 # ggsave(file="HoursLearning.png", g_hours_learn)
 ```
 
@@ -291,8 +297,7 @@ Compared to 40% for the full new coder survey, this is somewhat shocking.
 ```{r echo=FALSE, message=FALSE, JobPref}
 # JobPref
 fcc_data$JobPref <- order_factor(fcc_data$JobPref)
-job_pref_na_rm <- with(fcc_data, fcc_data[!is.na(JobPref), ])
-g_job_pref <- grid.arrange(nice_bar_plot(job_pref_na_rm$JobPref, "Would you prefer to...", nrow(job_pref_na_rm), 11, 0))
+g_job_pref <- grid.arrange(nice_bar_plot(fcc_data$JobPref, "Would you prefer to...", 11, 0))
 # ggsave(file="JobPref.png", g_job_pref)
 ```
 
@@ -301,8 +306,7 @@ g_job_pref <- grid.arrange(nice_bar_plot(job_pref_na_rm$JobPref, "Would you pref
 ```{r echo=FALSE, message=FALSE, JobApplyWhen}
 # JobApplyWhen
 fcc_data$JobApplyWhen <- order_factor(fcc_data$JobApplyWhen)
-job_apply_when_na_rm <- with(fcc_data, fcc_data[!is.na(JobApplyWhen), ])
-g_job_apply_when <- grid.arrange(nice_bar_plot(job_apply_when_na_rm$JobApplyWhen, "When do you plan to start applying for jobs?", nrow(job_apply_when_na_rm), 11, 0))
+g_job_apply_when <- grid.arrange(nice_bar_plot(fcc_data$JobApplyWhen, "When do you plan to start applying for jobs?", 11, 0))
 # ggsave(file="JobApplyWhen.png", g_job_apply_when)
 ```
 
@@ -311,8 +315,7 @@ g_job_apply_when <- grid.arrange(nice_bar_plot(job_apply_when_na_rm$JobApplyWhen
 ```{r echo=FALSE, message=FALSE, JobWherePref}
 # JobWherePref
 fcc_data$JobWherePref <- order_factor(fcc_data$JobWherePref)
-job_where_pref_na_rm <- with(fcc_data, fcc_data[!is.na(JobWherePref), ])
-g_job_where_pref <- grid.arrange(nice_bar_plot(job_where_pref_na_rm$JobWherePref, "Would you prefer to work...", nrow(job_where_pref_na_rm), 11, 0))
+g_job_where_pref <- grid.arrange(nice_bar_plot(fcc_data$JobWherePref, "Would you prefer to work...", 11, 0))
 # ggsave(file="JobWherePref.png", g_job_where_pref)
 ```
 
@@ -321,8 +324,7 @@ g_job_where_pref <- grid.arrange(nice_bar_plot(job_where_pref_na_rm$JobWherePref
 ```{r echo=FALSE, message=FALSE, JobRelocateYesNo}
 # JobRelocateYesNo
 fcc_data$JobRelocateYesNo <- order_factor(fcc_data$JobRelocateYesNo)
-job_relo_na_rm <- with(fcc_data, fcc_data[!is.na(JobRelocateYesNo), ])
-g_job_relo <- grid.arrange(nice_bar_plot(job_relo_na_rm$JobRelocateYesNo, "Are you willing to relocate for a job?", nrow(job_relo_na_rm), 12.3, 0))
+g_job_relo <- grid.arrange(nice_bar_plot(fcc_data$JobRelocateYesNo, "Are you willing to relocate for a job?", 12.3, 0))
 # ggsave(file="JobRelocateYesNo.png", g_job_relo)
 ```
 
@@ -348,7 +350,7 @@ code_event_factor <- as.data.frame(rep(code_event_sum_long$event,
 colnames(code_event_factor) <- "event"
 code_event_factor$event <- order_factor(code_event_factor$event)
 code_event_factor_lim <- code_event_factor %>% group_by(event) %>% filter(n() > 2)
-g_code_event <- grid.arrange(nice_bar_plot(droplevels(code_event_factor_lim$event), "Which types of in-person coding events have you attended?", num_answers_code_event, 5.7, 5))
+g_code_event <- grid.arrange(nice_bar_plot(droplevels(code_event_factor_lim$event), "Which types of in-person coding events have you attended?", 5.7, 5, num_answers_code_event))
 # ggsave(file="CodeEvent.png", g_code_event)
 ```
 
@@ -371,7 +373,7 @@ resource_factor <- as.data.frame(rep(resource_sum_long$resource,
 colnames(resource_factor) <- "resource"
 resource_factor$resource <- order_factor(resource_factor$resource)
 resource_factor_lim <- resource_factor %>% group_by(resource) %>% filter(n() > 4)
-g_resource <- grid.arrange(nice_bar_plot(droplevels(resource_factor_lim$resource), "Which learning resources have you found helpful?", num_answers_resource, 4.3, 5))
+g_resource <- grid.arrange(nice_bar_plot(droplevels(resource_factor_lim$resource), "Which learning resources have you found helpful?", 4.3, 5, num_answers_resource))
 # ggsave(file="Resource.png", g_resource)
 ```
 
@@ -392,7 +394,7 @@ podcast_factor <- as.data.frame(rep(podcast_sum_long$podcast,
                                        podcast_sum_long$num_yes))
 colnames(podcast_factor) <- "podcast"
 podcast_factor$podcast <- order_factor(podcast_factor$podcast)
-g_podcast <- grid.arrange(nice_bar_plot(podcast_factor$podcast, "Which coding-related podcasts have you found helpful?", num_answers_podcast, 4.3, 7))
+g_podcast <- grid.arrange(nice_bar_plot(podcast_factor$podcast, "Which coding-related podcasts have you found helpful?", 4.3, 7, num_answers_podcast))
 # ggsave(file="podcast.png", g_podcast)
 ```
 
@@ -401,8 +403,7 @@ g_podcast <- grid.arrange(nice_bar_plot(podcast_factor$podcast, "Which coding-re
 ```{r echo=FALSE, message=FALSE, Bootcamp}
 # Bootcamp
 fcc_data$BootcampName <- order_factor(fcc_data$BootcampName)
-bootcamp_name_na_rm <- with(fcc_data, fcc_data[!is.na(BootcampName), ])
-g_bootcamp_name <- grid.arrange(nice_bar_plot(droplevels(bootcamp_name_na_rm$BootcampName), "If you have attended a full-time coding bootcamp, which one?", nrow(bootcamp_name_na_rm), 6, 0))
+g_bootcamp_name <- grid.arrange(nice_bar_plot(droplevels(fcc_data$BootcampName), "If you have attended a full-time coding bootcamp, which one?", 6, 0))
 # ggsave(file="BootcampName.png", g_bootcamp_name)
 ```
 
@@ -416,15 +417,8 @@ g_bootcamp_name <- grid.arrange(nice_bar_plot(droplevels(bootcamp_name_na_rm$Boo
 fcc_data$CountryCitizen <- order_factor(fcc_data$CountryCitizen)
 country_citizen_na_rm <- with(fcc_data, fcc_data[!is.na(CountryCitizen), ])
 country_citizen_na_rm_lim <- country_citizen_na_rm %>% group_by(CountryCitizen) %>% filter(n() > 4)
-g_country_citizen <- grid.arrange(nice_bar_plot(droplevels(country_citizen_na_rm_lim$CountryCitizen), "Which country are you a citizen of?", nrow(country_citizen_na_rm), 3.2, 3))
+g_country_citizen <- grid.arrange(nice_bar_plot(droplevels(country_citizen_na_rm_lim$CountryCitizen), "Which country are you a citizen of?", 3.2, 3, nrow(country_citizen_na_rm)))
 # ggsave(file="CountryCitizen.png", g_country_citizen)
-
-# CountryLive
-# fcc_data$CountryLive <- order_factor(fcc_data$CountryLive)
-# country_live_na_rm <- with(fcc_data, fcc_data[!is.na(CountryLive), ])
-# country_live_na_rm_lim <- country_live_na_rm %>% group_by(CountryLive) %>% filter(n() > 4)
-# g_country_live <- grid.arrange(nice_bar_plot(droplevels(country_live_na_rm_lim$CountryLive), "Which country do you currently live in?", nrow(country_live_na_rm), 2.5, 3))
-# ggsave(file="CountryLive.png", g_country_live)
 ```
 
 #### <span style="color:#377bb5">More than 90% are from North America, Europe, and Asia.</span>
@@ -432,8 +426,7 @@ g_country_citizen <- grid.arrange(nice_bar_plot(droplevels(country_citizen_na_rm
 ```{r echo=FALSE, message=FALSE, Continent}
 # ContinentCitizen
 fcc_data$ContinentCitizen <- order_factor(fcc_data$ContinentCitizen)
-continent_citizen_na_rm <- with(fcc_data, fcc_data[!is.na(ContinentCitizen), ])
-g_continent_citizen <- grid.arrange(nice_bar_plot(droplevels(continent_citizen_na_rm$ContinentCitizen), "Which continent are you a citizen of?", nrow(continent_citizen_na_rm), 9, 4))
+g_continent_citizen <- grid.arrange(nice_bar_plot(droplevels(fcc_data$ContinentCitizen), "Which continent are you a citizen of?", 9, 4))
 # ggsave(file="ContinentCitizen.png", g_continent_citizen)
 ```
 
@@ -442,8 +435,7 @@ g_continent_citizen <- grid.arrange(nice_bar_plot(droplevels(continent_citizen_n
 ```{r echo=FALSE, message=FALSE, CityPopulation}
 # CityPopulation
 fcc_data$CityPopulation <- order_factor(fcc_data$CityPopulation)
-city_pop_na_rm <- with(fcc_data, fcc_data[!is.na(CityPopulation), ])
-g_city_pop <- grid.arrange(nice_bar_plot(city_pop_na_rm$CityPopulation, "About how many people live in your city?", nrow(city_pop_na_rm), 11, 0))
+g_city_pop <- grid.arrange(nice_bar_plot(city_pop_na_rm$CityPopulation, "About how many people live in your city?", 11, 0))
 # ggsave(file="CityPopulation.png", g_city_pop)
 ```
 
@@ -452,8 +444,7 @@ g_city_pop <- grid.arrange(nice_bar_plot(city_pop_na_rm$CityPopulation, "About h
 ```{r echo=FALSE, message=FALSE, IsEthnicMinority}
 # Ethnic Minority
 fcc_data$IsEthnicMinority <- order_factor(fcc_data$IsEthnicMinority)
-ethnic_minority_na_rm <- with(fcc_data, fcc_data[!is.na(IsEthnicMinority), ])
-g_ethnic_minority <- grid.arrange(nice_bar_plot(ethnic_minority_na_rm$IsEthnicMinority, "Are you an ethnic minority in your country?", nrow(ethnic_minority_na_rm), 13, 0))
+g_ethnic_minority <- grid.arrange(nice_bar_plot(fcc_data$IsEthnicMinority, "Are you an ethnic minority in your country?", 13, 0))
 # ggsave(file="IsEthnicMinority.png", g_ethnic_minority)
 ```
 
@@ -466,7 +457,7 @@ g_ethnic_minority <- grid.arrange(nice_bar_plot(ethnic_minority_na_rm$IsEthnicMi
 fcc_data$LanguageAtHome <- order_factor(fcc_data$LanguageAtHome)
 language_na_rm <- with(fcc_data, fcc_data[!is.na(LanguageAtHome), ])
 language_na_rm_lim <- language_na_rm %>% group_by(LanguageAtHome) %>% filter(n() > 5)
-g_language <- grid.arrange(nice_bar_plot(droplevels(language_na_rm_lim$LanguageAtHome), "Which language do you speak at home with your family?", nrow(language_na_rm), 3.6, 3.6))
+g_language <- grid.arrange(nice_bar_plot(droplevels(language_na_rm_lim$LanguageAtHome), "Which language do you speak at home with your family?", 3.6, 3.6, nrow(language_na_rm)))
 # ggsave(file="LanguageAtHome.png", g_language)
 ```
 
@@ -476,8 +467,7 @@ Compared to 58% for the full new coder survey, the data-focused subset is more s
 ```{r echo=FALSE, message=FALSE, SchoolDegree}
 # SchoolDegree
 fcc_data$SchoolDegree <- order_factor(fcc_data$SchoolDegree)
-school_degree_na_rm <- with(fcc_data, fcc_data[!is.na(SchoolDegree), ])
-g_school_degree <- grid.arrange(nice_bar_plot(school_degree_na_rm$SchoolDegree, "What's the highest level of school you have completed?", nrow(school_degree_na_rm), 5.7, 5))
+g_school_degree <- grid.arrange(nice_bar_plot(fcc_data$SchoolDegree, "What's the highest level of school you have completed?", 5.7, 5))
 # ggsave(file="SchoolDegree.png", g_school_degree)
 ```
 
@@ -491,7 +481,7 @@ Diversity amongst majors is greater compared to the full survey, where Computer 
 fcc_data$SchoolMajor <- order_factor(fcc_data$SchoolMajor)
 school_major_na_rm <- with(fcc_data, fcc_data[!is.na(SchoolMajor), ])
 school_major_na_rm_lim <- school_major_na_rm %>% group_by(SchoolMajor) %>% filter(n() > 5)
-g_school_major <- grid.arrange(nice_bar_plot(droplevels(school_major_na_rm_lim$SchoolMajor), "What was the main subject your studied in university?", nrow(school_major_na_rm), 3, 0))
+g_school_major <- grid.arrange(nice_bar_plot(droplevels(school_major_na_rm_lim$SchoolMajor), "What was the main subject your studied in university?", 3, 0, nrow(school_major_na_rm)))
 # ggsave(file="SchoolMajor.png", g_school_major)
 ```
 
@@ -500,8 +490,7 @@ g_school_major <- grid.arrange(nice_bar_plot(droplevels(school_major_na_rm_lim$S
 ```{r echo=FALSE, message=FALSE, EmploymentStatus}
 # EmploymentStatus
 fcc_data$EmploymentStatus <- order_factor(fcc_data$EmploymentStatus)
-employment_status_na_rm <- with(fcc_data, fcc_data[!is.na(EmploymentStatus), ])
-g_employment_status <- grid.arrange(nice_bar_plot(employment_status_na_rm$EmploymentStatus, "Regarding employment status, are you currently...", nrow(employment_status_na_rm), 5.7, 8))
+g_employment_status <- grid.arrange(nice_bar_plot(fcc_data$EmploymentStatus, "Regarding employment status, are you currently...", 5.7, 8))
 # ggsave(file="EmploymentStatus.png", g_employment_status)
 ```
 
@@ -511,8 +500,7 @@ Employment fields are more spread compared to the full new coder survey, where 5
 ```{r echo=FALSE, message=FALSE, EmploymentField}
 # EmploymentField
 fcc_data$EmploymentField <- order_factor(fcc_data$EmploymentField)
-employment_field_na_rm <- with(fcc_data, fcc_data[!is.na(EmploymentField), ])
-g_employment_field <- grid.arrange(nice_bar_plot(droplevels(employment_field_na_rm$EmploymentField), "Which field do you work in?", nrow(employment_field_na_rm), 4, 2))
+g_employment_field <- grid.arrange(nice_bar_plot(droplevels(fcc_data$EmploymentField), "Which field do you work in?", 4, 2))
 # ggsave(file="EmploymentField.png", g_employment_field)
 ```
 
@@ -522,8 +510,7 @@ g_employment_field <- grid.arrange(nice_bar_plot(droplevels(employment_field_na_
 # Income
 summary(fcc_data$Income, na.rm = TRUE)
 income.grob <- plot_title("What is your current salary in USD?")
-income_na_rm <- with(fcc_data, fcc_data[!is.na(Income), ])
-g_income <- grid.arrange(nice_histogram(income_na_rm$Income, 10000, "Income"), top = income.grob)
+g_income <- grid.arrange(nice_histogram(fcc_data$Income, 10000, "Income"), top = income.grob)
 # ggsave(file="Income.png", g_income)
 ```
 
@@ -534,8 +521,7 @@ With data science/engineering being [notoriously lucrative](http://www.wired.com
 # ExpectedEarning
 summary(fcc_data$ExpectedEarning, na.rm = TRUE)
 exp_earn.grob <- plot_title("About how much do you expect to earn per year at your first new job (in USD)?")
-exp_earn_na_rm <- with(fcc_data, fcc_data[!is.na(ExpectedEarning), ])
-g_exp_earn <- grid.arrange(nice_histogram(exp_earn_na_rm$ExpectedEarning, 10000, "ExpectedEarning"), top = exp_earn.grob)
+g_exp_earn <- grid.arrange(nice_histogram(fcc_data$ExpectedEarning, 10000, "ExpectedEarning"), top = exp_earn.grob)
 # ggsave(file="ExpectedEarning.png", g_exp_earn)
 ```
 
@@ -585,8 +571,7 @@ is_under_emp / sum(table(fcc_data$IsUnderEmployed))
 # HomeMortgageOwe
 summary(fcc_data$HomeMortgageOwe, na.rm = TRUE)
 home_mort_owe.grob <- plot_title("About how much do you owe on your home mortgage in USD?")
-home_mort_owe_na_rm <- with(fcc_data, fcc_data[!is.na(HomeMortgageOwe), ])
-g_home_mort_owe <- grid.arrange(nice_histogram(home_mort_owe_na_rm$HomeMortgageOwe, 100000, "HomeMortgageOwe"), top = home_mort_owe.grob)
+g_home_mort_owe <- grid.arrange(nice_histogram(fcc_data$HomeMortgageOwe, 100000, "HomeMortgageOwe"), top = home_mort_owe.grob)
 ```
 
 #### <span style="color:#377bb5">If they have student loans, they owe an average of $37k.</span>
@@ -595,8 +580,7 @@ g_home_mort_owe <- grid.arrange(nice_histogram(home_mort_owe_na_rm$HomeMortgageO
 # StudentDebtOwe
 summary(fcc_data$StudentDebtOwe, na.rm = TRUE)
 stud_debt_owe.grob <- plot_title("About how much do you owe in student debt loans in USD?")
-stud_debt_owe_na_rm <- with(fcc_data, fcc_data[!is.na(StudentDebtOwe), ])
-g_stud_debt_owe <- grid.arrange(nice_histogram(stud_debt_owe_na_rm$StudentDebtOwe, 10000, "StudentDebtOwe"), top = stud_debt_owe.grob)
+g_stud_debt_owe <- grid.arrange(nice_histogram(fcc_data$StudentDebtOwe, 10000, "StudentDebtOwe"), top = stud_debt_owe.grob)
 ```
 
 Removing the million dollar outlier, the distribution is much more clear with the majority of debt under $75k. I hope that outlier is a joke.
@@ -604,8 +588,8 @@ Removing the million dollar outlier, the distribution is much more clear with th
 ```{r echo=FALSE, message=FALSE, StudentDebtOwe_2}
 # StudentDebtOwe without 1 million outlier (joke?)
 stud_debt_owe.grob <- plot_title("About how much do you owe in student debt loans in USD?")
-stud_debt_owe_na_rm <- with(fcc_data, fcc_data[!is.na(StudentDebtOwe) & StudentDebtOwe < 1000000, ])
-g_stud_debt_owe <- grid.arrange(nice_histogram(stud_debt_owe_na_rm$StudentDebtOwe, 10000, "StudentDebtOwe"), top = stud_debt_owe.grob)
+stud_debt_owe_mil_rm <- with(fcc_data, fcc_data[StudentDebtOwe < 1000000, ])
+g_stud_debt_owe <- grid.arrange(nice_histogram(stud_debt_owe_mil_rm$StudentDebtOwe, 10000, "StudentDebtOwe"), top = stud_debt_owe.grob)
 ```
 
 #### <span style="color:#377bb5">14% don’t yet have high speed internet at home.</span>
