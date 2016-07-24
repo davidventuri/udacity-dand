@@ -21,6 +21,7 @@ library(extrafont)
 library(extrafontdb)
 library(tidyr)
 library(stringr)
+library(psych)
 ```
 
 ```{r echo=FALSE, Load_Clean_the_Data}
@@ -135,7 +136,7 @@ dim(fcc_data)
 #### <span style="color:#377bb5">The following analysis explores the characteristics of these developing data scientists and engineers.</span>
 Additional comments are included where the results significantly differ from the full new coder survey dataset.
 
-## Univariate Plots Section
+## Univariate Plots
 ```{r echo=FALSE, Univariate_Plot_Functions}
 # Order factor based on the survey's data science subset results (ascending)
 order_factor <- function(fcc_data_var) {
@@ -624,18 +625,9 @@ If the survey asked "*Are you already working as a data scientist/engineer?*" in
 
 #### What other features in the dataset do you think will help support your investigation into your feature(s) of interest?
 
-Though there isn't a main feature of interest, I will explore one smaller feature of interest: what drives an individual's earning expectations. For respondents pursuing data science and engineering, I wonder how salary expectations vary based on:
+Though there isn't a main feature of interest, we can separate the respondents who did not answer "*Data Scientist/Data Engineer*" to the job role interest question (as we already have for those who did) and compare the two subsets using bivariate and multivariate plots.
 
-- age
-- location
-- gender
-- level of education
-- school major
-- if they consider themselves underemployed
-- current salary
-- current industry
-- programming experience
-- how many hours they dedicate to learning per week
+I will also explore how two smaller features, how many hours dedicated to learning per week and expected salary, using bivariate and multivariate plots.
 
 #### Of the features you investigated, were there any unusual distributions?
 
@@ -654,29 +646,48 @@ The following operations were performed to tidy, adjust, or change the form of t
 
 The first five operations were performed so bar charts could be created, which wasn't possible with the original data format. The "Americas" separation was performed for additional insight.
 
-## Bivariate Plots Section
-```{r echo=FALSE, message=FALSE, Bivariate_Plots}
-# note univariate where things differ from new coder survey
-# put na_rm in geom_bar/hist functions?
+## Bivariate Plots
+```{r echo=FALSE, Bivariate_Plots}
+non_fcc_data <- with(fcc, fcc[JobRoleInterest != '  Data Scientist / Data Engineer', ])
+dim(non_fcc_data)
 
-#- age
-#- location
-#- gender
-#- level of education
-#- school major
-#- if they consider themselves underemployed
-#- current salary
-#- current industry
-#- programming experience
-#- how many hours they dedicate to learning per week
+#with(non_fcc_data, cor.test(Age, MonthsProgramming, method = 'pearson'))
 
+# this supports that there isn't one main feature
+pp1 <- pairs.panels(select(fcc_data, Age, MonthsProgramming, HoursLearning, Income, ExpectedEarning, StudentDebtOwe), hist.col="#377bb5", col="#FF4541")
+
+pp2 <- pairs.panels(select(non_fcc_data, Age, MonthsProgramming, HoursLearning, Income, ExpectedEarning, StudentDebtOwe), hist.col="#377bb5", col="#FF4541")
+
+# talk about what the fitting thing is
 age_income.grob <- plot_title("What is your current salary in USD?\nHow old are you?")
-g_age_income <- grid.arrange(nice_scatter(fcc_data$Age, fcc_data$Income, "Age", "Income"), top = age_income.grob)
+r_age_income <- paste("r =", as.character(round(with(fcc_data, cor.test(Age, Income, method = 'pearson'))$estimate, digits = 3)))
+g_age_income <- grid.arrange(nice_scatter(fcc_data$Age, fcc_data$Income, "Age", "Income") + annotate("text", x = 45, y = 100000, label = r_age_income, colour = "#FF4541"), top = age_income.grob)
 
 age_exp_earn.grob <- plot_title("About how much do you expect to earn per year at your first new job (in USD)?\nHow old are you?")
-g_age_income <- grid.arrange(nice_scatter(fcc_data$Age, fcc_data$ExpectedEarning, "Age", "ExpectedEarning"), top = age_exp_earn.grob)
+r_age_exp_earn <- paste("r =", as.character(round(with(fcc_data, cor.test(Age, ExpectedEarning, method = 'pearson'))$estimate, digits = 3)))
+g_age_income <- grid.arrange(nice_scatter(fcc_data$Age, fcc_data$ExpectedEarning, "Age", "ExpectedEarning") + annotate("text", x = 59.5, y = 100000, label = r_age_exp_earn, colour = "#FF4541"), top = age_exp_earn.grob)
+# Others correlate heavy, but they aren't that illuminating with regards to data science specific.
 
-with(fcc_data, cor.test(Age, ExpectedEarning, method = 'pearson'))
+# Hours Learning by Gender
+
+# Hours Learning by ContinentLive
+
+# Expected Earning by Gender
+ggplot(fcc_data, aes(x=Gender, y=ExpectedEarning, fill=Gender)) +
+  geom_boxplot() +
+  theme_minimal()
+
+# Expected Earning by ContinentLive
+ggplot(fcc_data, aes(x=ContinentLive, y=ExpectedEarning, fill=ContinentLive)) +
+  geom_boxplot() +
+  theme_minimal()
+
+# Expected Earning by Hours Learning
+fcc_data$hours_learning.bucket <- cut(fcc_data$HoursLearning,
+                             breaks = c(0, 10, 20, 40, 80))
+ggplot(fcc_data, aes(x=hours_learning.bucket, y=ExpectedEarning, fill=hours_learning.bucket)) +
+  geom_boxplot() +
+  theme_minimal()
 ```
 
 ## Bivariate Analysis
@@ -690,7 +701,7 @@ with(fcc_data, cor.test(Age, ExpectedEarning, method = 'pearson'))
 
 
 
-## Multivariate Plots Section
+## Multivariate Plots
 
 ```{r echo=FALSE, Multivariate_Plots}
 
@@ -734,3 +745,4 @@ with(fcc_data, cor.test(Age, ExpectedEarning, method = 'pearson'))
 ------
 
 ## Reflection
+# note univariate where things differ from new coder survey
