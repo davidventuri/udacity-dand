@@ -139,10 +139,14 @@ Additional comments are included where the results significantly differ from the
 ## Univariate Plots
 ```{r echo=FALSE, Univariate_Plot_Functions}
 # Order factor based on the survey's data science subset results (ascending)
-order_factor <- function(fcc_data_var) {
-  table(fcc_data_var)
+order_factor <- function(fcc_data_var, rev) {
   var_table <- table(fcc_data_var)
-  var_levels <- names(var_table)[order(var_table)]
+  if (missing(rev)) {
+    var_levels <- names(var_table)[order(var_table)]
+  }  
+  else {
+    var_levels <- names(var_table)[order(var_table, decreasing=TRUE)]
+  }
   return(factor(fcc_data_var, levels = var_levels))
 }
 
@@ -236,6 +240,28 @@ nice_scatter <- function(xcol, ycol, xlab, ylab) {
         axis.title=element_text(color="#454545"))
   return(plot)
 }
+
+# Pretty boxplot
+nice_boxplot <- function(df, xlab, ylab, question) {
+  colnames(df)[1] <- "x"
+  colnames(df)[2] <- "y"
+  
+  df_na_rm <- with(df, df[!is.na(x), ])
+  colnames(df_na_rm)[1] <- "x"
+  colnames(df_na_rm)[2] <- "y"
+  
+  plot <- ggplot(df_na_rm, aes(x=x, y=y, fill=x)) +
+    geom_boxplot() +
+    theme_minimal() +
+    labs(title="", x=paste("\n",xlab), y=paste(ylab,"\n")) +
+    theme(axis.text=element_text(size=10, color="#454545"),
+          axis.title=element_text(color="#454545"),
+          legend.position="none")
+  
+  title.grob <- plot_title(question)
+  plot <- arrangeGrob(plot, top = title.grob)
+  return(plot)
+}
 ```
 
 ### Who Participated
@@ -276,6 +302,7 @@ Logarithmically transforming the long tail data to better understand the distrib
 
 ```{r echo=FALSE, message=FALSE, MonthsProgrammingLog10}
 # Add 3/5 of a month to ease log10(0)=-inf issue
+# Didn't include grob code in function to permit adding scale_x_log10
 g_months_prog_log10 <- grid.arrange(nice_histogram((fcc_data$MonthsProgramming+0.6)/12, 0.25, "Years Programming") + scale_x_log10(breaks=c(0.1,0.5,1,2.5,5,10,25,50)), top = months_prog.grob)
 # ggsave(file="MonthsProgrammingLog10.png", g_months_prog_log10)
 ```
@@ -647,47 +674,101 @@ The following operations were performed to tidy, adjust, or change the form of t
 The first five operations were performed so bar charts could be created, which wasn't possible with the original data format. The "Americas" separation was performed for additional insight.
 
 ## Bivariate Plots
-```{r echo=FALSE, Bivariate_Plots}
+14974 respondents did not answer "*Data Scientist/Data Engineer*" to the question: "*Which one of these roles are you most interested in?*"
+
+```{r echo=FALSE, Non_Data_Science_Dataset}
 non_fcc_data <- with(fcc, fcc[JobRoleInterest != '  Data Scientist / Data Engineer', ])
 dim(non_fcc_data)
+```
 
-#with(non_fcc_data, cor.test(Age, MonthsProgramming, method = 'pearson'))
+The next two plots are created using [pairs.panels()](http://www.inside-r.org/packages/cran/psych/docs/pairs.panels) from the *psych* package. They display a scatter plot of matrices (SPLOM), with bivariate scatter plots below the diagonal, histograms on the diagonal, and the Pearson correlation above the diagonal.
 
-# this supports that there isn't one main feature
-pp1 <- pairs.panels(select(fcc_data, Age, MonthsProgramming, HoursLearning, Income, ExpectedEarning, StudentDebtOwe), hist.col="#377bb5", col="#FF4541")
+For the data science subset of the survey, all correlations are below 0.4, which supports my statement that no main feature exists. The strongest of the correlations are:
 
-pp2 <- pairs.panels(select(non_fcc_data, Age, MonthsProgramming, HoursLearning, Income, ExpectedEarning, StudentDebtOwe), hist.col="#377bb5", col="#FF4541")
+- Age and Income (0.30)
+- Income and ExpectedEarning (0.36)
+- Income and StudentDebtOwe (0.34)
 
-# talk about what the fitting thing is
+The phenomena revealed are intuitive, but not groundbreaking: you tend to make more money when you are older, you tend to expect your next job to have a high salary if your current one does, and expensive schooling tends to lead to higher income levels.
+
+```{r echo=FALSE, Data_Science_Panel}
+data_panel <- pairs.panels(select(fcc_data, Age, MonthsProgramming, HoursLearning, Income, ExpectedEarning, StudentDebtOwe), hist.col="#377bb5", col="#FF4541")
+```
+
+For the non-data science subset of the survey, all correlations are again below 0.4. Most of the correlations are within 0.1 of the data science subset, except for three:
+
+- Age and StudentDebtOwe (0.24 - 0.10 = 0.14)
+- MonthsProgramming and StudentDebtOwe (-0.07 - 0.09 = -0.16)
+- Income and StudentDebtOwe (0.34 - 0.08 = 0.26)
+
+Interesting. I bet the skew towards graduate studies for the data science subset plays a role here, where higher levels of student debt and higher salaries are expected.
+
+```{r echo=FALSE, Non_Data_Science_Panel}
+non_data_panel <- pairs.panels(select(non_fcc_data, Age, MonthsProgramming, HoursLearning, Income, ExpectedEarning, StudentDebtOwe), hist.col="#377bb5", col="#FF4541")
+```
+
+Let's return to the data science subset of the survey. One of the strongest correlations is between age and current salary.
+
+```{r echo=FALSE, Age_Income}
 age_income.grob <- plot_title("What is your current salary in USD?\nHow old are you?")
 r_age_income <- paste("r =", as.character(round(with(fcc_data, cor.test(Age, Income, method = 'pearson'))$estimate, digits = 3)))
 g_age_income <- grid.arrange(nice_scatter(fcc_data$Age, fcc_data$Income, "Age", "Income") + annotate("text", x = 45, y = 100000, label = r_age_income, colour = "#FF4541"), top = age_income.grob)
+```
 
+The earnings vs. age trend isn't maintained as these individuals prepare to transition to the data science/engineering field. Younger individuals appear willing to capitalize on lucrative data-related salaries and older individuals appear willing to take a pay cut to enter their new field of choice.
+
+```{r echo=FALSE, Age_Exp_Earn}
 age_exp_earn.grob <- plot_title("About how much do you expect to earn per year at your first new job (in USD)?\nHow old are you?")
 r_age_exp_earn <- paste("r =", as.character(round(with(fcc_data, cor.test(Age, ExpectedEarning, method = 'pearson'))$estimate, digits = 3)))
 g_age_income <- grid.arrange(nice_scatter(fcc_data$Age, fcc_data$ExpectedEarning, "Age", "ExpectedEarning") + annotate("text", x = 59.5, y = 100000, label = r_age_exp_earn, colour = "#FF4541"), top = age_exp_earn.grob)
-# Others correlate heavy, but they aren't that illuminating with regards to data science specific.
+```
 
+**The variables on the x-axis in the boxplots below are in descending order in terms of number of respondents.**
+
+Since two agender, three genderqueer, and two trans respondents exist and males represent 75% of the subset, we can't say much about who is most dedicated to learning. The medians for males and females (10 hours per week) are identical.
+
+```{r echo=FALSE, warning=FALSE, Hours_Learn_Gender}
 # Hours Learning by Gender
+fcc_data$Gender <- order_factor(fcc_data$Gender, "desc")
+g_hours_learn_gender <- grid.arrange(nice_boxplot(select(fcc_data, Gender, HoursLearning), "Gender", "HoursLearning", "About how many hours do you spend learning each week?\nWhat's your gender?"))
+with(fcc_data, by(HoursLearning, Gender, summary))
+```
 
-# Hours Learning by ContinentLive
+The medians for five of the six continents are identical (10 hours per week). The bulk of Asian students appear most dedicated to learning, with their 75th percentile approaching 25 hours per week. Africa may be suffering from a small sample size issue with only 11 respondents.
 
+```{r echo=FALSE, warning=FALSE, Hours_Learn_Continent}
+# Hours Learning by ContinentCitizen
+fcc_data$ContinentCitizen <- order_factor(fcc_data$ContinentCitizen, "desc")
+g_hours_learn_continent <- grid.arrange(nice_boxplot(select(fcc_data, ContinentCitizen, HoursLearning), "ContinentCitizen", "HoursLearning", "About how many hours do you spend learning each week?\nWhich continent are you a citizen of?"))
+with(fcc_data, by(HoursLearning, ContinentCitizen, summary))
+```
+
+Again, male and female medians are identical. They both expect around a $60k data science/engineering salary. There is a gap in first quartiles, however, as females expect $10k more than males.
+
+```{r echo=FALSE, warning=FALSE, Exp_Earn_Gender}
 # Expected Earning by Gender
-ggplot(fcc_data, aes(x=Gender, y=ExpectedEarning, fill=Gender)) +
-  geom_boxplot() +
-  theme_minimal()
+g_exp_earn_gender <- grid.arrange(nice_boxplot(select(fcc_data, Gender, ExpectedEarning), "Gender", "ExpectedEarning", "About how much do you expect to earn per year at your first new job (in USD)?\nWhat's your gender?"))
+with(fcc_data, by(ExpectedEarning, Gender, summary))
+```
 
-# Expected Earning by ContinentLive
-ggplot(fcc_data, aes(x=ContinentLive, y=ExpectedEarning, fill=ContinentLive)) +
-  geom_boxplot() +
-  theme_minimal()
+Whoa. Expected earning by continent varies way more compared to the above three boxplots. Most North Americans expect the highest range of salaries, with their interquartile range spanning from $55k to $80k. The 75th percentile for Europe is $5k below North America's 25th percentile. Expectations in Asia are all over the board. I wonder if some European respondents forgot to convert from pounds to USD.
 
+A lot of these individuals are using similar, if not the same, online educational resources. Labour markets can be cruel.
+
+```{r echo=FALSE, warning=FALSE, Exp_Earn_Continent}
+# Expected Earning by ContinentCitizen
+g_exp_earn_continent <- grid.arrange(nice_boxplot(select(fcc_data, ContinentCitizen, ExpectedEarning), "ContinentCitizen", "ExpectedEarning", "About how much do you expect to earn per year at your first new job (in USD)?\nWhich continent are you a citizen of?"))
+with(fcc_data, by(ExpectedEarning, ContinentCitizen, summary))
+```
+
+Salary expectations don't vary much depending on hours dedicated to learning. Other than those who dedicate 40+ hours per week, an expected salary in the $40k to $80k range is standard.
+
+```{r echo=FALSE, warning=FALSE, Exp_Earn_Hours_Learn}
 # Expected Earning by Hours Learning
 fcc_data$hours_learning.bucket <- cut(fcc_data$HoursLearning,
-                             breaks = c(0, 10, 20, 40, 80))
-ggplot(fcc_data, aes(x=hours_learning.bucket, y=ExpectedEarning, fill=hours_learning.bucket)) +
-  geom_boxplot() +
-  theme_minimal()
+                                      breaks = c(0, 10, 20, 40, 80))
+g_exp_earn_hours_learning <- grid.arrange(nice_boxplot(select(fcc_data, hours_learning.bucket, ExpectedEarning), "HoursLearning", "ExpectedEarning", "About how much do you expect to earn per year at your first new job (in USD)?\nAbout how many hours do you spend learning each week?"))
+with(fcc_data, by(ExpectedEarning, hours_learning.bucket, summary))
 ```
 
 ## Bivariate Analysis
