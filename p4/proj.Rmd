@@ -1,6 +1,8 @@
 # Developing Data Scientists: Exploring Free Code Camp's ["2016 New Coder Survey"](https://www.kaggle.com/freecodecamp/2016-new-coder-survey-)
 #### By [David Venturi](http://davidventuri.com/)
 
+------
+
 ```{r echo=FALSE, message=FALSE, warning=FALSE, packages}
 # Load all of the packages that you end up using
 # in your analysis in this code chunk.
@@ -136,6 +138,8 @@ dim(fcc_data)
 #### <span style="color:#377bb5">The following analysis explores the characteristics of these developing data scientists and engineers.</span>
 Additional comments are included where the results significantly differ from the full new coder survey dataset.
 
+------
+
 ## Univariate Plots
 ```{r echo=FALSE, Univariate_Plot_Functions}
 # Order factor based on the survey's data science subset results (ascending)
@@ -250,6 +254,9 @@ nice_boxplot <- function(df, xlab, ylab, question) {
   colnames(df_na_rm)[1] <- "x"
   colnames(df_na_rm)[2] <- "y"
   
+  # Not using a sequential scale_fill_brewer palette here
+  # Don't want to imply superiority order along x-axis
+  # Order of categories used to convey number of respondents
   plot <- ggplot(df_na_rm, aes(x=x, y=y, fill=x)) +
     geom_boxplot() +
     theme_minimal() +
@@ -673,6 +680,8 @@ The following operations were performed to tidy, adjust, or change the form of t
 
 The first five operations were performed so bar charts could be created, which wasn't possible with the original data format. The "Americas" separation was performed for additional insight.
 
+------
+
 ## Bivariate Plots
 14974 respondents did not answer "*Data Scientist/Data Engineer*" to the question: "*Which one of these roles are you most interested in?*"
 
@@ -751,9 +760,9 @@ g_exp_earn_gender <- grid.arrange(nice_boxplot(select(fcc_data, Gender, Expected
 with(fcc_data, by(ExpectedEarning, Gender, summary))
 ```
 
-Whoa. Expected earning by continent varies way more compared to the above three boxplots. Most North Americans expect the highest range of salaries, with their interquartile range spanning from $55k to $80k. The 75th percentile for Europe is $5k below North America's 25th percentile. Expectations in Asia are all over the board. I wonder if some European respondents forgot to convert from pounds to USD.
+Whoa. Expected earning by continent varies way more compared to the above three boxplots. Most North Americans expect the highest range of salaries, with their interquartile range spanning from $55k to $80k. The 75th percentile for Europe is $5k below North America's 25th percentile. I wonder if some European respondents forgot to convert from pounds to USD. Expectations in Asia are all over the board.
 
-A lot of these individuals are using similar, if not the same, online educational resources. Labour markets can be cruel.
+A lot of these individuals are using similar, if not the same, online educational resources. Labour market economics can be cruel.
 
 ```{r echo=FALSE, warning=FALSE, Exp_Earn_Continent}
 # Expected Earning by ContinentCitizen
@@ -768,24 +777,38 @@ Salary expectations don't vary much depending on hours dedicated to learning. Ot
 fcc_data$hours_learning.bucket <- cut(fcc_data$HoursLearning,
                                       breaks = c(0, 10, 20, 40, 80))
 g_exp_earn_hours_learning <- grid.arrange(nice_boxplot(select(fcc_data, hours_learning.bucket, ExpectedEarning), "HoursLearning", "ExpectedEarning", "About how much do you expect to earn per year at your first new job (in USD)?\nAbout how many hours do you spend learning each week?"))
+table(fcc_data$hours_learning.bucket)
 with(fcc_data, by(ExpectedEarning, hours_learning.bucket, summary))
 ```
 
 ## Bivariate Analysis
 
-#### Talk about some of the relationships you observed in this part of the investigation. How did the feature(s) of interest vary with other features in the dataset?
+#### How did the feature(s) of interest vary with other features in the dataset?
 
-#### Did you observe any interesting relationships between the other features (not the main feature(s) of interest)?
+The data science/engineering subset of the survey is largely similar to the non-data science/engineering subset, except for three correlations involving  student debt owed. I bet this has something to do with the skew towards graduate studies for the data-focused subset.
+
+The correlation between current salary and age is stronger than expected earning for the individual's first data science/engineering job and age.
+
+Hours dedicated to learning per week doesn't appear to vary much with gender or continent, though sample size issues exist.
+
+Expected earning varies strongly by continent. Females also appear to have a higher bottom line for expected salary than males. Those who dedicate more than 40 hours a week to learning data science/engineering appear to expect higher salaries as well.
 
 #### What was the strongest relationship you found?
 
+For both subsets of the survey, there is no exceedingly strong relationship. All correlations are below 0.4.
 
+Current salary and expected salary for an individual's first data-related job has the strongest relationship for both subsets with correlations of 0.36 and 0.38.
 
+------
 
 ## Multivariate Plots
 
 ```{r echo=FALSE, Multivariate_Plots}
+# y-axis = exp, x-axis = , legend color = hours_learning.bucket (needs to be sequential)
 
+# x and y axes should be numerical. see panel for vars
+
+table(fcc_data$MaritalStatus)
 ```
 
 ## Multivariate Analysis
@@ -798,32 +821,6 @@ with(fcc_data, by(ExpectedEarning, hours_learning.bucket, summary))
 
 ------
 
-## Final Plots and Summary
-
-#### Plot One
-```{r echo=FALSE, Plot_One}
-
-```
-
-#### Description One
-
-
-#### Plot Two
-```{r echo=FALSE, Plot_Two}
-
-```
-
-#### Description Two
-
-
-#### Plot Three
-```{r echo=FALSE, Plot_Three}
-
-```
-
-#### Description Three
-
-------
-
 ## Reflection
 # note univariate where things differ from new coder survey
+# say no final plots section because i polished all of them for kaggle (say it right before where section start would be)
