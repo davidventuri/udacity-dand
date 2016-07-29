@@ -235,7 +235,7 @@ Of the 646 *developing data scientists and data engineers* who responded to the 
 # Gender
 table(fcc_data$Gender)['female'] / sum(table(fcc_data$Gender))
 fcc_data$Gender <- order_factor(fcc_data$Gender)
-g_gender <- grid.arrange(nice_bar_plot(fcc_data$Gender, "What's your gender?", 11, 1))
+g_gender <- grid.arrange(nice_bar_plot(fcc_data$Gender, "What is your gender?", 11, 1))
 # ggsave(file="Gender.png", g_gender)
 ```
 
@@ -280,7 +280,7 @@ g_hours_learn <- grid.arrange(nice_histogram(fcc_data$HoursLearning, 5, "HoursLe
 ```
 
 
-#### <span style="color:#377bb5">Nobody wants to freelance or start their own business.</span>
+#### <span style="color:#377bb5">No respondents want to freelance or start their own business.</span>
 Compared to 40% for the full new coder survey, this is a bit shocking, but understandable given the demand for data scientists and engineers in industry.
 
 ```{r echo=FALSE, message=FALSE, JobPref}
@@ -459,7 +459,7 @@ Compared to 58% for the full new coder survey, the data-focused subset is more s
 ```{r echo=FALSE, message=FALSE, SchoolDegree}
 # SchoolDegree
 fcc_data$SchoolDegree <- order_factor(fcc_data$SchoolDegree)
-g_school_degree <- grid.arrange(nice_bar_plot(fcc_data$SchoolDegree, "What's the highest level of school you have completed?", 5.7, 5))
+g_school_degree <- grid.arrange(nice_bar_plot(fcc_data$SchoolDegree, "What is the highest level of school you have completed?", 5.7, 5))
 # ggsave(file="SchoolDegree.png", g_school_degree)
 ```
 
@@ -473,7 +473,7 @@ Diversity amongst majors is greater compared to the full survey, where Computer 
 fcc_data$SchoolMajor <- order_factor(fcc_data$SchoolMajor)
 school_major_na_rm <- with(fcc_data, fcc_data[!is.na(SchoolMajor), ])
 school_major_na_rm_lim <- school_major_na_rm %>% group_by(SchoolMajor) %>% filter(n() > 5)
-g_school_major <- grid.arrange(nice_bar_plot(droplevels(school_major_na_rm_lim$SchoolMajor), "What was the main subject your studied in university?", 3, 0, nrow(school_major_na_rm)))
+g_school_major <- grid.arrange(nice_bar_plot(droplevels(school_major_na_rm_lim$SchoolMajor), "What was the main subject you studied in university?", 3, 0, nrow(school_major_na_rm)))
 # ggsave(file="SchoolMajor.png", g_school_major)
 ```
 
@@ -618,7 +618,7 @@ If the survey asked "*Are you already working as a data scientist/engineer?*" in
 
 Though there isn't a main feature of interest, we can separate the respondents who did not answer "*Data Scientist/Data Engineer*" to the job role interest question (as we already have for those who did) and compare the two subsets using bivariate and multivariate plots.
 
-I will also explore how two smaller features, how many hours dedicated to learning per week and expected salary, using bivariate and multivariate plots.
+I will also explore two smaller features, how many hours dedicated to learning per week and expected salary, using bivariate and multivariate plots.
 
 #### Of the features you investigated, were there any unusual distributions?
 
@@ -741,7 +741,7 @@ nice_boxplot <- function(df, xlab, ylab, questions, hue) {
 
 # Hours Learning by Gender
 fcc_data$Gender <- order_factor(fcc_data$Gender, "desc")
-g_hours_learn_gender <- grid.arrange(nice_boxplot(select(fcc_data, Gender, HoursLearning), "Gender", "HoursLearning", "About how many hours do you spend learning each week?\nWhat's your gender?", c(0,30)))
+g_hours_learn_gender <- grid.arrange(nice_boxplot(select(fcc_data, Gender, HoursLearning), "Gender", "HoursLearning", "About how many hours do you spend learning each week?\nWhat is your gender?", c(0,30)))
 with(fcc_data, by(HoursLearning, Gender, summary))
 ```
 
@@ -758,7 +758,7 @@ Again, male and female medians are identical. They both expect around a $60k dat
 
 ```{r echo=FALSE, warning=FALSE, Exp_Earn_Gender}
 # Expected Earning by Gender
-g_exp_earn_gender <- grid.arrange(nice_boxplot(select(fcc_data, Gender, ExpectedEarning), "Gender", "ExpectedEarning", "About how much do you expect to earn per year at your first new job in USD?\nWhat's your gender?", c(0,30)))
+g_exp_earn_gender <- grid.arrange(nice_boxplot(select(fcc_data, Gender, ExpectedEarning), "Gender", "ExpectedEarning", "About how much do you expect to earn per year at your first new job in USD?\nWhat is your gender?", c(0,30)))
 with(fcc_data, by(ExpectedEarning, Gender, summary))
 ```
 
@@ -839,7 +839,7 @@ nice_scatter_facet <- function(df, xlab, ylab, flab, hline, vline, questions, hu
 }
 
 # Expected Earning by Income by Gender
-g_exp_earn_income_gender <- grid.arrange(nice_scatter_facet(select(fcc_data, Income, ExpectedEarning, Gender), "Income (Thousands)", "ExpectedEarning (Thousands)", "Gender", 100, 100, "About how much do you expect to earn per year at your first new job in USD?\nWhat is your current salary in USD?\nWhat's your gender?", c(0,150)))
+g_exp_earn_income_gender <- grid.arrange(nice_scatter_facet(select(fcc_data, Income, ExpectedEarning, Gender), "Income (Thousands)", "ExpectedEarning (Thousands)", "Gender", 100, 100, "About how much do you expect to earn per year at your first new job in USD?\nWhat is your current salary in USD?\nWhat is your gender?", c(0,150)))
 
 # Expected Earning by Income by EthnicMinority
 #hoping the diversity landscape is changing
@@ -859,7 +859,7 @@ stud_debt_owe_mil_rm$SchoolDegree <- factor(stud_debt_owe_mil_rm$SchoolDegree,
                                                        "no high school (secondary school)"))
 
 stud_debt_owe_mil_rm$SchoolDegree <- revalue(stud_debt_owe_mil_rm$SchoolDegree, c("professional degree (MBA, MD, JD, etc.)"="professional degree\n(MBA, MD, JD, etc.)", "master's degree (non-professional)"="master's degree\n(non-professional)", "some college credit, no degree"="some college credit,\nno degree"))
-g_stud_debt_income_em <- grid.arrange(nice_scatter_facet(select(stud_debt_owe_mil_rm, Income, StudentDebtOwe, SchoolDegree), "Income (Thousands)", "StudentDebtOwe (Thousands)", "SchoolDegree", 25, 50, "About how much do you owe in student debt loans in USD?\nWhat is your current salary in USD?\nWhat's the highest level of school you have completed?", c(150,300)))
+g_stud_debt_income_em <- grid.arrange(nice_scatter_facet(select(stud_debt_owe_mil_rm, Income, StudentDebtOwe, SchoolDegree), "Income (Thousands)", "StudentDebtOwe (Thousands)", "SchoolDegree", 25, 50, "About how much do you owe in student debt loans in USD?\nWhat is your current salary in USD?\nWhat is the highest level of school you have completed?", c(150,300)))
 
 g_stud_debt_income_hl <- grid.arrange(nice_scatter_facet(select(stud_debt_owe_mil_rm, Income, StudentDebtOwe, hours_learning.bucket), "Income (Thousands)", "StudentDebtOwe (Thousands)", "HoursLearning", 25, 50, "About how much do you owe in student debt loans in USD?\nWhat is your current salary in USD?\nAbout how many hours do you spend learning each week?", c(150,300)))
 ```
@@ -896,6 +896,6 @@ Developing data scientists and engineers are slightly different than new coders 
 
 The two datasets do share plenty of common trends. Demographics are similar. Most don't use podcasts or attend events. 
 
-Diversity is still an issue in the workplace, as reflected in current and expected salary for females and ethnic minorites. Student debt owed matches well with current salary and higher levels of education. There aren't as many 40+ hour per week learners as I expected given the student debt levels.
+Diversity is still an issue in the workplace, as reflected in current and expected salary for females and ethnic minorites. Student debt owed matches well with current salary and higher levels of education. Most people aren't replacing the traditional college/university route with fulltime online education...yet.
 
 These are the people who are learning data science and engineering. It is clear that free, self-paced learning resources are important.
