@@ -3,14 +3,13 @@
 
 ------
 
-```{r echo=FALSE, message=FALSE, warning=FALSE, packages}
-# Load all of the packages that you end up using
-# in your analysis in this code chunk.
+```{r global_options, include=FALSE}
+# Set global options
+knitr::opts_chunk$set(echo=FALSE, warning=FALSE, message=FALSE)
+```
 
-# Notice that the parameter "echo" was set to FALSE for this code chunk.
-# This prevents the code from displaying in the knitted HTML output.
-# You should set echo=FALSE for all code chunks in your file.
-
+```{r packages}
+# Load packages ---------------------------
 library(ggplot2)
 library(countrycode)
 library(plyr)
@@ -26,41 +25,59 @@ library(stringr)
 library(psych)
 ```
 
-```{r echo=FALSE, Load_Clean_the_Data}
-# Load the Data
+```{r Load_Clean_the_Data}
+# Load data ---------------------------
 setwd('~/Documents/CS/DAND/udacity-dand/p4')
 fcc <- read.csv('2016-FCC-New-Coders-Survey-Data.csv')
 
 # Create new continent variables and move them to their alphabetical position
-fcc$ContinentCitizen <- countrycode(fcc$CountryCitizen, 'country.name', 'continent')
+fcc$ContinentCitizen <- countrycode(fcc$CountryCitizen,
+                                    'country.name', 'continent')
 fcc$ContinentLive <- countrycode(fcc$CountryLive, 'country.name', 'continent')
-fcc <- select(fcc, Age:CountryCitizen, ContinentCitizen, CountryLive, ContinentLive, EmploymentField:StudentDebtOwe)
+fcc <- select(fcc, Age:CountryCitizen, ContinentCitizen, CountryLive,
+              ContinentLive, EmploymentField:StudentDebtOwe)
 
-# Clean the data
+# Clean data ---------------------------
 
 # 66 countries with no assigned continent via countrycode()
 cit_live_cols <- select(fcc, CountryCitizen:ContinentLive)
-problem_countries <- with(cit_live_cols, cit_live_cols[(!is.na(CountryCitizen) & is.na(ContinentCitizen)) | (!is.na(CountryLive) & is.na(ContinentLive)), ])
+problem_countries <- with(cit_live_cols,
+                          cit_live_cols[(!is.na(CountryCitizen) &
+                                         is.na(ContinentCitizen)) |
+                                        (!is.na(CountryLive) &
+                                         is.na(ContinentLive)), ])
 
 # Problem country/continent names
 fix_cont <- c('Africa', 'Asia', 'Europe', 'Europe', 'Europe', 'Oceania')
-names(fix_cont) <- c('Nambia', 'Taiwan', 'Canary Islands', 'Kosovo', 'Channel Islands', 'Hawaii')
-# "Hawaii is generally included in Oceania, even though it is a part of the United States" http://cs.mcgill.ca/~rwest/wikispeedia/wpcd/wp/o/Oceania.htm
+names(fix_cont) <- c('Nambia', 'Taiwan', 'Canary Islands', 'Kosovo',
+                     'Channel Islands', 'Hawaii')
+# Hawaii is generally included in Oceania, even though it is a part of the
+# United States (http://cs.mcgill.ca/~rwest/wikispeedia/wpcd/wp/o/Oceania.htm)
 
 # Assign continents to problem countries
-fcc$ContinentCitizen <- ifelse(fcc$CountryCitizen %in% names(fix_cont), fix_cont[as.character(fcc$CountryCitizen)], fcc$ContinentCitizen)
-fcc$ContinentLive <- ifelse(fcc$CountryLive %in% names(fix_cont), fix_cont[as.character(fcc$CountryLive)], fcc$ContinentLive)
+fcc$ContinentCitizen <- ifelse(fcc$CountryCitizen %in% names(fix_cont),
+                               fix_cont[as.character(fcc$CountryCitizen)],
+                               fcc$ContinentCitizen)
+fcc$ContinentLive <- ifelse(fcc$CountryLive %in% names(fix_cont),
+                            fix_cont[as.character(fcc$CountryLive)],
+                            fcc$ContinentLive)
 
 # South American countries in dataset
-s_america <- c('Argentina', 'Bolivia', 'Brazil', 'Chile', 'Colombia', 'Ecuador', 'Guyana', 'Netherland Antilles', 'Paraguay', 'Peru', 'Uruguay', 'Venezuela')
+s_america <- c('Argentina', 'Bolivia', 'Brazil', 'Chile', 'Colombia',
+               'Ecuador', 'Guyana', 'Netherland Antilles', 'Paraguay', 'Peru',
+               'Uruguay', 'Venezuela')
 
 # Separate Americas into North and South
 make_s_america <- function(continent, country) {
-  return(ifelse(continent == 'Americas' & country %in% s_america, 'South America', continent))
+  return(ifelse(continent == 'Americas' & country %in% s_america,
+                'South America',
+                continent))
 }
 
 make_n_america <- function(continent, country) {
-  return(ifelse(continent == 'Americas' & !(country %in% s_america), 'North America', continent))
+  return(ifelse(continent == 'Americas' & !(country %in% s_america),
+                'North America',
+                continent))
 }
 
 fcc$ContinentCitizen <- make_s_america(fcc$ContinentCitizen, fcc$CountryCitizen)
@@ -77,35 +94,66 @@ fcc$ContinentCitizen <- factor(fcc$ContinentCitizen)
 fcc$ContinentLive <- factor(fcc$ContinentLive)
 
 # Fix Netherlands (Country...)
-fcc$CountryCitizen <- ifelse(fcc$CountryCitizen == "Netherlands (Holland, Europe)", "Netherlands", as.character(fcc$CountryCitizen))
-fcc$CountryLive <- ifelse(fcc$CountryLive == "Netherlands (Holland, Europe)", "Netherlands", as.character(fcc$CountryLive))
+fcc$CountryCitizen <- ifelse(fcc$CountryCitizen == "Netherlands (Holland, Europe)",
+                             "Netherlands",
+                             as.character(fcc$CountryCitizen))
+fcc$CountryLive <- ifelse(fcc$CountryLive == "Netherlands (Holland, Europe)",
+                          "Netherlands",
+                          as.character(fcc$CountryLive))
 fcc$CountryCitizen <- factor(fcc$CountryCitizen)
 fcc$CountryLive <- factor(fcc$CountryLive)
 
 # Fix Math/Mathematics (SchoolMajor)
-fcc$SchoolMajor <- ifelse(fcc$SchoolMajor == "Math", "Mathematics", as.character(fcc$SchoolMajor))
+fcc$SchoolMajor <- ifelse(fcc$SchoolMajor == "Math",
+                          "Mathematics",
+                          as.character(fcc$SchoolMajor))
 fcc$SchoolMajor <- factor(fcc$SchoolMajor)
 
 # Change 0 to No, 1 to Yes for two plots
 fcc$JobRelocateYesNo <- factor(fcc$JobRelocateYesNo)
-fcc$JobRelocateYesNo <- revalue(fcc$JobRelocateYesNo, c("0"="No", "1"="Yes"))
+fcc$JobRelocateYesNo <- revalue(fcc$JobRelocateYesNo,
+                                c("0" = "No", "1" = "Yes"))
 fcc$IsEthnicMinority <- factor(fcc$IsEthnicMinority)
-fcc$IsEthnicMinority <- revalue(fcc$IsEthnicMinority, c("0"="No", "1"="Yes"))
+fcc$IsEthnicMinority <- revalue(fcc$IsEthnicMinority,
+                                c("0" = "No", "1" = "Yes"))
 
-# Add two data science podcast columns
-fcc$PodcastPartiallyDerivative <- with(fcc, ifelse(PodcastOther == "Partially Derivative" | PodcastOther == "http://www.partiallyderivative.com/", as.integer(1), NA))
-fcc$PodcastBecomingDataSci <- with(fcc, ifelse(PodcastOther == "Becoming A Data Scientist" | PodcastOther == "Learning to be a Data Scientist", as.integer(1), NA))
-fcc$PodcastTalkingMachines <- with(fcc, ifelse(PodcastOther == "Talking machines", as.integer(1), NA))
-fcc <- select(fcc, Age:PodcastOther, PodcastPartiallyDerivative:PodcastTalkingMachines, PodcastProgrammingThrowDown:StudentDebtOwe)
+# Add three data science podcast columns
+fcc$PodcastPartiallyDerivative <-
+  with(fcc, ifelse(PodcastOther == "Partially Derivative" |
+                   PodcastOther == "http://www.partiallyderivative.com/",
+                   as.integer(1),
+                   NA))
+fcc$PodcastBecomingDataSci <-
+  with(fcc, ifelse(PodcastOther == "Becoming A Data Scientist" |
+                   PodcastOther == "Learning to be a Data Scientist",
+                   as.integer(1),
+                   NA))
+fcc$PodcastTalkingMachines <-
+  with(fcc, ifelse(PodcastOther == "Talking machines",
+                   as.integer(1),
+                   NA))
+fcc <- select(fcc, Age:PodcastOther,
+                   PodcastPartiallyDerivative:PodcastTalkingMachines,
+                   PodcastProgrammingThrowDown:StudentDebtOwe)
+
+# Cut the HoursLearning variable into buckets
+fcc$HoursLearningBucket <-
+  cut(fcc$HoursLearning, breaks = c(0, 10, 20, 40, 80))
 
 # Change "NA" to "other" for EmploymentStatus if respondent provided EmploymentStatusOther
 fcc$EmploymentStatus <- as.character(fcc$EmploymentStatus)
-fcc$EmploymentStatus <- with(fcc, ifelse(is.na(EmploymentStatus) & !is.na(EmploymentStatusOther), 'Other', EmploymentStatus))
+fcc$EmploymentStatus <-
+  with(fcc, ifelse(is.na(EmploymentStatus) & !is.na(EmploymentStatusOther),
+                   'Other',
+                   EmploymentStatus))
 fcc$EmploymentStatus <- as.factor(fcc$EmploymentStatus)
 
 # Change "NA" to "other" for EmploymentField if respondent provided EmploymentFieldOther
 fcc$EmploymentField <- as.character(fcc$EmploymentField)
-fcc$EmploymentField <- with(fcc, ifelse(is.na(EmploymentField) & !is.na(EmploymentFieldOther), 'other', EmploymentField))
+fcc$EmploymentField <-
+  with(fcc, ifelse(is.na(EmploymentField) & !is.na(EmploymentFieldOther),
+                   'other',
+                   EmploymentField))
 fcc$EmploymentField <- as.factor(fcc$EmploymentField)
 ```
 
@@ -115,33 +163,38 @@ The original ["2016 New Coder Survey"](https://www.kaggle.com/freecodecamp/2016-
 The [```str``` function](http://www.r-bloggers.com/str-implementation-for-data-frames/) output is long and messy, so I won't print it here. Please consult Free Code Camp's [list of survey questions and possible answers](https://github.com/FreeCodeCamp/2016-new-coder-survey/blob/master/survey-data-dictionary.md). Boolean, numeric, and categorical types are the majority.
 
 ## New Variables
-I created five new variables from existing variables:
+I created six new variables from existing variables:
 
 - *ContinentCitizen* and *ContinentLive* from *CountryCitizen* and *CountryLive* using Vincent Arel-Bundock's [countrycode](https://github.com/vincentarelbundock/countrycode) R package
-- *PodcastPartiallyDerivative*, *PodcastBecomingDataSci*, and *PodcastTalkingMachines* from *PodcastOther* using [ifelse()](http://www.programiz.com/r-programming/ifelse-function) statements
+- *PodcastPartiallyDerivative*, *PodcastBecomingDataSci*, and *PodcastTalkingMachines* from *PodcastOther* using [```ifelse``` statements](http://www.programiz.com/r-programming/ifelse-function)
+- *HoursLearningBucket* using the [```cut``` function](https://stat.ethz.ch/R-manual/R-devel/library/base/html/cut.html) on *HoursLearning*
 
-These new variables bring our total to **118 variables**.
+These new variables bring our total to **119 variables**.
 
-```{r echo=FALSE, Full_Dataset}
+```{r Full_Dataset}
 dim(fcc)
 ```
 
 ## Data Science/Engineering Subset
 646 respondents answered "*Data Scientist/Data Engineer*" to the question: "*Which one of these roles are you most interested in?*"
 
-```{r echo=FALSE, Data_Science_Dataset}
+```{r Data_Science_Dataset}
 # "Which one of these roles are you most interested in?"
-fcc_data <- with(fcc, fcc[JobRoleInterest == '  Data Scientist / Data Engineer' & !is.na(JobRoleInterest), ])
+fcc_data <-
+  with(fcc, fcc[JobRoleInterest == '  Data Scientist / Data Engineer' &
+                !is.na(JobRoleInterest), ])
 dim(fcc_data)
 ```
 
 #### <span style="color:#377bb5">The following analysis explores the characteristics of these developing data scientists and engineers.</span>
 Additional comments are included where the results significantly differ from the full new coder survey dataset.
 
+The univariate section mimics the structure of [Free Code Camp's Medium article](https://medium.freecodecamp.com/we-asked-15-000-people-who-they-are-and-how-theyre-learning-to-code-4104e29b2781#.dbl4sh7q8) for direct comparison of data science/engineering students and new coders in general. A few additional univariate plots are included to smooth the transition to the plots explored in the bivariate and multivariate sections.
+
 ------
 
 ## Univariate Plots
-```{r echo=FALSE, Univariate_Plot_Functions}
+```{r Univariate_Plot_Functions}
 # Order factor based on the survey's data science subset results
 order_factor <- function(fcc_data_var, desc) {
   var_table <- table(fcc_data_var)
@@ -149,12 +202,12 @@ order_factor <- function(fcc_data_var, desc) {
     var_levels <- names(var_table)[order(var_table)]
   }  
   else {
-    var_levels <- names(var_table)[order(var_table, decreasing=TRUE)]
+    var_levels <- names(var_table)[order(var_table, decreasing = TRUE)]
   }
   return(factor(fcc_data_var, levels = var_levels))
 }
 
-# Text grob for plot title
+# Text grob for plot titles
 plot_title <- function(question) {
   title.grob <- textGrob(
     label = question,
@@ -174,11 +227,11 @@ nice_histogram <- function(col, bw, xlab) {
   colnames(df_na_rm)[1] <- "x"
   
   plot <- ggplot(aes(x), data = df_na_rm) +
-    geom_histogram(binwidth=bw, color = '#377bb5', fill = '#377bb5') +
+    geom_histogram(binwidth = bw, color = '#377bb5', fill = '#377bb5') +
     theme_minimal() +
-    labs(title="", x=paste("\n",xlab), y="Count\n") +
-    theme(axis.text=element_text(size=10, color="#454545"),
-          axis.title=element_text(color="#454545"))
+    labs(title = "", x = paste("\n",xlab), y = "Count\n") +
+    theme(axis.text = element_text(size=10, color="#454545"),
+          axis.title = element_text(color="#454545"))
   return(plot)
 }
 
@@ -204,19 +257,19 @@ nice_bar_plot <- function(col, question, lab_size, lab_cut, num_answers) {
   dfTab$lab <- as.character(dfTab$lab)
   
   plot <- ggplot(df_na_rm) +
-    geom_bar(aes(x, alpha=factor(..count..)), fill="#377bb5") +
+    geom_bar(aes(x, alpha = factor(..count..)), fill = "#377bb5") +
     theme_minimal() +
-    scale_x_discrete(drop=FALSE) +
-    labs(title="", x=NULL,
+    scale_x_discrete(drop = FALSE) +
+    labs(title = "", x = NULL,
          y=paste(as.character(num_answers),
                  "out of 646 developing data scientists/engineers answered")) +
-    theme(axis.text=element_text(size=10, color="#454545"),
-          axis.title.x=element_text(colour="#377bb5", size=10,
-                                    margin=margin(15,0,9,0)),
-          axis.title.y=element_text(color="#454545"),
-          legend.position="none") +
-    geom_text(data=dfTab, aes(x=x,y=Freq,label=lab), hjust = 1,
-              color="white", size=lab_size, fontface=2) +
+    theme(axis.text = element_text(size=10, color="#454545"),
+          axis.title.x = element_text(colour = "#377bb5", size = 10,
+                                      margin = margin(15,0,9,0)),
+          axis.title.y = element_text(color = "#454545"),
+          legend.position = "none") +
+    geom_text(data = dfTab, aes(x = x, y = Freq, label = lab), hjust = 1,
+              color = "white", size = lab_size, fontface = 2) +
     coord_flip()
   
   plot <- arrangeGrob(plot, top = title.grob)
@@ -231,51 +284,63 @@ Of the 646 *developing data scientists and data engineers* who responded to the 
 
 #### <span style="color:#377bb5">A quarter are women.</span>
 
-```{r echo=FALSE, message=FALSE, Gender}
+```{r Gender}
 # Gender
 table(fcc_data$Gender)['female'] / sum(table(fcc_data$Gender))
 fcc_data$Gender <- order_factor(fcc_data$Gender)
-g_gender <- grid.arrange(nice_bar_plot(fcc_data$Gender, "What is your gender?", 11, 1))
+g_gender <-
+  grid.arrange(nice_bar_plot(fcc_data$Gender, "What is your gender?", 11, 1))
 # ggsave(file="Gender.png", g_gender)
 ```
 
 #### <span style="color:#377bb5">Their median age is 26.</span>
 
-```{r echo=FALSE, message=FALSE, Age}
+```{r Age}
 # Age
 summary(fcc_data$Age, na.rm = TRUE)
 age.grob <- plot_title("How old are you?")
-g_age <- grid.arrange(nice_histogram(fcc_data$Age, 1, "Age"), top = age.grob)
+g_age <-
+  grid.arrange(nice_histogram(fcc_data$Age, 1, "Age"), top = age.grob)
 ```
 
 #### <span style="color:#377bb5">They started programming an average of 16 months ago.</span>
 This average is 5 months longer than the full survey dataset.
 
-```{r echo=FALSE, message=FALSE, MonthsProgramming}
+```{r MonthsProgramming}
 # MonthsProgramming
 summary(fcc_data$MonthsProgramming, na.rm = TRUE)
 months_prog.grob <- plot_title("About how many [years] have you been programming for?")
-g_months_prog <- grid.arrange(nice_histogram(fcc_data$MonthsProgramming/12, 0.5, "Years Programming"), top = months_prog.grob)
+g_months_prog <-
+  grid.arrange(nice_histogram(fcc_data$MonthsProgramming / 12, 0.5,
+                              "Years Programming"),
+               top = months_prog.grob)
 # ggsave(file="MonthsProgramming.png", g_months_prog)
 ```
 
 Logarithmically transforming the long tail data to better understand the distribution, programming experience peaks around one year.
 
-```{r echo=FALSE, message=FALSE, MonthsProgrammingLog10}
+```{r MonthsProgrammingLog10}
 # Add 3/5 of a month to ease log10(0)=-inf issue
 # Didn't include grob code in function to permit adding scale_x_log10
-g_months_prog_log10 <- grid.arrange(nice_histogram((fcc_data$MonthsProgramming+0.6)/12, 0.25, "Years Programming") + scale_x_log10(breaks=c(0.1,0.5,1,2.5,5,10,25,50)), top = months_prog.grob)
+g_months_prog_log10 <-
+  grid.arrange(nice_histogram((fcc_data$MonthsProgramming + 0.6) / 12, 0.25,
+                              "Years Programming") +
+               scale_x_log10(breaks = c(0.1, 0.5, 1, 2.5, 5, 10, 25, 50)),
+               top = months_prog.grob)
 # ggsave(file="MonthsProgrammingLog10.png", g_months_prog_log10)
 ```
 
 ### Learner Goals and Approaches
 #### <span style="color:#377bb5">The average respondent dedicates 14 hours per week to learning.</span>
 
-```{r echo=FALSE, message=FALSE, HoursLearning}
+```{r HoursLearning}
 # HoursLearning
 summary(fcc_data$HoursLearning, na.rm = TRUE)
-hours_learn.grob <- plot_title("About how many hours do you spend learning each week?")
-g_hours_learn <- grid.arrange(nice_histogram(fcc_data$HoursLearning, 5, "HoursLearning"), top = hours_learn.grob)
+hours_learn.grob <-
+  plot_title("About how many hours do you spend learning each week?")
+g_hours_learn <-
+  grid.arrange(nice_histogram(fcc_data$HoursLearning, 5, "HoursLearning"),
+               top = hours_learn.grob)
 # ggsave(file="HoursLearning.png", g_hours_learn)
 ```
 
@@ -283,244 +348,335 @@ g_hours_learn <- grid.arrange(nice_histogram(fcc_data$HoursLearning, 5, "HoursLe
 #### <span style="color:#377bb5">No respondents want to freelance or start their own business.</span>
 Compared to 40% for the full new coder survey, this is a bit shocking, but understandable given the demand for data scientists and engineers in industry.
 
-```{r echo=FALSE, message=FALSE, JobPref}
+```{r JobPref}
 # JobPref
 fcc_data$JobPref <- order_factor(fcc_data$JobPref)
-g_job_pref <- grid.arrange(nice_bar_plot(fcc_data$JobPref, "Would you prefer to...", 11, 0))
+g_job_pref <-
+  grid.arrange(nice_bar_plot(fcc_data$JobPref, "Would you prefer to...",
+                             11, 0))
 # ggsave(file="JobPref.png", g_job_pref)
 ```
 
 #### <span style="color:#377bb5">52% percent are already applying for jobs, or will start applying within the next year.</span>
 The data-related subset has a longer time horizon than the full survey dataset, where 65% are applying within the next year.
 
-```{r echo=FALSE, message=FALSE, JobApplyWhen}
+```{r JobApplyWhen}
 # JobApplyWhen
 fcc_data$JobApplyWhen <- order_factor(fcc_data$JobApplyWhen)
-g_job_apply_when <- grid.arrange(nice_bar_plot(fcc_data$JobApplyWhen, "When do you plan to start applying for jobs?", 11, 0))
+g_job_apply_when <-
+  grid.arrange(nice_bar_plot(fcc_data$JobApplyWhen,
+                             "When do you plan to start applying for jobs?",
+                             11, 0))
 # ggsave(file="JobApplyWhen.png", g_job_apply_when)
 ```
 
 #### <span style="color:#377bb5">Most of them want to work in an office, as opposed to remotely.</span>
 
-```{r echo=FALSE, message=FALSE, JobWherePref}
+```{r JobWherePref}
 # JobWherePref
 fcc_data$JobWherePref <- order_factor(fcc_data$JobWherePref)
-g_job_where_pref <- grid.arrange(nice_bar_plot(fcc_data$JobWherePref, "Would you prefer to work...", 11, 0))
+g_job_where_pref <-
+  grid.arrange(nice_bar_plot(fcc_data$JobWherePref,
+                             "Would you prefer to work...", 11, 0))
 # ggsave(file="JobWherePref.png", g_job_where_pref)
 ```
 
 #### <span style="color:#377bb5">And a majority are willing to relocate.</span>
 
-```{r echo=FALSE, message=FALSE, JobRelocateYesNo}
+```{r JobRelocateYesNo}
 # JobRelocateYesNo
 fcc_data$JobRelocateYesNo <- order_factor(fcc_data$JobRelocateYesNo)
-g_job_relo <- grid.arrange(nice_bar_plot(fcc_data$JobRelocateYesNo, "Are you willing to relocate for a job?", 12.3, 0))
+g_job_relo <-
+  grid.arrange(nice_bar_plot(fcc_data$JobRelocateYesNo,
+                             "Are you willing to relocate for a job?",
+                             12.3, 0))
 # ggsave(file="JobRelocateYesNo.png", g_job_relo)
 ```
 
 #### <span style="color:#377bb5">Most of them have not yet attended any in-person coding events.</span>
 
-```{r echo=FALSE, message=FALSE, CodeEvent}
+```{r CodeEvent}
 # LEARN TO USE LAZYEVAL TO MAKE A FUNCTION FOR THE NEXT THREE WRANGLING SEQUENCES (CodeEvent, Resource, Podcast) IN THE FUTURE
 
 # CodeEvent
 code_event_cols <- select(fcc_data, CodeEventBootcamp:CodeEventWorkshop)
 code_event_cols$CodeEventOther <-
   ifelse(!is.na(code_event_cols$CodeEventOther),
-         as.integer(1), NA)
+         as.integer(1),
+         NA)
 code_event_cols$answered <-
-  ifelse(rowSums(code_event_cols, na.rm = TRUE) != 0, 1, 0)
-num_answers_code_event <- sum(code_event_cols[,'answered'])
-code_event_sum <- code_event_cols %>% summarise_each(funs(sum(., na.rm=TRUE)))
-code_event_sum_long <- gather(code_event_sum, event, num_yes, CodeEventBootcamp:CodeEventWorkshop) %>%
+  ifelse(rowSums(code_event_cols, na.rm = TRUE) != 0,
+         1,
+         0)
+num_answers_code_event <- sum(code_event_cols[ , 'answered'])
+code_event_sum <-
+  code_event_cols %>%
+  summarise_each(funs(sum(., na.rm = TRUE)))
+code_event_sum_long <-
+  gather(code_event_sum, event, num_yes, CodeEventBootcamp:CodeEventWorkshop) %>%
   arrange(desc(num_yes)) %>%
   mutate(event = str_sub(event, nchar("CodeEvent") + 1, -1))
 code_event_factor <- as.data.frame(rep(code_event_sum_long$event,
                                        code_event_sum_long$num_yes))
 colnames(code_event_factor) <- "event"
 code_event_factor$event <- order_factor(code_event_factor$event)
-code_event_factor_lim <- code_event_factor %>% group_by(event) %>% filter(n() > 2)
-g_code_event <- grid.arrange(nice_bar_plot(droplevels(code_event_factor_lim$event), "Which types of in-person coding events have you attended?", 5.7, 5, num_answers_code_event))
+code_event_factor_lim <-
+  code_event_factor %>%
+  group_by(event) %>%
+  filter(n() > 2)
+g_code_event <-
+  grid.arrange(nice_bar_plot(droplevels(code_event_factor_lim$event),
+                             "Which types of in-person coding events have you attended?",
+                             5.7, 5, num_answers_code_event))
 # ggsave(file="CodeEvent.png", g_code_event)
 ```
 
 #### <span style="color:#377bb5">On average, they use at least three different resources for learning.</span>
 The developing data scientists/engineers use Coursera, edX, and Udacity more frequently than new coders in general. These companies are have wider subject area scopes than the some of the programming-specific resources listed.
 
-```{r echo=FALSE, message=FALSE, Resource}
+```{r Resource}
 # Resource
 # length(resource_factor$resource) / dim(fcc_data)[1]
 # 3.543344
 resource_cols <- select(fcc_data, ResourceBlogs:ResourceYouTube)
-resource_cols$ResourceOther <- ifelse(!is.na(resource_cols$ResourceOther), as.integer(1), NA)
-resource_cols$answered <- ifelse(rowSums(resource_cols, na.rm = TRUE) != 0, 1, 0)
-num_answers_resource <- sum(resource_cols[,'answered'])
-resource_sum <- resource_cols %>% summarise_each(funs(sum(., na.rm=TRUE)))
-resource_sum_long <- gather(resource_sum, resource, num_yes, ResourceBlogs:ResourceYouTube) %>%
+resource_cols$ResourceOther <- ifelse(!is.na(resource_cols$ResourceOther),
+                                      as.integer(1),
+                                      NA)
+resource_cols$answered <- ifelse(rowSums(resource_cols, na.rm = TRUE) != 0,
+                                 1,
+                                 0)
+num_answers_resource <- sum(resource_cols[ , 'answered'])
+resource_sum <-
+  resource_cols %>%
+  summarise_each(funs(sum(., na.rm = TRUE)))
+resource_sum_long <-
+  gather(resource_sum, resource, num_yes, ResourceBlogs:ResourceYouTube) %>%
   arrange(desc(num_yes)) %>%
   mutate(resource = str_sub(resource, nchar("Resource") + 1, -1))
 resource_factor <- as.data.frame(rep(resource_sum_long$resource,
                                        resource_sum_long$num_yes))
 colnames(resource_factor) <- "resource"
 resource_factor$resource <- order_factor(resource_factor$resource)
-resource_factor_lim <- resource_factor %>% group_by(resource) %>% filter(n() > 4)
-g_resource <- grid.arrange(nice_bar_plot(droplevels(resource_factor_lim$resource), "Which learning resources have you found helpful?", 4.3, 5, num_answers_resource))
+resource_factor_lim <-
+  resource_factor %>%
+  group_by(resource) %>%
+  filter(n() > 4)
+g_resource <-
+  grid.arrange(nice_bar_plot(droplevels(resource_factor_lim$resource),
+                             "Which learning resources have you found helpful?",
+                             4.3, 5, num_answers_resource))
 # ggsave(file="Resource.png", g_resource)
 ```
 
 #### <span style="color:#377bb5">Less than 20% listen to coding-related podcasts.</span>
 Of them, Partially Derivative, Becoming A Data Scientist, and Talking Machines are the only domain-specific podcasts noted.
 
-```{r echo=FALSE, message=FALSE, Podcast}
+```{r Podcast}
 # Podcast
 podcast_cols <- select(fcc_data, PodcastChangeLog:PodcastWebAhead)
-podcast_cols$PodcastOther <- ifelse(!is.na(podcast_cols$PodcastOther), as.integer(1), NA)
-podcast_cols$answered <- ifelse(rowSums(podcast_cols, na.rm = TRUE) != 0, 1, 0)
-num_answers_podcast <- sum(podcast_cols[,'answered'])
-podcast_sum <- podcast_cols %>% summarise_each(funs(sum(., na.rm=TRUE)))
-podcast_sum_long <- gather(podcast_sum, podcast, num_yes, PodcastChangeLog:PodcastWebAhead) %>%
+# Convert podcast answer to boolean
+podcast_cols$PodcastOther <- ifelse(!is.na(podcast_cols$PodcastOther),
+                                    as.integer(1),
+                                    NA)
+# If row is empty, the respondent didn't answer the podcast question
+podcast_cols$answered <- ifelse(rowSums(podcast_cols, na.rm = TRUE) != 0,
+                                1,
+                                0)
+num_answers_podcast <- sum(podcast_cols[ , 'answered'])
+# Wide format
+podcast_sum <-
+  podcast_cols %>%
+  summarise_each(funs(sum(., na.rm = TRUE)))
+# Long format
+podcast_sum_long <-
+  gather(podcast_sum, podcast, num_yes, PodcastChangeLog:PodcastWebAhead) %>%
   arrange(desc(num_yes)) %>%
   mutate(podcast = str_sub(podcast, nchar("Podcast") + 1, -1))
+# Factor format
 podcast_factor <- as.data.frame(rep(podcast_sum_long$podcast,
                                        podcast_sum_long$num_yes))
 colnames(podcast_factor) <- "podcast"
 podcast_factor$podcast <- order_factor(podcast_factor$podcast)
-g_podcast <- grid.arrange(nice_bar_plot(podcast_factor$podcast, "Which coding-related podcasts have you found helpful?", 4.3, 7, num_answers_podcast))
+g_podcast <-
+  grid.arrange(nice_bar_plot(podcast_factor$podcast,
+                             "Which coding-related podcasts have you found helpful?",
+                             4.3, 7, num_answers_podcast))
 # ggsave(file="podcast.png", g_podcast)
 ```
 
 #### <span style="color:#377bb5">Only 11 of the 954 respondents (1%) that attended a bootcamp in the full survey are pursuing data science/engineering.</span>
 6% of new coders from the full survey dataset have attended a bootcamp.
 
-```{r echo=FALSE, message=FALSE, Bootcamp}
+```{r Bootcamp}
 # Bootcamp
 fcc_data$BootcampName <- order_factor(fcc_data$BootcampName)
-g_bootcamp_name <- grid.arrange(nice_bar_plot(droplevels(fcc_data$BootcampName), "If you have attended a full-time coding bootcamp, which one?", 6, 0))
+g_bootcamp_name <-
+  grid.arrange(nice_bar_plot(droplevels(fcc_data$BootcampName),
+                             "If you have attended a full-time coding bootcamp, which one?",
+                             6, 0))
 # ggsave(file="BootcampName.png", g_bootcamp_name)
 ```
 
 ### Demographics and Socioeconomics
 #### <span style="color:#377bb5">Data-focused respondents represent 166 countries.</span>
 
-```{r echo=FALSE, message=FALSE, Country}
+```{r Country}
 # CountryCitizen
 # length(names(table(fcc_data$CountryCitizen)))
 # 166
 fcc_data$CountryCitizen <- order_factor(fcc_data$CountryCitizen)
 country_citizen_na_rm <- with(fcc_data, fcc_data[!is.na(CountryCitizen), ])
-country_citizen_na_rm_lim <- country_citizen_na_rm %>% group_by(CountryCitizen) %>% filter(n() > 4)
-g_country_citizen <- grid.arrange(nice_bar_plot(droplevels(country_citizen_na_rm_lim$CountryCitizen), "Which country are you a citizen of?", 3.2, 3, nrow(country_citizen_na_rm)))
+country_citizen_na_rm_lim <-
+  country_citizen_na_rm %>%
+  group_by(CountryCitizen) %>%
+  filter(n() > 4)
+g_country_citizen <-
+  grid.arrange(nice_bar_plot(droplevels(country_citizen_na_rm_lim$CountryCitizen),
+                             "Which country are you a citizen of?", 3.2, 3,
+                             nrow(country_citizen_na_rm)))
 # ggsave(file="CountryCitizen.png", g_country_citizen)
 ```
 
 #### <span style="color:#377bb5">More than 90% are from North America, Europe, and Asia.</span>
 
-```{r echo=FALSE, message=FALSE, Continent}
+```{r Continent}
 # ContinentCitizen
 fcc_data$ContinentCitizen <- order_factor(fcc_data$ContinentCitizen)
-g_continent_citizen <- grid.arrange(nice_bar_plot(droplevels(fcc_data$ContinentCitizen), "Which continent are you a citizen of?", 9, 4))
+g_continent_citizen <-
+  grid.arrange(nice_bar_plot(droplevels(fcc_data$ContinentCitizen),
+                             "Which continent are you a citizen of?", 9, 4))
 # ggsave(file="ContinentCitizen.png", g_continent_citizen)
 ```
 
 #### <span style="color:#377bb5">Their cities span a wide range of urbanization levels.</span>
 
-```{r echo=FALSE, message=FALSE, CityPopulation}
+```{r CityPopulation}
 # CityPopulation
 fcc_data$CityPopulation <- order_factor(fcc_data$CityPopulation)
-g_city_pop <- grid.arrange(nice_bar_plot(fcc_data$CityPopulation, "About how many people live in your city?", 11, 0))
+g_city_pop <-
+  grid.arrange(nice_bar_plot(fcc_data$CityPopulation,
+                             "About how many people live in your city?",
+                             11, 0))
 # ggsave(file="CityPopulation.png", g_city_pop)
 ```
 
 #### <span style="color:#377bb5">Just under a quarter of respondents are ethnic minorities in their country.</span>
 
-```{r echo=FALSE, message=FALSE, IsEthnicMinority}
+```{r IsEthnicMinority}
 # Ethnic Minority
 fcc_data$IsEthnicMinority <- order_factor(fcc_data$IsEthnicMinority)
-g_ethnic_minority <- grid.arrange(nice_bar_plot(fcc_data$IsEthnicMinority, "Are you an ethnic minority in your country?", 13, 0))
+g_ethnic_minority <-
+  grid.arrange(nice_bar_plot(fcc_data$IsEthnicMinority,
+                             "Are you an ethnic minority in your country?",
+                             13, 0))
 # ggsave(file="IsEthnicMinority.png", g_ethnic_minority)
 ```
 
 #### <span style="color:#377bb5">And nearly half are non-native English speakers. They grew up speaking one of 148 languages.</span>
 
-```{r echo=FALSE, message=FALSE, LanguageAtHome}
+```{r LanguageAtHome}
 # LanguageAtHome
 # length(names(table(fcc_data$LanguageAtHome)))
 # 148
 fcc_data$LanguageAtHome <- order_factor(fcc_data$LanguageAtHome)
 language_na_rm <- with(fcc_data, fcc_data[!is.na(LanguageAtHome), ])
-language_na_rm_lim <- language_na_rm %>% group_by(LanguageAtHome) %>% filter(n() > 5)
-g_language <- grid.arrange(nice_bar_plot(droplevels(language_na_rm_lim$LanguageAtHome), "Which language do you speak at home with your family?", 3.6, 3.6, nrow(language_na_rm)))
+language_na_rm_lim <-
+  language_na_rm %>% group_by(LanguageAtHome) %>%
+  filter(n() > 5)
+g_language <-
+  grid.arrange(nice_bar_plot(droplevels(language_na_rm_lim$LanguageAtHome),
+                             "Which language do you speak at home with your family?",
+                             3.6, 3.6, nrow(language_na_rm)))
 # ggsave(file="LanguageAtHome.png", g_language)
 ```
 
 #### <span style="color:#377bb5">67% have earned at least a bachelor’s degree.</span>
 Compared to 58% for the full new coder survey, the data-focused subset is more skewed towards graduate studies.
 
-```{r echo=FALSE, message=FALSE, SchoolDegree}
+```{r SchoolDegree}
 # SchoolDegree
 fcc_data$SchoolDegree <- order_factor(fcc_data$SchoolDegree)
-g_school_degree <- grid.arrange(nice_bar_plot(fcc_data$SchoolDegree, "What is the highest level of school you have completed?", 5.7, 5))
+g_school_degree <-
+  grid.arrange(nice_bar_plot(fcc_data$SchoolDegree,
+                             "What is the highest level of school you have completed?",
+                             5.7, 5))
 # ggsave(file="SchoolDegree.png", g_school_degree)
 ```
 
 #### <span style="color:#377bb5">They studied 425 different majors. Computer Science and Mathematics were the two most popular majors, and an additional 16% studied some form of engineering.</span>
 Diversity amongst majors is greater compared to the full survey, where Computer Science and Information Technology checked in at #1 and #2 with 17% and 5%, respectively.
 
-```{r echo=FALSE, message=FALSE, SchoolMajor}
+```{r SchoolMajor}
 # SchoolMajor
 # length(names(table(fcc_data$SchoolMajor)))
 # 425
 fcc_data$SchoolMajor <- order_factor(fcc_data$SchoolMajor)
 school_major_na_rm <- with(fcc_data, fcc_data[!is.na(SchoolMajor), ])
-school_major_na_rm_lim <- school_major_na_rm %>% group_by(SchoolMajor) %>% filter(n() > 5)
-g_school_major <- grid.arrange(nice_bar_plot(droplevels(school_major_na_rm_lim$SchoolMajor), "What was the main subject you studied in university?", 3, 0, nrow(school_major_na_rm)))
+school_major_na_rm_lim <-
+  school_major_na_rm %>%
+  group_by(SchoolMajor) %>%
+  filter(n() > 5)
+g_school_major <-
+  grid.arrange(nice_bar_plot(droplevels(school_major_na_rm_lim$SchoolMajor),
+                             "What was the main subject you studied in university?",
+                             3, 0, nrow(school_major_na_rm)))
 # ggsave(file="SchoolMajor.png", g_school_major)
 ```
 
 #### <span style="color:#377bb5">Just over one half are currently working.</span>
 Two thirds of new coders in general are currently working.
 
-```{r echo=FALSE, message=FALSE, EmploymentStatus}
+```{r EmploymentStatus}
 # EmploymentStatus
 fcc_data$EmploymentStatus <- order_factor(fcc_data$EmploymentStatus)
-g_employment_status <- grid.arrange(nice_bar_plot(fcc_data$EmploymentStatus, "Regarding employment status, are you currently...", 5.7, 8))
+g_employment_status <-
+  grid.arrange(nice_bar_plot(fcc_data$EmploymentStatus,
+                             "Regarding employment status, are you currently...",
+                             5.7, 8))
 # ggsave(file="EmploymentStatus.png", g_employment_status)
 ```
 
 #### <span style="color:#377bb5">A quarter work in the tech industry.</span>
 Employment fields are more spread compared to the full new coder survey, where 50% of respondents work in software development and IT.
 
-```{r echo=FALSE, message=FALSE, EmploymentField}
+```{r EmploymentField}
 # EmploymentField
 fcc_data$EmploymentField <- order_factor(fcc_data$EmploymentField)
-g_employment_field <- grid.arrange(nice_bar_plot(droplevels(fcc_data$EmploymentField), "Which field do you work in?", 4, 2))
+g_employment_field <-
+  grid.arrange(nice_bar_plot(droplevels(fcc_data$EmploymentField),
+                             "Which field do you work in?", 4, 2))
 # ggsave(file="EmploymentField.png", g_employment_field)
 ```
 
 #### <span style="color:#377bb5">Median current salary is $44k.</span>
 
-```{r echo=FALSE, message=FALSE, Income}
+```{r Income}
 # Income
 summary(fcc_data$Income, na.rm = TRUE)
 income.grob <- plot_title("What is your current salary in USD?")
-g_income <- grid.arrange(nice_histogram(fcc_data$Income, 10000, "Income"), top = income.grob)
+g_income <-
+  grid.arrange(nice_histogram(fcc_data$Income, 10000, "Income"),
+               top = income.grob)
 # ggsave(file="Income.png", g_income)
 ```
 
 #### <span style="color:#377bb5">And they expect to earn a median of $60k with their new data science/engineering skills.</span>
 With data science/engineering being [notoriously lucrative](http://www.wired.com/insights/2015/03/data-scientists-earning-salaries/) in 2016, some respondents are likely seeking higher wages.
 
-```{r echo=FALSE, message=FALSE, ExpectedEarning}
+```{r ExpectedEarning}
 # ExpectedEarning
 summary(fcc_data$ExpectedEarning, na.rm = TRUE)
-exp_earn.grob <- plot_title("About how much do you expect to earn per year at your first new job in USD?")
-g_exp_earn <- grid.arrange(nice_histogram(fcc_data$ExpectedEarning, 10000, "ExpectedEarning"), top = exp_earn.grob)
+exp_earn.grob <-
+  plot_title("About how much do you expect to earn per year at your first new job in USD?")
+g_exp_earn <-
+  grid.arrange(nice_histogram(fcc_data$ExpectedEarning, 10000, "ExpectedEarning"),
+               top = exp_earn.grob)
 # ggsave(file="ExpectedEarning.png", g_exp_earn)
 ```
 
 #### <span style="color:#377bb5">7% have served in their country’s military.</span>
 
-```{r echo=FALSE, message=FALSE, HasServedInMilitary}
+```{r HasServedInMilitary}
 # HasServedInMilitary
 has_served <- table(fcc_data$HasServedInMilitary)['1']
 names(has_served) = c("has served in military")
@@ -529,7 +685,7 @@ has_served / nrow(fcc_data)
 
 #### <span style="color:#377bb5">13% have children, and another 3% financially support an elderly or disabled relative. And one fifth of them are doing this without the help of a spouse.</span>
 
-```{r echo=FALSE, message=FALSE, Home_Life}
+```{r Home_Life}
 # HasChildren
 has_children <- table(fcc_data$HasChildren)['1']
 names(has_children) = c("has children")
@@ -551,7 +707,7 @@ no_spouse / sum(table(fcc_data$MaritalStatus))
 
 #### <span style="color:#377bb5">47% consider themselves underemployed (working a job that is below their education level).</span>
 
-```{r echo=FALSE, message=FALSE, IsUnderEmployed}
+```{r IsUnderEmployed}
 # IsUnderEmployed
 is_under_emp <- table(fcc_data$IsUnderEmployed)['1']
 names(is_under_emp) = c("is underemployed")
@@ -560,35 +716,44 @@ is_under_emp / sum(table(fcc_data$IsUnderEmployed))
 
 #### <span style="color:#377bb5">If they have a home mortgage, they owe an average of $194k.</span>
 
-```{r echo=FALSE, message=FALSE, HomeMortgageOwe}
+```{r HomeMortgageOwe}
 # HomeMortgageOwe
 summary(fcc_data$HomeMortgageOwe, na.rm = TRUE)
-home_mort_owe.grob <- plot_title("About how much do you owe on your home mortgage in USD?")
-g_home_mort_owe <- grid.arrange(nice_histogram(fcc_data$HomeMortgageOwe, 100000, "HomeMortgageOwe"), top = home_mort_owe.grob)
+home_mort_owe.grob <-
+  plot_title("About how much do you owe on your home mortgage in USD?")
+g_home_mort_owe <-
+  grid.arrange(nice_histogram(fcc_data$HomeMortgageOwe, 100000, "HomeMortgageOwe"),
+               top = home_mort_owe.grob)
 ```
 
 #### <span style="color:#377bb5">If they have student loans, they owe an average of $37k.</span>
 This average is $3k more than the full survey dataset.
 
-```{r echo=FALSE, message=FALSE, StudentDebtOwe_1}
+```{r StudentDebtOwe_1}
 # StudentDebtOwe
 summary(fcc_data$StudentDebtOwe, na.rm = TRUE)
-stud_debt_owe.grob <- plot_title("About how much do you owe in student debt loans in USD?")
-g_stud_debt_owe <- grid.arrange(nice_histogram(fcc_data$StudentDebtOwe, 10000, "StudentDebtOwe"), top = stud_debt_owe.grob)
+stud_debt_owe.grob <-
+  plot_title("About how much do you owe in student debt loans in USD?")
+g_stud_debt_owe <-
+  grid.arrange(nice_histogram(fcc_data$StudentDebtOwe, 10000, "StudentDebtOwe"),
+               top = stud_debt_owe.grob)
 ```
 
 Removing the million dollar outlier, the distribution is much more clear with the majority of debt under $75k. I hope that outlier is a joke.
 
-```{r echo=FALSE, message=FALSE, StudentDebtOwe_2}
+```{r StudentDebtOwe_2}
 # StudentDebtOwe without 1 million outlier (joke?)
-stud_debt_owe.grob <- plot_title("About how much do you owe in student debt loans in USD?")
+stud_debt_owe.grob <-
+  plot_title("About how much do you owe in student debt loans in USD?")
 stud_debt_owe_mil_rm <- with(fcc_data, fcc_data[StudentDebtOwe < 1000000, ])
-g_stud_debt_owe <- grid.arrange(nice_histogram(stud_debt_owe_mil_rm$StudentDebtOwe, 10000, "StudentDebtOwe"), top = stud_debt_owe.grob)
+g_stud_debt_owe <-
+  grid.arrange(nice_histogram(stud_debt_owe_mil_rm$StudentDebtOwe, 10000, "StudentDebtOwe"),
+               top = stud_debt_owe.grob)
 ```
 
 #### <span style="color:#377bb5">14% don’t yet have high speed internet at home.</span>
 
-```{r echo=FALSE, message=FALSE, HasHighSpdInternet}
+```{r HasHighSpdInternet}
 # HasHighSpdInternet
 has_hs_int <- table(fcc_data$HasHighSpdInternet)['1']
 names(has_hs_int) = c("has high speed internet")
@@ -597,7 +762,7 @@ has_hs_int / sum(table(fcc_data$HasHighSpdInternet))
 
 #### <span style="color:#377bb5">And 3% are currently receiving disability benefits from their government.</span>
 
-```{r echo=FALSE, message=FALSE, IsReceiveDiabilitiesBenefits}
+```{r IsReceiveDiabilitiesBenefits}
 # IsReceiveDiabilitiesBenefits
 disability_bfts <- table(fcc_data$IsReceiveDiabilitiesBenefits)['1']
 names(disability_bfts) = c("is receiving disability benefits")
@@ -642,8 +807,9 @@ The first five operations were performed so bar charts could be created, which w
 ## Bivariate Plots
 14974 respondents did not answer "*Data Scientist/Data Engineer*" to the question: "*Which one of these roles are you most interested in?*"
 
-```{r echo=FALSE, Non_Data_Science_Dataset}
-non_fcc_data <- with(fcc, fcc[JobRoleInterest != '  Data Scientist / Data Engineer', ])
+```{r Non_Data_Science_Dataset}
+non_fcc_data <-
+  with(fcc, fcc[JobRoleInterest != '  Data Scientist / Data Engineer', ])
 dim(non_fcc_data)
 ```
 
@@ -657,8 +823,12 @@ For the data science subset of the survey, all correlations are below 0.4, which
 
 The phenomena revealed are intuitive, but not groundbreaking: you tend to make more money when you are older, you tend to expect your next job to have a high salary if your current one does, and expensive schooling tends to lead to higher income levels.
 
-```{r echo=FALSE, Data_Science_Panel}
-data_panel <- pairs.panels(select(fcc_data, Age, MonthsProgramming, HoursLearning, Income, ExpectedEarning, StudentDebtOwe), hist.col="#377bb5", col="#FF4541")
+```{r Data_Science_Panel}
+# SPLOM for data scientist/engineer subset
+data_panel <-
+  pairs.panels(select(fcc_data, Age, MonthsProgramming, HoursLearning,
+                      Income, ExpectedEarning, StudentDebtOwe),
+               hist.col = "#377bb5", col = "#FF4541")
 ```
 
 For the non-data science subset of the survey, all correlations are again below 0.4. Most of the correlations are within 0.1 of the data science subset, except for three:
@@ -669,18 +839,22 @@ For the non-data science subset of the survey, all correlations are again below 
 
 Interesting. I bet the skew towards graduate studies for the data science subset plays a role here, where higher levels of student debt and higher salaries are expected.
 
-```{r echo=FALSE, Non_Data_Science_Panel}
-non_data_panel <- pairs.panels(select(non_fcc_data, Age, MonthsProgramming, HoursLearning, Income, ExpectedEarning, StudentDebtOwe), hist.col="#377bb5", col="#FF4541")
+```{r Non_Data_Science_Panel}
+# SPLOM for non-data scientist/engineer subset
+non_data_panel <-
+  pairs.panels(select(non_fcc_data, Age, MonthsProgramming, HoursLearning,
+                      Income, ExpectedEarning, StudentDebtOwe),
+               hist.col = "#377bb5", col = "#FF4541")
 ```
 
 Let's return to the data science subset of the survey. One of the strongest correlations is between age and current salary.
 
-```{r echo=FALSE, Age_Income}
+```{r Age_Income}
 # Pretty scatter plot
 nice_scatter <- function(xcol, ycol, xlab, ylab) {
   xdf <- as.data.frame(xcol)
   ydf <- as.data.frame(ycol)
-  df <- merge(xdf, ydf, by=0)
+  df <- merge(xdf, ydf, by = 0)
   #df <- df[order(as.numeric(df$Row.names)),]
   
   colnames(df)[2] <- "x"
@@ -688,34 +862,51 @@ nice_scatter <- function(xcol, ycol, xlab, ylab) {
   
   df_na_rm <- with(df, df[!is.na(x) & !is.na(y), ])
   
-  plot <- ggplot(aes(x=x, y=y), data=df_na_rm) +
-  geom_jitter(alpha=0.85, color="#377bb5") +
-  geom_smooth(method='lm', color="#FF4541") +
+  plot <- ggplot(aes(x = x, y = y), data = df_na_rm) +
+  geom_jitter(alpha = 0.85, color = "#377bb5") +
+  geom_smooth(method = 'lm', color = "#FF4541") +
   theme_minimal() +
-  labs(title="", x=paste("\n",xlab), y=paste(ylab,"\n")) +
-  theme(axis.text=element_text(size=10, color="#454545"),
-        axis.title=element_text(color="#454545"))
+  labs(title = "", x = paste("\n", xlab), y = paste(ylab, "\n")) +
+  theme(axis.text = element_text(size = 10, color = "#454545"),
+        axis.title = element_text(color = "#454545"))
   return(plot)
 }
 
-age_income.grob <- plot_title("What is your current salary in USD?\nHow old are you?")
-r_age_income <- paste("r =", as.character(round(with(fcc_data, cor.test(Age, Income, method = 'pearson'))$estimate, digits = 3)))
-g_age_income <- grid.arrange(nice_scatter(fcc_data$Age, fcc_data$Income, "Age", "Income") + annotate("text", x = 45, y = 100000, label = r_age_income, colour = "#FF4541"), top = age_income.grob)
+age_income.grob <-
+  plot_title("What is your current salary in USD?\nHow old are you?")
+r_age_income <-
+  paste("r =",
+        as.character(round(with(fcc_data,
+                                cor.test(Age, Income, method = 'pearson'))$estimate,
+                           digits = 3)))
+g_age_income <-
+  grid.arrange(nice_scatter(fcc_data$Age, fcc_data$Income, "Age", "Income") +
+               annotate("text", x = 45, y = 100000, label = r_age_income,
+                        colour = "#FF4541"), top = age_income.grob)
 ```
 
 The earnings vs. age trend isn't maintained as these individuals prepare to transition to the data science/engineering field. Younger individuals appear willing to capitalize on lucrative data-related salaries and older individuals appear willing to take a pay cut to enter their new field of choice.
 
-```{r echo=FALSE, Age_Exp_Earn}
-age_exp_earn.grob <- plot_title("About how much do you expect to earn per year at your first new job in USD?\nHow old are you?")
-r_age_exp_earn <- paste("r =", as.character(round(with(fcc_data, cor.test(Age, ExpectedEarning, method = 'pearson'))$estimate, digits = 3)))
-g_age_income <- grid.arrange(nice_scatter(fcc_data$Age, fcc_data$ExpectedEarning, "Age", "ExpectedEarning") + annotate("text", x = 59.5, y = 100000, label = r_age_exp_earn, colour = "#FF4541"), top = age_exp_earn.grob)
+```{r Age_Exp_Earn}
+age_exp_earn.grob <-
+  plot_title("About how much do you expect to earn per year at your first new job in USD?\nHow old are you?")
+r_age_exp_earn <-
+  paste("r =",
+        as.character(round(with(fcc_data,
+                                cor.test(Age, ExpectedEarning, method = 'pearson'))$estimate,
+                           digits = 3)))
+g_age_income <-
+  grid.arrange(nice_scatter(fcc_data$Age, fcc_data$ExpectedEarning,
+                            "Age", "ExpectedEarning") +
+                 annotate("text", x = 59.5, y = 100000, label = r_age_exp_earn,
+                          colour = "#FF4541"), top = age_exp_earn.grob)
 ```
 
 **The variables on the x-axis in the boxplots below are in descending order in terms of number of respondents.**
 
 Since two agender, three genderqueer, and two trans respondents exist and males represent 75% of the subset, we can't say much about who is most dedicated to learning. The medians for males and females (10 hours per week) are identical.
 
-```{r echo=FALSE, warning=FALSE, Hours_Learn_Gender}
+```{r Hours_Learn_Gender}
 # Pretty boxplot
 nice_boxplot <- function(df, xlab, ylab, questions, hue) {
   colnames(df)[1] <- "x"
@@ -725,64 +916,82 @@ nice_boxplot <- function(df, xlab, ylab, questions, hue) {
   colnames(df_na_rm)[1] <- "x"
   colnames(df_na_rm)[2] <- "y"
   
-  plot <- ggplot(df_na_rm, aes(x=x, y=y, fill=x)) +
+  plot <- ggplot(df_na_rm, aes(x = x, y = y, fill = x)) +
     geom_boxplot() +
     theme_minimal() +
-    labs(title="", x=paste("\n",xlab), y=paste(ylab,"\n")) +
-    theme(axis.text=element_text(size=10, color="#454545"),
-          axis.title=element_text(color="#454545"),
-          legend.position="none") +
-    scale_fill_discrete(h=hue)
+    labs(title = "", x = paste("\n", xlab), y = paste(ylab, "\n"), fill = "# of Respondents\n(Descending)") +
+    theme(axis.text = element_text(size = 10, color = "#454545"),
+          axis.title = element_text(color = "#454545")) +
+    scale_fill_discrete(h = hue) +
+    stat_summary(fun.y = mean, geom = "point", shape = 4)
   
   title.grob <- plot_title(questions)
-  plot <- arrangeGrob(plot, top=title.grob)
+  plot <- arrangeGrob(plot, top = title.grob)
   return(plot)
 }
 
 # Hours Learning by Gender
 fcc_data$Gender <- order_factor(fcc_data$Gender, "desc")
-g_hours_learn_gender <- grid.arrange(nice_boxplot(select(fcc_data, Gender, HoursLearning), "Gender", "HoursLearning", "About how many hours do you spend learning each week?\nWhat is your gender?", c(0,30)))
+g_hours_learn_gender <-
+  grid.arrange(nice_boxplot(select(fcc_data, Gender, HoursLearning),
+                            "Gender", "HoursLearning",
+                            "About how many hours do you spend learning each week?\nWhat is your gender?",
+                            c(0, 30)))
 with(fcc_data, by(HoursLearning, Gender, summary))
 ```
 
 The medians for five of the six continents are identical (10 hours per week). The bulk of Asian students appear most dedicated to learning, with their 75th percentile approaching 25 hours per week. Africa may be suffering from a small sample size issue with only 11 respondents.
 
-```{r echo=FALSE, warning=FALSE, Hours_Learn_Continent}
+```{r Hours_Learn_Continent, fig.width = 8}
 # Hours Learning by ContinentCitizen
 fcc_data$ContinentCitizen <- order_factor(fcc_data$ContinentCitizen, "desc")
-g_hours_learn_continent <- grid.arrange(nice_boxplot(select(fcc_data, ContinentCitizen, HoursLearning), "ContinentCitizen", "HoursLearning", "About how many hours do you spend learning each week?\nWhich continent are you a citizen of?", c(240,270)))
+g_hours_learn_continent <-
+  grid.arrange(nice_boxplot(select(fcc_data, ContinentCitizen, HoursLearning),
+                            "ContinentCitizen", "HoursLearning",
+                            "About how many hours do you spend learning each week?\nWhich continent are you a citizen of?",
+                            c(240, 270)))
 with(fcc_data, by(HoursLearning, ContinentCitizen, summary))
 ```
 
 Again, male and female medians are identical. They both expect around a $60k data science/engineering salary. There is a gap in first quartiles, however, as females expect $10k more than males.
 
-```{r echo=FALSE, warning=FALSE, Exp_Earn_Gender}
+```{r Exp_Earn_Gender}
 # Expected Earning by Gender
-g_exp_earn_gender <- grid.arrange(nice_boxplot(select(fcc_data, Gender, ExpectedEarning), "Gender", "ExpectedEarning", "About how much do you expect to earn per year at your first new job in USD?\nWhat is your gender?", c(0,30)))
+g_exp_earn_gender <-
+  grid.arrange(nice_boxplot(select(fcc_data, Gender, ExpectedEarning),
+                            "Gender", "ExpectedEarning",
+                            "About how much do you expect to earn per year at your first new job in USD?\nWhat is your gender?",
+                            c(0, 30)))
 with(fcc_data, by(ExpectedEarning, Gender, summary))
 ```
 
-Whoa. Expected earning by continent varies way more compared to the above three boxplots. Most North Americans expect the highest range of salaries, with their interquartile range spanning from $55k to $80k. The 75th percentile for Europe is $5k below North America's 25th percentile. I wonder if some European respondents forgot to convert from pounds to USD. Expectations in Asia are all over the board.
+Whoa. Expected earning by continent varies way more compared to the above three boxplots. Most North Americans expect the highest range of salaries, with their interquartile range spanning from $55k to $80k. The 75th percentile for Europe is $5k below North America's 25th percentile. I wonder if some European respondents forgot to convert from pounds or euros to USD. Expectations in Asia are all over the board.
 
 A lot of these individuals are using similar, if not the same, online educational resources. Labour market economics can be cruel.
 
-```{r echo=FALSE, warning=FALSE, Exp_Earn_Continent}
+```{r Exp_Earn_Continent, fig.width = 8}
 # Expected Earning by ContinentCitizen
-g_exp_earn_continent <- grid.arrange(nice_boxplot(select(fcc_data, ContinentCitizen, ExpectedEarning), "ContinentCitizen", "ExpectedEarning", "About how much do you expect to earn per year at your first new job in USD?\nWhich continent are you a citizen of?", c(240,270)))
+g_exp_earn_continent <-
+  grid.arrange(nice_boxplot(select(fcc_data, ContinentCitizen, ExpectedEarning),
+                            "ContinentCitizen",
+                            "ExpectedEarning",
+                            "About how much do you expect to earn per year at your first new job in USD?\nWhich continent are you a citizen of?",
+                            c(240, 270)))
 with(fcc_data, by(ExpectedEarning, ContinentCitizen, summary))
 ```
 
 Salary expectations don't vary much depending on hours dedicated to learning. Other than those who dedicate 40+ hours per week, an expected salary in the $40k to $80k range is standard.
 
-```{r echo=FALSE, warning=FALSE, Exp_Earn_Hours_Learn}
+```{r Exp_Earn_Hours_Learn}
 # Expected Earning by Hours Learning
-fcc_data$hours_learning.bucket <- cut(fcc_data$HoursLearning,
-                                      breaks = c(0, 10, 20, 40, 80))
-stud_debt_owe_mil_rm$hours_learning.bucket <- cut(stud_debt_owe_mil_rm$HoursLearning,
-                                      breaks = c(0, 10, 20, 40, 80))
-g_exp_earn_hours_learning <- grid.arrange(nice_boxplot(select(fcc_data, hours_learning.bucket, ExpectedEarning), "HoursLearning", "ExpectedEarning", "About how much do you expect to earn per year at your first new job in USD?\nAbout how many hours do you spend learning each week?", c(135,175)))
-table(fcc_data$hours_learning.bucket)
-with(fcc_data, by(ExpectedEarning, hours_learning.bucket, summary))
+g_exp_earn_hours_learning <-
+  grid.arrange(nice_boxplot(select(fcc_data, HoursLearningBucket,
+                                   ExpectedEarning),
+                            "HoursLearning", "ExpectedEarning",
+                            "About how much do you expect to earn per year at your first new job in USD?\nAbout how many hours do you spend learning each week?",
+                            c(115, 195)))
+table(fcc_data$HoursLearningBucket)
+with(fcc_data, by(ExpectedEarning, HoursLearningBucket, summary))
 ```
 
 ## Bivariate Analysis
@@ -809,8 +1018,8 @@ Current salary and expected salary for an individual's first data-related job ha
 
 Let's dig deeper into the two strongest correlations, income against expected salary and student debt owed, using multivariate analysis.
 
-```{r echo=FALSE, Multivariate_Plots}
-nice_scatter_facet <- function(df, xlab, ylab, flab, hline, vline, questions, hue) {
+```{r Multivariate_Plots}
+nice_scatter_mv <- function(df, xlab, ylab, flab, hline, vline, questions, hue) {
   colnames(df)[1] <- "x"
   colnames(df)[2] <- "y"
   colnames(df)[3] <- "f"
@@ -820,62 +1029,215 @@ nice_scatter_facet <- function(df, xlab, ylab, flab, hline, vline, questions, hu
   colnames(df_na_rm)[2] <- "y"
   colnames(df)[3] <- "f"
   
-  plot <- ggplot(aes(x = x/1000, y = y/1000),
+  plot <- ggplot(aes(x = x / 1000, y = y / 1000),
        data = df_na_rm) +
   geom_jitter(aes(colour = f)) +
-  geom_hline(yintercept=hline, colour="#454545") +
-  geom_vline(xintercept=vline, colour="#454545") +
+  geom_hline(yintercept = hline, colour = "#454545") +
+  geom_vline(xintercept = vline, colour = "#454545") +
   theme_minimal() +
-  scale_colour_discrete(h=hue) +
-  facet_wrap(~f) +
-  labs(title="", x=paste("\n",xlab), y=paste(ylab,"\n"), colour=flab) +
-  theme(axis.text=element_text(size=10, color="#454545"),
-        axis.title=element_text(color="#454545"),
-        legend.position="none")
+  scale_colour_discrete(h = hue) +
+  labs(title = "", x = paste("\n", xlab), y = paste(ylab, "\n"), colour = flab) +
+  theme(axis.text = element_text(size = 10, color = "#454545"),
+        axis.title = element_text(color = "#454545"))
   
   title.grob <- plot_title(questions)
-  plot <- arrangeGrob(plot, top=title.grob)
+  plot <- arrangeGrob(plot, top = title.grob)
   return(plot)
 }
+```
 
+The male/female wage gap is evident through each gender's presence above the $100k lines. There aren't enough data points for genderqueer and trans individuals to draw conclusions.
+
+```{r Exp_Earn_Income_Gender}
 # Expected Earning by Income by Gender
-g_exp_earn_income_gender <- grid.arrange(nice_scatter_facet(select(fcc_data, Income, ExpectedEarning, Gender), "Income (Thousands)", "ExpectedEarning (Thousands)", "Gender", 100, 100, "About how much do you expect to earn per year at your first new job in USD?\nWhat is your current salary in USD?\nWhat is your gender?", c(0,150)))
+fcc_data$Gender <-
+  factor(fcc_data$Gender,
+         levels = c("male", "agender", "genderqueer", "trans", "female"))
 
+g_exp_earn_income_gender <-
+  grid.arrange(nice_scatter_mv(select(fcc_data, Income,
+                                         ExpectedEarning, Gender),
+                               "Income (k)",
+                               "ExpectedEarning (k)",
+                               "Gender",
+                               100, 100,
+                               "About how much do you expect to earn per year at your first new job in USD?\nWhat is your current salary in USD?\nWhat is your gender?",
+                               c(0, 225)))
+```
+
+Ethnic minorities appear to be optimistic about the changing diversity landscape via their expected salaries. They have a notable presence above the $100k expected earning line, but not the $100k current salary line.
+
+```{r Exp_Earn_Income_EM}
 # Expected Earning by Income by EthnicMinority
-#hoping the diversity landscape is changing
-g_exp_earn_income_em <- grid.arrange(nice_scatter_facet(select(fcc_data, Income, ExpectedEarning, IsEthnicMinority), "Income (Thousands)", "ExpectedEarning (Thousands)", "IsEthnicMinority", 100, 100, "About how much do you expect to earn per year at your first new job in USD?\nWhat is your current salary in USD?\nAre you an ethnic minority in your country?", c(0,150)))
+fcc_data$IsEthnicMinority <- order_factor(fcc_data$IsEthnicMinority, "desc")
+g_exp_earn_income_em <-
+  grid.arrange(nice_scatter_mv(select(fcc_data, Income, ExpectedEarning,
+                                         IsEthnicMinority),
+                               "Income (k)",
+                               "ExpectedEarning (k)",
+                               "IsEthnicMinority",
+                               100, 100,
+                               "About how much do you expect to earn per year at your first new job in USD?\nWhat is your current salary in USD?\nAre you an ethnic minority in your country?",
+                               c(0, 150)))
+```
 
+Current salaries and student debt levels for graduate students are relatively high, as expected. Bachelor's degrees appear to have the worst student debt/current salary balance.
+
+```{r Stud_Debt_Income_Degree}
 # StudentDebtOwe by Income by SchoolDegree
-stud_debt_owe_mil_rm$SchoolDegree <- factor(stud_debt_owe_mil_rm$SchoolDegree,
-                                            levels = c("Ph.D.",
-                                                       "professional degree (MBA, MD, JD, etc.)",
-                                                       "master's degree (non-professional)",
-                                                       "bachelor's degree",
-                                                       "associate's degree",
-                                                       "some college credit, no degree",
-                                                       "trade, technical, or vocational training",
-                                                       "high school diploma or equivalent (GED)",
-                                                       "some high school",
-                                                       "no high school (secondary school)"))
+stud_debt_owe_mil_rm$SchoolDegree <-
+  factor(stud_debt_owe_mil_rm$SchoolDegree,
+         levels = c("Ph.D.",
+                    "professional degree (MBA, MD, JD, etc.)",
+                    "master's degree (non-professional)",
+                    "bachelor's degree",
+                    "associate's degree",
+                    "some college credit, no degree",
+                    "trade, technical, or vocational training",
+                    "high school diploma or equivalent (GED)",
+                    "some high school",
+                    "no high school (secondary school)"))
 
-stud_debt_owe_mil_rm$SchoolDegree <- revalue(stud_debt_owe_mil_rm$SchoolDegree, c("professional degree (MBA, MD, JD, etc.)"="professional degree\n(MBA, MD, JD, etc.)", "master's degree (non-professional)"="master's degree\n(non-professional)", "some college credit, no degree"="some college credit,\nno degree"))
-g_stud_debt_income_em <- grid.arrange(nice_scatter_facet(select(stud_debt_owe_mil_rm, Income, StudentDebtOwe, SchoolDegree), "Income (Thousands)", "StudentDebtOwe (Thousands)", "SchoolDegree", 25, 50, "About how much do you owe in student debt loans in USD?\nWhat is your current salary in USD?\nWhat is the highest level of school you have completed?", c(150,300)))
+stud_debt_owe_mil_rm$SchoolDegree <-
+  revalue(stud_debt_owe_mil_rm$SchoolDegree,
+          c("professional degree (MBA, MD, JD, etc.)" =
+            "professional degree\n(MBA, MD, JD, etc.)",
+            "master's degree (non-professional)" =
+            "master's degree\n(non-professional)",
+            "some college credit, no degree" =
+            "some college credit,\nno degree"))
+g_stud_debt_income_degree <-
+  grid.arrange(nice_scatter_mv(select(stud_debt_owe_mil_rm, Income,
+                                         StudentDebtOwe, SchoolDegree),
+                               "Income (k)",
+                               "StudentDebtOwe (k)",
+                               "SchoolDegree",
+                               25, 50,
+                               "About how much do you owe in student debt loans in USD?\nWhat is your current salary in USD?\nWhat is the highest level of school you have completed?",
+                               c(0, 225)))
+```
 
-g_stud_debt_income_hl <- grid.arrange(nice_scatter_facet(select(stud_debt_owe_mil_rm, Income, StudentDebtOwe, hours_learning.bucket), "Income (Thousands)", "StudentDebtOwe (Thousands)", "HoursLearning", 25, 50, "About how much do you owe in student debt loans in USD?\nWhat is your current salary in USD?\nAbout how many hours do you spend learning each week?", c(150,300)))
+It appears that the student debt remaining vs. current salary relationship doesn't differ much across hours dedicated to learning brackets.
+
+```{r Stud_Debt_Income_Hours_Learn}
+g_stud_debt_income_hl <-
+  grid.arrange(nice_scatter_mv(select(stud_debt_owe_mil_rm, Income,
+                                         StudentDebtOwe,
+                                         HoursLearningBucket),
+                               "Income (k)",
+                               "StudentDebtOwe (k)",
+                               "HoursLearning",
+                               25, 50,
+                               "About how much do you owe in student debt loans in USD?\nWhat is your current salary in USD?\nAbout how many hours do you spend learning each week?",
+                               c(0, 225)))
 ```
 
 ## Multivariate Analysis
 
-#### Talk about some of the relationships you observed in this part of the investigation. Were there features that strengthened each other in terms of looking at your feature(s) of interest?
+#### Were there any interesting or surprising interactions between features?
+It's interesting that females expect their next salary to be as relatively low as their current one, but ethnic minorities expect a higher salary.
+
+I'm also surprised more individuals with high levels of student debt aren't dedicating 20+ hours to learning each week. I bet the current jobs of the individuals in lower time brackets are preventing them from increasing their pace.
+
+The affordability of quality education online is a huge reason why I'm in the 40-80 hour bracket for [my personalized data science master's degree](https://medium.com/@venturidb/i-dropped-out-of-school-to-create-my-own-data-science-master-s-here-s-my-curriculum-1b400dcee412#.kl5dis6bb).
+
+------
+
+## Final Plots
+
+```{r Final_Plots}
+nice_scatter_mv_facet <- function(df, xlab, ylab, flab, hline, vline, questions, hue) {
+  colnames(df)[1] <- "x"
+  colnames(df)[2] <- "y"
+  colnames(df)[3] <- "f"
+  
+  df_na_rm <- with(df, df[!is.na(x) & !is.na(y) & !is.na(f), ])
+  colnames(df_na_rm)[1] <- "x"
+  colnames(df_na_rm)[2] <- "y"
+  colnames(df)[3] <- "f"
+  
+  plot <- ggplot(aes(x = x / 1000, y = y / 1000),
+       data = df_na_rm) +
+  geom_jitter(aes(colour = f)) +
+  geom_hline(yintercept = hline, colour = "#454545") +
+  geom_vline(xintercept = vline, colour = "#454545") +
+  theme_minimal() +
+  facet_wrap(~ f) +
+  scale_colour_discrete(h = hue) +
+  labs(title = "", x = paste("\n", xlab), y = paste(ylab, "\n"), colour = flab) +
+  theme(axis.text = element_text(size = 10, color = "#454545"),
+        axis.title = element_text(color = "#454545"),
+        legend.position = "none")
+  
+  title.grob <- plot_title(questions)
+  plot <- arrangeGrob(plot, top = title.grob)
+  return(plot)
+}
+```
+
+#### Plot One
+
+```{r Final_Plot_1, fig.height = 7}
+exp_earn_income_gender_mf <- filter(select(fcc_data, Income, ExpectedEarning, Gender), Gender == "male" | Gender == "female")
+exp_earn_income_g_em <- grid.arrange(nice_scatter_mv_facet(exp_earn_income_gender_mf,
+                                    "Income (k)",
+                                    "ExpectedEarning (k)",
+                                    "Gender",
+                                    100, 100,
+                                    "About how much do you expect to earn per year at your first new job in USD?\nWhat is your current salary in USD?\nWhat is your gender?",
+                                    c(0, 150)),
+             nice_scatter_mv_facet(select(fcc_data, Income, ExpectedEarning,
+                                         IsEthnicMinority),
+                                     "Income (k)",
+                                     "ExpectedEarning (k)",
+                                     "IsEthnicMinority",
+                                     100, 100,
+                                     "Are you an ethnic minority in your country?",
+                                     c(0, 150)))
+```
+
+#### Description One
 
 Males and non-minorities appear most frequently above the $100k lines. The wage gap is evident in current salary for both females and minorities. Though females appear to expect lower salaries than men, minorities are better represented above the $100k expected earning line.
 
+Higher dispersion exists for the majority demographic in both cases. The relationship between expected and current salary is much stronger for the minority demographic.
+
+#### Plot Two
+
+```{r Final_Plot_2}
+g_stud_debt_income_degree_facet <-
+  grid.arrange(nice_scatter_mv_facet(select(stud_debt_owe_mil_rm, Income,
+                                         StudentDebtOwe, SchoolDegree),
+                                    "Income (k)",
+                                    "StudentDebtOwe (k)",
+                                    "SchoolDegree",
+                                    25, 50,
+                                    "About how much do you owe in student debt loans in USD?\nWhat is your current salary in USD?\nWhat is the highest level of school you have completed?",
+                                    c(150, 300)))
+```
+
+#### Description Two
+
 The majority of individuals who pursued post-secondary education are above the $25k student debt remaining line. Compared to the data science/engineering subset, the lack of correlation between student debt and current salary for the full survey dataset now makes sense. The aforementioned skew towards graduate studies appears to instead be a skew towards post-secondary studies in general, however.
 
-#### Were there any interesting or surprising interactions between features?
-I'm a bit surprised that more individuals with high levels of student debt aren't dedicating 20+ hours to learning each week. I bet the current jobs of the individuals in lower time brackets are preventing them from increasing their pace.
+#### Plot Three
 
-The affordability of quality education online is a huge reason why I'm in the 40-80 hour bracket for [my personalized data science master's degree](https://medium.com/@venturidb/i-dropped-out-of-school-to-create-my-own-data-science-master-s-here-s-my-curriculum-1b400dcee412#.kl5dis6bb).
+```{r Final_Plot_3}
+g_stud_debt_income_hl_facet <-
+  grid.arrange(nice_scatter_mv_facet(select(stud_debt_owe_mil_rm, Income,
+                                         StudentDebtOwe,
+                                         HoursLearningBucket),
+                                    "Income (k)",
+                                    "StudentDebtOwe (k)",
+                                    "HoursLearning",
+                                    25, 50,
+                                    "About how much do you owe in student debt loans in USD?\nWhat is your current salary in USD?\nAbout how many hours do you spend learning each week?",
+                                    c(150, 300)))
+```
+
+#### Description Three
+
+The highest proportion of individuals above the $50k current salary line belongs to the 0-10 hours dedicated to learning bracket. Proportions of individuals above the $25k student debt remaining line are similar across brackets.
 
 ------
 
@@ -894,8 +1256,12 @@ Developing data scientists and engineers are slightly different than new coders 
 - Fewer work in the tech industry.
 - They have more student debt.
 
-The two datasets do share plenty of common trends. Demographics are similar. Most don't use podcasts or attend events. 
+The two datasets do share plenty of common trends. Demographics are similar. Most are willing to relocate. Most don't use podcasts or attend events yet.
 
-Diversity is still an issue in the workplace, as reflected in current and expected salary for females and ethnic minorites. Student debt owed matches well with current salary and higher levels of education. Most people aren't replacing the traditional college/university route with fulltime online education...yet.
+Diversity is still an issue in the workplace, as reflected in current and expected salary for females and ethnic minorities. Student debt owed matches well with current salary and higher levels of education. Most people aren't replacing the traditional college/university route with fulltime online education...yet.
+
+The successes of this exploration are largely due to the detailed design of the Free Code Camp survey.
+
+The main struggle I encountered in this exploration was the lack of a main feature of interest, like the diamond dataset's price variable. It would be awesome if we could survey the same respondents in a decade or so. We could combine career earnings and career satisfaction with the 2016 survey's results to build a predictive model to estimate career success.
 
 These are the people who are learning data science and engineering. It is clear that free, self-paced learning resources are important.
