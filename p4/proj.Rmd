@@ -771,7 +771,7 @@ disability_bfts / sum(table(fcc_data$IsReceiveDiabilitiesBenefits))
 
 ## Univariate Analysis
 
-#### What is/are the main feature(s) of interest in your dataset?
+### What is/are the main feature(s) of interest in your dataset?
 
 There isn't really a singular main feature of interest in the "2016 New Coder Survey" dataset. There are several smaller features, but nothing stands out like diamond price and its relationship to carat weight, cut, colour, etc. in the [R diamonds dataset](http://docs.ggplot2.org/0.9.3.1/diamonds.html), for example. The diamonds dataset covers two time periods - the existence of the diamond pre-sale and post-sale, whereas the survey dataset only covers a single period - the early stages of an individual's coding care.
 
@@ -779,17 +779,17 @@ If we could fast-forward several years and survey the same respondents, the main
 
 If the survey asked "*Are you already working as a data scientist/engineer?*" instead of "*Are you already working as a software developer?*", that variable might also be a main feature of interest. Unfortunately, the answer to that question cannot be extracted from the existing variables.
 
-#### What other features in the dataset do you think will help support your investigation into your feature(s) of interest?
+### What other features in the dataset do you think will help support your investigation into your feature(s) of interest?
 
 Though there isn't a main feature of interest, we can separate the respondents who did not answer "*Data Scientist/Data Engineer*" to the job role interest question (as we already have for those who did) and compare the two subsets using bivariate and multivariate plots.
 
 I will also explore two smaller features, how many hours dedicated to learning per week and expected salary, using bivariate and multivariate plots.
 
-#### Of the features you investigated, were there any unusual distributions?
+### Of the features you investigated, were there any unusual distributions?
 
 There was a lot of long tail data. Most did not require transformation to view the details of the distribution. Programming experience was *really* positively skewed, however, and required log transformation to visually compare those with 3 months experience to those with 25 years.
 
-#### Did you perform any operations on the data to tidy, adjust, or change the form of the data? If so, why did you do this?
+### Did you perform any operations on the data to tidy, adjust, or change the form of the data? If so, why did you do this?
 
 The following operations were performed to tidy, adjust, or change the form of the data:
 
@@ -996,7 +996,7 @@ with(fcc_data, by(ExpectedEarning, HoursLearningBucket, summary))
 
 ## Bivariate Analysis
 
-#### How did the feature(s) of interest vary with other features in the dataset?
+### How did the feature(s) of interest vary with other features in the dataset?
 
 The data science/engineering subset of the survey is largely similar to the non-data science/engineering subset, except for three correlations involving  student debt owed. I bet this has something to do with the skew towards graduate studies for the data-focused subset.
 
@@ -1006,7 +1006,7 @@ Hours dedicated to learning per week doesn't appear to vary much with gender or 
 
 Expected earning varies strongly by continent. Females also appear to have a higher bottom line for expected salary than males. Those who dedicate more than 40 hours a week to learning data science/engineering appear to expect higher salaries as well.
 
-#### What was the strongest relationship you found?
+### What was the strongest relationship you found?
 
 For both subsets of the survey, there is no exceedingly strong relationship. All correlations are below 0.4.
 
@@ -1134,7 +1134,7 @@ g_stud_debt_income_hl <-
 
 ## Multivariate Analysis
 
-#### Were there any interesting or surprising interactions between features?
+### Were there any interesting or surprising interactions between features?
 It's interesting that females expect their next salary to be as relatively low as their current one, but ethnic minorities expect a higher salary.
 
 I'm also surprised more individuals with high levels of student debt aren't dedicating 20+ hours to learning each week. I bet the current jobs of the individuals in lower time brackets are preventing them from increasing their pace.
@@ -1175,7 +1175,7 @@ nice_scatter_mv_facet <- function(df, xlab, ylab, flab, hline, vline, questions,
 }
 ```
 
-#### Plot One
+### Plot One
 
 ```{r Final_Plot_1, fig.height = 7}
 exp_earn_income_gender_mf <- filter(select(fcc_data, Income, ExpectedEarning, Gender), Gender == "male" | Gender == "female")
@@ -1196,13 +1196,13 @@ exp_earn_income_g_em <- grid.arrange(nice_scatter_mv_facet(exp_earn_income_gende
                                      c(0, 150)))
 ```
 
-#### Description One
+### Description One
 
 Males and non-minorities appear most frequently above the $100k lines. The wage gap is evident in current salary for both females and minorities. Though females appear to expect lower salaries than men, minorities are better represented above the $100k expected earning line.
 
 Higher dispersion exists for the majority demographic in both cases. The relationship between expected and current salary is much stronger for the minority demographic.
 
-#### Plot Two
+### Plot Two
 
 ```{r Final_Plot_2}
 g_stud_debt_income_degree_facet <-
@@ -1216,11 +1216,11 @@ g_stud_debt_income_degree_facet <-
                                     c(150, 300)))
 ```
 
-#### Description Two
+### Description Two
 
 The majority of individuals who pursued post-secondary education are above the $25k student debt remaining line. Compared to the data science/engineering subset, the lack of correlation between student debt and current salary for the full survey dataset now makes sense. The aforementioned skew towards graduate studies appears to instead be a skew towards post-secondary studies in general, however.
 
-#### Plot Three
+### Plot Three
 
 ```{r Final_Plot_3}
 g_stud_debt_income_hl_facet <-
@@ -1235,7 +1235,7 @@ g_stud_debt_income_hl_facet <-
                                     c(150, 300)))
 ```
 
-#### Description Three
+### Description Three
 
 The highest proportion of individuals above the $50k current salary line belongs to the 0-10 hours dedicated to learning bracket. Proportions of individuals above the $25k student debt remaining line are similar across brackets.
 
