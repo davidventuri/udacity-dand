@@ -793,7 +793,7 @@ There was a lot of long tail data. Most did not require transformation to view t
 
 The following operations were performed to tidy, adjust, or change the form of the data:
 
-- Each code event, resource, and podcast is represented by a boolean variable. I summed the number of yeses for event event/resource/podcast, which created a single row of sums. I used [tidyr](https://github.com/hadley/tidyr)'s ```gather()``` to transform the data from a wide format to a long format. Then I transformed the long data into factor format, using the replicate function with the number of yeses as the multiplier. This data is used to create each category's bar chart. ![wide to long to factor formats](http://i.imgur.com/ICL9lkQ.png)
+- Each code event, resource, and podcast is represented by a boolean variable. I summed the number of yeses for event event/resource/podcast, which created a single row of sums. I used [tidyr](https://github.com/hadley/tidyr)'s ```gather()``` to transform the data from a wide format to a long format. Then I transformed the long data into factor format, using the [replicate function](https://stat.ethz.ch/R-manual/R-devel/library/base/html/rep.html) with the number of yeses as the multiplier. This data is used to create each category's bar chart. ![wide to long to factor formats](http://i.imgur.com/ICL9lkQ.png)
 - After subselecting all code event, resource, and podcast columns separately, I created a new boolean variable named *answered*, where 1 represents using at least one event/resource/podcast and 0 represents using none. The *answered* sum total for each of the three categories is used in the "*x out of 646 developing data scientists/engineers answered*" label at the bottom of the bar charts above. ![label](http://i.imgur.com/j04JNl5.png)
 - I separated data science/engineering-related podcasts in the user-inputted PodcastOther category into their own boolean variables.
 - I changed "NA" in the EmploymentStatus variable to "other" if the respondent provided the user-inputted EmploymentStatusOther variable.
@@ -916,6 +916,10 @@ nice_boxplot <- function(df, xlab, ylab, questions, hue) {
   colnames(df_na_rm)[1] <- "x"
   colnames(df_na_rm)[2] <- "y"
   
+  if (ylab == "ExpectedEarning (k)") {
+    df_na_rm[ , 2] <- df_na_rm[ , 2] / 1000
+  }
+  
   plot <- ggplot(df_na_rm, aes(x = x, y = y, fill = x)) +
     geom_boxplot() +
     theme_minimal() +
@@ -959,7 +963,7 @@ Again, male and female medians are identical. They both expect around a $60k dat
 # Expected Earning by Gender
 g_exp_earn_gender <-
   grid.arrange(nice_boxplot(select(fcc_data, Gender, ExpectedEarning),
-                            "Gender", "ExpectedEarning",
+                            "Gender", "ExpectedEarning (k)",
                             "About how much do you expect to earn per year at your first new job in USD?\nWhat is your gender?",
                             c(0, 30)))
 with(fcc_data, by(ExpectedEarning, Gender, summary))
@@ -973,8 +977,7 @@ A lot of these individuals are using similar, if not the same, online educationa
 # Expected Earning by ContinentCitizen
 g_exp_earn_continent <-
   grid.arrange(nice_boxplot(select(fcc_data, ContinentCitizen, ExpectedEarning),
-                            "ContinentCitizen",
-                            "ExpectedEarning",
+                            "ContinentCitizen", "ExpectedEarning (k)",
                             "About how much do you expect to earn per year at your first new job in USD?\nWhich continent are you a citizen of?",
                             c(240, 270)))
 with(fcc_data, by(ExpectedEarning, ContinentCitizen, summary))
@@ -987,7 +990,7 @@ Salary expectations don't vary much depending on hours dedicated to learning. Ot
 g_exp_earn_hours_learning <-
   grid.arrange(nice_boxplot(select(fcc_data, HoursLearningBucket,
                                    ExpectedEarning),
-                            "HoursLearning", "ExpectedEarning",
+                            "HoursLearning", "ExpectedEarning (k)",
                             "About how much do you expect to earn per year at your first new job in USD?\nAbout how many hours do you spend learning each week?",
                             c(115, 195)))
 table(fcc_data$HoursLearningBucket)
