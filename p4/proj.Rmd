@@ -285,10 +285,10 @@ g_job_int <-
                              6, 9))
 ```
 
-#### <span style="color:#377bb5">The following analysis explores the characteristics of these developing data scientists/engineers and new coders in general.</span>
+#### <span style="color:#377bb5">The following analysis first explores the characteristics of these developing data scientists/engineers, then dives deeper into the characteristics of new coders in general.</span>
 Additional comments are included where the results significantly differ from the full new coder survey dataset.
 
-The univariate section mimics the structure of [Free Code Camp's Medium article](https://medium.freecodecamp.com/we-asked-15-000-people-who-they-are-and-how-theyre-learning-to-code-4104e29b2781#.dbl4sh7q8) for direct comparison of data science/engineering students and new coders in general. A few additional univariate plots are included to smooth the transition to the plots explored in the bivariate and multivariate sections.
+The univariate section intentionally mimics the structure of [Free Code Camp's Medium article](https://medium.freecodecamp.com/we-asked-15-000-people-who-they-are-and-how-theyre-learning-to-code-4104e29b2781#.dbl4sh7q8) for a direct comparison of data science/engineering students and new coders in general. A few additional univariate plots are included to smooth the transition to the plots explored in the bivariate and multivariate sections.
 
 ------
 
@@ -326,7 +326,7 @@ This average is 5 months longer than the full survey dataset.
 ```{r MonthsProgramming}
 # MonthsProgramming
 summary(fcc_data$MonthsProgramming, na.rm = TRUE)
-months_prog.grob <- plot_title("About how many [years] have you been programming for?")
+months_prog.grob <- plot_title("About how many years have you been programming for?")
 g_months_prog <-
   grid.arrange(nice_histogram(fcc_data$MonthsProgramming / 12, 0.5,
                               "Years Programming"),
@@ -334,7 +334,7 @@ g_months_prog <-
 # ggsave(file="MonthsProgramming.png", g_months_prog)
 ```
 
-Logarithmically transforming the long tail data to better understand the distribution, programming experience peaks around one year.
+The median programming experience of 8 months is much clearer after logarithmically transforming the long tail data.
 
 ```{r MonthsProgrammingLog10}
 # Add 3/5 of a month to ease log10(0)=-inf issue
@@ -363,7 +363,7 @@ g_hours_learn <-
 
 
 #### <span style="color:#377bb5">No respondents want to freelance or start their own business.</span>
-Compared to 40% for the full new coder survey, this is a bit shocking, but understandable given the demand for data scientists and engineers in industry.
+Compared to 40% for the full new coder survey, this is a bit shocking. I understand the demand for data scientists and engineers in industry, but I have a hunch these zero counts are caused by the [survey's design](https://medium.freecodecamp.com/we-just-launched-the-biggest-ever-survey-of-people-learning-to-code-cac81dadf1ea#.4q6h3rxv9). Every respondent that answered the job role of interest question has zero counts for "start your own business" and "freelance."
 
 ```{r JobPref}
 # JobPref
@@ -449,7 +449,7 @@ g_code_event <-
 ```
 
 #### <span style="color:#377bb5">On average, they use at least three different resources for learning.</span>
-The developing data scientists/engineers use Coursera, edX, and Udacity more frequently than new coders in general. These companies are have wider subject area scopes than the some of the programming-specific resources listed.
+The developing data scientists/engineers use Coursera, edX, and Udacity more frequently than new coders in general. These companies have wider subject area scopes than the some of the coding-specific resources listed.
 
 ```{r Resource}
 # Resource
@@ -486,7 +486,7 @@ g_resource <-
 ```
 
 #### <span style="color:#377bb5">Less than 20% listen to coding-related podcasts.</span>
-Of them, Partially Derivative, Becoming A Data Scientist, and Talking Machines are the only domain-specific podcasts noted.
+Of them, Partially Derivative, Becoming A Data Scientist, and Talking Machines are the only data-specific podcasts noted.
 
 ```{r Podcast}
 # Podcast
@@ -521,7 +521,7 @@ g_podcast <-
 # ggsave(file="podcast.png", g_podcast)
 ```
 
-#### <span style="color:#377bb5">Only 11 of the 954 respondents (1%) that attended a bootcamp in the full survey are pursuing data science/engineering.</span>
+#### <span style="color:#377bb5">Only 1% have attended a bootcamp.</span>
 6% of new coders from the full survey dataset have attended a bootcamp.
 
 ```{r Bootcamp}
@@ -555,6 +555,7 @@ g_country_citizen <-
 ```
 
 #### <span style="color:#377bb5">More than 90% are from North America, Europe, and Asia.</span>
+The dominating percentage of North Americans should be expected because Free Code Camp is based in the United States.
 
 ```{r Continent}
 # ContinentCitizen
@@ -640,8 +641,8 @@ g_school_major <-
 # ggsave(file="SchoolMajor.png", g_school_major)
 ```
 
-#### <span style="color:#377bb5">Just over one half are currently working.</span>
-Two thirds of new coders in general are currently working.
+#### <span style="color:#377bb5">Just over one-half are currently working.</span>
+Two-thirds of new coders, in general, are currently working.
 
 ```{r EmploymentStatus}
 # EmploymentStatus
@@ -666,6 +667,7 @@ g_employment_field <-
 ```
 
 #### <span style="color:#377bb5">Median current salary is $44k.</span>
+The median current salary for the full dataset is $37k.
 
 ```{r Income}
 # Income
@@ -678,7 +680,7 @@ g_income <-
 ```
 
 #### <span style="color:#377bb5">And they expect to earn a median of $60k with their new data science/engineering skills.</span>
-With data science/engineering being [notoriously lucrative](http://www.wired.com/insights/2015/03/data-scientists-earning-salaries/) in 2016, some respondents are likely seeking higher wages.
+The median for the full survey dataset is $50k. With data science/engineering being [notoriously lucrative](http://www.wired.com/insights/2015/03/data-scientists-earning-salaries/) in 2016, some respondents might be seeking higher wages.
 
 ```{r ExpectedEarning}
 # ExpectedEarning
@@ -700,7 +702,7 @@ names(has_served) = c("has served in military")
 has_served / nrow(fcc_data)
 ```
 
-#### <span style="color:#377bb5">13% have children, and another 3% financially support an elderly or disabled relative. And one fifth of them are doing this without the help of a spouse.</span>
+#### <span style="color:#377bb5">13% have children, and another 3% financially support an elderly or disabled relative. And one-fifth are doing this without the help of a spouse.</span>
 
 ```{r Home_Life}
 # HasChildren
@@ -756,7 +758,7 @@ g_stud_debt_owe <-
                top = stud_debt_owe.grob)
 ```
 
-Removing the million dollar outlier, the distribution is much more clear with the majority of debt under $75k. I hope that outlier is a joke.
+Removing the million dollar outlier, the distribution is much clearer with the majority of debt under $75k. I hope that outlier is a joke.
 
 ```{r StudentDebtOwe_2}
 # StudentDebtOwe without 1 million outlier (joke?)
@@ -768,12 +770,12 @@ g_stud_debt_owe <-
                top = stud_debt_owe.grob)
 ```
 
-#### <span style="color:#377bb5">14% don’t yet have high speed internet at home.</span>
+#### <span style="color:#377bb5">14% don’t yet have high-speed internet at home.</span>
 
 ```{r HasHighSpdInternet}
 # HasHighSpdInternet
 has_hs_int <- table(fcc_data$HasHighSpdInternet)['1']
-names(has_hs_int) = c("has high speed internet")
+names(has_hs_int) = c("has high-speed internet")
 has_hs_int / sum(table(fcc_data$HasHighSpdInternet))
 ```
 
@@ -790,39 +792,42 @@ disability_bfts / sum(table(fcc_data$IsReceiveDiabilitiesBenefits))
 
 ### What is/are the main feature(s) of interest in your dataset?
 
-There isn't really a singular main feature of interest in the "2016 New Coder Survey" dataset. There are several smaller features, but nothing stands out like diamond price and its relationship to carat weight, cut, colour, etc. in the [R diamonds dataset](http://docs.ggplot2.org/0.9.3.1/diamonds.html), for example. The diamonds dataset covers two time periods - the existence of the diamond pre-sale and post-sale, whereas the survey dataset only covers a single period - the early stages of an individual's coding care.
+There isn't really a singular main feature of interest in the "2016 New Coder Survey" dataset. There are several smaller features, but nothing stands out like diamond price and its relationship to carat weight, cut, colour, etc. in the [R diamonds dataset](http://docs.ggplot2.org/0.9.3.1/diamonds.html), for example. The diamonds dataset covers two time periods (the existence of the diamond pre-sale and post-sale), whereas the survey dataset only covers a single period (the early stages of an individual's coding career).
 
 If we could fast-forward several years and survey the same respondents, the main feature of interest might be career earnings (adjusted for cost of living, preferably) and/or self-reported career satisfaction. A predictive model using a combination of variables from the 2016 survey could then be built to estimate career success.
 
-If the survey asked "*Are you already working as a data scientist/engineer?*" instead of "*Are you already working as a software developer?*", that variable might also be a main feature of interest. Unfortunately, the answer to that question cannot be extracted from the existing variables.
+If the survey asked "*Are you already working as a data scientist/engineer?*" instead of "*Are you already working as a software developer?*", the current income variable might be a main feature of interest. Unfortunately, the answer to that question cannot be extracted from the existing variables.
 
 ### What other features in the dataset do you think will help support your investigation into your feature(s) of interest?
 
-Though there isn't a main feature of interest, we can separate the respondents who did not answer "*Data Scientist/Data Engineer*" to the job role interest question (as we already have for those who did) and compare the two subsets using bivariate and multivariate plots.
+Though there isn't a main feature of interest, we can separate the respondents who did **not** answer "*Data Scientist/Data Engineer*" to the job role interest question (as we already have for those who did) and compare the two subsets using bivariate and multivariate plots.
 
-I will also explore two smaller features, how many hours dedicated to learning per week and expected salary, using bivariate and multivariate plots.
+I will also explore two smaller features, hours dedicated to learning per week and expected next salary, using bivariate and multivariate plots.
 
 ### Of the features you investigated, were there any unusual distributions?
 
-There was a lot of long tail data. Most did not require transformation to view the details of the distribution. Programming experience was *really* positively skewed, however, and required log transformation to visually compare those with 3 months experience to those with 25 years.
+There is a lot of long tail data. Most did not require transformation to view the details of the distribution. Programming experience is *really* positively skewed, however, and required log transformation to visually compare those with 3 months experience to those with 25 years.
+
+That no respondents want to freelance or start their own business seems strange. Perhaps a [survey design](https://medium.freecodecamp.com/we-just-launched-the-biggest-ever-survey-of-people-learning-to-code-cac81dadf1ea#.4q6h3rxv9) choice caused these zero counts.
 
 ### Did you perform any operations on the data to tidy, adjust, or change the form of the data? If so, why did you do this?
 
 The following operations were performed to tidy, adjust, or change the form of the data:
 
-- Each code event, resource, and podcast is represented by a boolean variable. I summed the number of yeses for event event/resource/podcast, which created a single row of sums. I used [tidyr](https://github.com/hadley/tidyr)'s ```gather()``` to transform the data from a wide format to a long format. Then I transformed the long data into factor format, using the [replicate function](https://stat.ethz.ch/R-manual/R-devel/library/base/html/rep.html) with the number of yeses as the multiplier. This data is used to create each category's bar chart. ![wide to long to factor formats](http://i.imgur.com/ICL9lkQ.png)
-- After subselecting all code event, resource, and podcast columns separately, I created a new boolean variable named *answered*, where 1 represents using at least one event/resource/podcast and 0 represents using none. The *answered* sum total for each of the three categories is used in the "*x out of 646 developing data scientists/engineers answered*" label at the bottom of the bar charts above. ![label](http://i.imgur.com/j04JNl5.png)
-- I separated data science/engineering-related podcasts in the user-inputted PodcastOther category into their own boolean variables.
+- Each code event, resource, and podcast is represented by a boolean variable. I summed the number of yeses for each, which created a single row of sums. I used [tidyr](https://github.com/hadley/tidyr)'s ```gather()``` to transform the data from a wide format to a long format. Then I transformed the long data into factor format, using the [replicate function](https://stat.ethz.ch/R-manual/R-devel/library/base/html/rep.html) with the number of yeses as the multiplier. This data is used to create the code event, resource, and podcast bar charts. ![wide to long to factor formats](http://i.imgur.com/ICL9lkQ.png)
+- After subselecting all code event, resource, and podcast columns separately, I created a new boolean variable named *answered*, where 1 represents using at least one event/resource/podcast and 0 represents using none. The *answered* sum total is used in the "*x out of 646 developing data scientists/engineers answered*" label at the bottom of each bar chart. ![label](http://i.imgur.com/j04JNl5.png)
+- I separated data-specific podcasts in the user-inputted PodcastOther category into their own boolean variables.
 - I changed "NA" in the EmploymentStatus variable to "other" if the respondent provided the user-inputted EmploymentStatusOther variable.
 - I changed "NA" in the EmploymentField variable to "other" if the respondent provided the user-inputted EmploymentFieldOther variable.
 - I separated the “Americas” continents outputted by [countrycode()](https://github.com/vincentarelbundock/countrycode) into North and South America.
 
-The first five operations were performed so bar charts could be created, which wasn't possible with the original data format. The "Americas" separation was performed for additional insight.
+The first five operations were performed so bar charts could be created, which wasn't possible with the original data format. The Americas separation was performed for additional insight.
 
 ------
 
 ## Bivariate Plots
-14974 respondents did not answer "*Data Scientist/Data Engineer*" to the question: "*Which one of these roles are you most interested in?*"
+
+14974 respondents did **not** answer "*Data Scientist/Data Engineer*" to the question: "*Which one of these roles are you most interested in?*"
 
 ```{r Non_Data_Science_Dataset}
 non_fcc_data <-
@@ -856,7 +861,7 @@ data_panel <-
 - MonthsProgramming and StudentDebtOwe (-0.07 - 0.09 = -0.16)
 - Income and StudentDebtOwe (0.34 - 0.08 = 0.26)
 
-Interesting. I bet the skew towards post-secondary studies for the data science subset plays a role here, where higher levels of student debt and higher salaries are expected.
+Interesting. Student debt levels are involved in all three correlations. I bet the aforementioned skew towards post-secondary studies for the data science subset plays a role here, where higher levels of student debt are expected.
 
 ```{r Non_Data_Science_Panel}
 # SPLOM for non-data scientist/engineer subset
@@ -866,9 +871,7 @@ non_data_panel <-
                hist.col = "#377bb5", col = "#FF4541")
 ```
 
-### Individual Plots
-
-**Let's examine the full new coder survey.** One of the strongest correlations is between age and current salary. Note that this strength exists despite the majority of $200k salaries belonging to respondents under 40.
+Let's zoom in on the strong age-income correlation, this time for the full survey dataset. Note that the strength exists despite the majority of $200k salaries belonging to respondents under 40.
 
 ```{r Age_Income}
 # Pretty scatter plot
@@ -884,8 +887,8 @@ nice_scatter <- function(xcol, ycol, xlab, ylab) {
   df_na_rm <- with(df, df[!is.na(x) & !is.na(y), ])
   
   plot <- ggplot(aes(x = x, y = y), data = df_na_rm) +
-  geom_jitter(alpha = 0.50, color = "#377bb5") +
-  geom_smooth(method = 'lm', color = "#FF4541") +
+  geom_jitter(alpha = 0.50, colour = "#377bb5") +
+  geom_smooth(method = 'lm', colour = "#FF4541") +
   theme_minimal() +
   labs(title = "", x = paste("\n", xlab), y = paste(ylab, "\n")) +
   theme(axis.text = element_text(size = 10, color = "#454545"),
@@ -906,7 +909,7 @@ g_age_income <-
                         colour = "#FF4541"), top = age_income.grob)
 ```
 
-The earnings vs. age trend isn't maintained as these individuals prepare to transition to their new field of choice. Younger individuals appear willing to capitalize on lucrative tech salaries and older individuals appear willing to take a pay cut.
+The earnings vs. age trend, however, isn't maintained as these individuals prepare to transition to their new field of choice. Younger individuals appear willing to capitalize on lucrative tech salaries and older individuals appear willing to take a pay cut.
 
 ```{r Age_Exp_Earn}
 age_exp_earn.grob <-
@@ -923,19 +926,22 @@ g_age_income <-
                           colour = "#FF4541"), top = age_exp_earn.grob)
 ```
 
-**The variables on the x-axis in the boxplots below are in descending order in terms of number of respondents.**
+### Gender and Citizenship
 
-**The horizontal line is the median. The "x" is the mean.**
+Let's use the full new coder survey for the rest of the analysis. We'll explore hours dedicated to learning per week and expected next salary. These are variables dependent upon the quality of coding resources, whereas the other numerical ones (e.g. age, income, and programming experience) are set previously.
+
+**For the following [boxplots](http://www.physics.csbsju.edu/stats/box2.html), the horizontal line is the median and the "x" is the mean. The top of the box is the third quartile and the bottom is the first quartile. Whisker length is the interquartile range multiplied by 1.5.**
 
 Hours dedicated to learning results are nearly identical across genders. Do trans new coders spend more time learning? A small sample size issue exists, but I wouldn't be shocked if a true effect is present here.
 
 ```{r Hours_Learn_Gender}
 # Pretty boxplot
 nice_boxplot <- function(df, xlab, ylab, questions, hue) {
+  # select()-created df passed in rather than two columns as in nice_scatter
   colnames(df)[1] <- "x"
   colnames(df)[2] <- "y"
   
-  df_na_rm <- with(df, df[!is.na(x), ])
+  df_na_rm <- with(df, df[!is.na(x) & !is.na(y), ])
   colnames(df_na_rm)[1] <- "x"
   colnames(df_na_rm)[2] <- "y"
   
@@ -971,7 +977,7 @@ sort(table(fcc$Gender), decreasing = TRUE)
 ```
 
 <br>
-Not much differentiation here as well. All continents have a median of 10 hours dedicated to learning per week. Asian and African students have the highest means, at 16.4 and 16.8 hours, respectively.
+Not much differentiation for continents as well. All have a median of 10 hours dedicated to learning per week. Asian and African students have the highest means, at 16.4 and 16.8 hours, respectively.
 
 ```{r Hours_Learn_Continent, fig.width = 8}
 # Hours Learning by ContinentCitizen
@@ -985,7 +991,7 @@ sort(table(fcc$ContinentCitizen), decreasing = TRUE)
 ```
 
 <br>
-Females expect higher salaries than males, with a $9k gap in medians and a $4k gap in means. There is a huge gap in first quartiles, where the 25th percentile female expects $14k more than her male equivalent. As with hours dedicated to learning, transgender new coders have relatively higher expected salaries.
+Females actually expect higher salaries than males, with a $9k gap in medians and a $4k gap in means. There is a huge gap in first quartiles, where the 25th percentile female expects $14k more than her male equivalent. As with hours dedicated to learning, transgender new coders have relatively higher expected salaries. Did a particularly ambitious set of trans individuals respond to the survey or are these their true traits?
 
 ```{r Exp_Earn_Gender}
 # Expected Earning by Gender
@@ -998,9 +1004,9 @@ with(fcc, by(ExpectedEarning, Gender, summary))
 ```
 
 <br>
-Whoa. Expected earning by continent varies way more compared to the above three boxplots. Most North Americans expect the highest range of salaries, with their interquartile range spanning from $50k to $70k. The 75th percentile for Europe is equivalent to North America's 25th percentile. I wonder if some European respondents forgot to convert from pounds or euros to USD. Expectations in Asia are all over the board.
+Whoa. Expected earning by continent varies way more compared to the above three boxplots. North Americans expect the highest range of salaries, with their interquartile range spanning from $50k to $70k. Europe's 75th percentile is North America's 25th percentile. I wonder if some European respondents forgot to convert from pounds or euros to US dollars. Expectations in Asia are all over the board.
 
-A lot of these individuals are using similar, if not the same, online educational resources. Labour market economics can be cruel.
+A lot of these individuals are using similar, if not the same, online educational resources. Labour market economics are cruel.
 
 ```{r Exp_Earn_Continent, fig.width = 8}
 # Expected Earning by ContinentCitizen
@@ -1027,6 +1033,21 @@ table(fcc$HoursLearningBucket)
 ```
 
 <br>
+Let's dig into that 40-80 hour bracket. Less than 5% of respondents are dedicating 40+ hours to learning each week. Below are the most common ages (the top row is age and the bottom row is number of respondents) and educational backgrounds for this bracket.
+
+```{r Full_Time_New_Coders}
+full_time_new_coders <- filter(fcc, HoursLearningBucket == "(40,80]")
+sort(table(full_time_new_coders$Age), decreasing = TRUE)[1:10]
+sort(table(full_time_new_coders$SchoolDegree), decreasing = TRUE)[1:6]
+```
+
+<br>
+Most of these respondents are in their early twenties and have a bachelor's degree. It appears that they are forgoing traditional forms of higher education like master's and professional degrees and using those 40+ hour weeks to learn code.
+
+This is the exact situation I'm in with [my personalized data science master's degree](https://medium.com/@venturidb/i-dropped-out-of-school-to-create-my-own-data-science-master-s-here-s-my-curriculum-1b400dcee412#.kl5dis6bb). The quality and affordability of online education in 2016 is incredible, though many still aren't aware of the existence of resources like Free Code Camp, Udacity, and Coursera. If this survey was performed in a few years, I would expect more respondents to be in the higher brackets.
+
+### Job Roles of Interest
+
 Again, the most common job roles of interest are:
 
 ```{r Job_Role_Interest}
@@ -1054,6 +1075,9 @@ fcc_job_lim$JobRoleInterest <-
             "UX Designer"))
 ```
 
+<br>
+User Experience Designer is by far the most diverse discipline in terms of gender, with about the same amount of males as females and the highest percentage of agender, genderqueer, and trans respondents. Mobile development is the most male-dominated discipline near 80%, though full-stack and back-end development are close.
+
 ```{r Gender_Job_Role_Interest, fig.width = 8}
 # Pretty segmented bar chart
 nice_seg_bar_plot <- function(df, xlab, flab, question, hue) {
@@ -1071,13 +1095,12 @@ nice_seg_bar_plot <- function(df, xlab, flab, question, hue) {
     geom_bar(position = "fill") +
     scale_y_continuous(labels = percent_format()) +
     theme_minimal() +
-    labs(title = "", x = paste("\n", xlab), y = "Count\n", fill = flab) +
+    labs(title = "", x = paste("\n", xlab), y = "Percentage\n", fill = flab) +
     theme(text = element_text(color="#454545"),
           title = element_text(color = "#454545"),
           axis.text = element_text(size=10)) +
     scale_fill_discrete(h = hue) +
-    scale_x_discrete(labels = function(x) str_wrap(x, width = 15)) +
-    guides(fill = guide_legend(reverse = TRUE))
+    scale_x_discrete(labels = function(x) str_wrap(x, width = 15))
   
   plot <- arrangeGrob(plot, top = title.grob)
   return(plot)
@@ -1091,6 +1114,47 @@ g_gender_job_int <-
                                c(290, 650)))
 ```
 
+The highest relative popularity for North America (read: biggest purple bar segment) is user experience design. Europe's is back-end development. Asia's, South America's, and Africa's is mobile development. Oceania's is data science/engineering. Mobile developer is the most diverse discipline in terms of citizenship.
+
+```{r Continent_Job_Role_Interest, fig.width = 8}
+# Continent by Job Role Interest
+g_cont_job_int <- 
+  grid.arrange(nice_seg_bar_plot(select(fcc_job_lim, JobRoleInterest, ContinentCitizen),
+                               "JobRoleInterest", "ContinentCitizen",
+                               "Which continent are you a citizen of?\nWhich one of these roles are you most interested in?",
+                               c(290, 650)))
+
+# table(filter(fcc_job_lim, JobRoleInterest == "Data Scientist / Engineer")$ContinentCitizen)["Oceania"] / sum(table(filter(fcc_job_lim, JobRoleInterest == "Data Scientist / Engineer")$ContinentCitizen))
+
+# table(filter(fcc_job_lim, JobRoleInterest == "UX Designer")$ContinentCitizen)["Oceania"] / sum(table(filter(fcc_job_lim, JobRoleInterest == "UX Designer")$ContinentCitizen))
+```
+
+The skew towards post-secondary studies for data science and data engineering is much clearer here. Mobile development has the highest percentage of respondents with no, some, or only a high school education. This skew will surely reflect itself in the subsequent age boxplot.
+
+```{r Degree_Job_Role_Interest, fig.width = 9}
+# School Degree by Job Role Interest
+fcc_job_lim$SchoolDegree <-
+  factor(fcc_job_lim$SchoolDegree,
+         levels = c("Ph.D.",
+                    "professional degree (MBA, MD, JD, etc.)",
+                    "master's degree (non-professional)",
+                    "bachelor's degree",
+                    "associate's degree",
+                    "some college credit, no degree",
+                    "trade, technical, or vocational training",
+                    "high school diploma or equivalent (GED)",
+                    "some high school",
+                    "no high school (secondary school)"))
+
+g_degree_job_int <- 
+  grid.arrange(nice_seg_bar_plot(select(fcc_job_lim, JobRoleInterest, SchoolDegree),
+                               "JobRoleInterest", "SchoolDegree",
+                               "What is the highest level of school you have completed?\nWhich one of these roles are you most interested in?",
+                               c(290, 650)))
+```
+
+Mobile developers are indeed the youngest with a first quartile of 20 years, two years younger than the next youngest discipline. The remaining disciplines are fairly close in age, with front-end development being the oldest with a mean age of 29 years.
+
 ```{r Age_Job_Role_Interest, fig.width = 8}
 # Age by Job Role Interest
 g_age_job_int <-
@@ -1100,6 +1164,24 @@ g_age_job_int <-
                             c(290, 330)))
 with(fcc_job_lim, by(Age, JobRoleInterest, summary))
 ```
+
+<br>
+Data scientists-, data engineers-, and back-end developers-in-training have programmed the longest with a median experience of 8 months. UX designers have the lowest first quartile by two whole months at two months of programming experience.
+
+```{r Years_Prog_Job_Role_Interest, fig.width = 8, fig.height = 7.5}
+# Years Programming by Job Role Interest
+years_prog_job_lim <- select(fcc_job_lim, JobRoleInterest, MonthsProgramming)
+years_prog_job_lim$MonthsProgramming <- years_prog_job_lim$MonthsProgramming / 12
+g_months_prog_job_int <-
+  grid.arrange(nice_boxplot(years_prog_job_lim,
+                            "JobRoleInterest", "YearsProgramming",
+                            "About how many years have you been programming for?\nWhich one of these roles are you most interested in?",
+                            c(290, 330)))
+with(years_prog_job_lim, by(MonthsProgramming, JobRoleInterest, summary))
+```
+
+<br>
+Full-stack developers dedicate the most time to learning each week, with 25% of respondents dedicating 30+ hours weekly. UX designers spend the least amount of time learning per week with a mean of 12 hours per week.
 
 ```{r Hours_Learn_Job_Role_Interest, fig.width = 8}
 # Hours Learning by Job Role Interest
@@ -1111,6 +1193,22 @@ g_hours_learn_job_int <-
 with(fcc_job_lim, by(HoursLearning, JobRoleInterest, summary))
 ```
 
+<br>
+Respondents interested in data science and/or engineering clearly have the highest current salaries. Their third quartile of $60k per year is $8k higher than the next highest discipline. There isn't much income differentiation between the remaining job roles of interest.
+
+```{r Income_Job_Role_Interest, fig.width = 8}
+# Income by Job Role Interest
+g_income_job_int <-
+  grid.arrange(nice_boxplot(select(fcc_job_lim, JobRoleInterest, Income),
+                            "JobRoleInterest", "Income",
+                            "What is your current salary in USD?\nWhich one of these roles are you most interested in?",
+                            c(290, 330)))
+with(fcc_job_lim, by(Income, JobRoleInterest, summary))
+```
+
+<br>
+Respondents interested in data science/engineering expect to earn the most at their next job. Given the aforementioned correlation between current salaries and expected salaries, this is not a surprise. Note that expected salaries are higher than current salaries (see the previous boxplot) across the board.
+
 ```{r Exp_Earn_Job_Role_Interest, fig.width = 8}
 # Expected Earning by Job Role Interest
 g_exp_earn_job_int <-
@@ -1121,44 +1219,39 @@ g_exp_earn_job_int <-
 with(fcc_job_lim, by(ExpectedEarning, JobRoleInterest, summary))
 ```
 
-Again, with the million dollar student debt outlier removed, ... mobile dev outlier drags up box
-
-```{r Stud_Debt_Job_Role_Interest, fig.width = 8, fig.height = 6.5}
-# Expected Earning by Job Role Interest
-fcc_job_lim_sd_lim <- with(fcc_job_lim, fcc_job_lim[StudentDebtOwe < 1000000, ])
-g_stud_debt_job_int <-
-  grid.arrange(nice_boxplot(select(fcc_job_lim_sd_lim, JobRoleInterest, StudentDebtOwe),
-                            "JobRoleInterest", "StudentDebtOwe (k)",
-                            "About how much do you owe in student debt loans in USD?\nWhich one of these roles are you most interested in?",
-                            c(290, 330)))
-with(fcc_job_lim, by(StudentDebtOwe, JobRoleInterest, summary))
-```
-
 ## Bivariate Analysis
 
 ### How did the feature(s) of interest vary with other features in the dataset?
 
-The data science/engineering subset of the survey is largely similar to the non-data science/engineering subset, except for three correlations involving  student debt owed. I bet this has something to do with the skew towards graduate studies for the data-focused subset.
+The data science/engineering subset of the survey is largely similar to the non-data science/engineering subset, except for three correlations involving  student debt owed. The skew towards post-secondary studies for the data-focused subset is the likely culprit.
 
-The correlation between current salary and age is stronger than expected earning for the individual's first data science/engineering job and age.
+The correlation between current salary and age is stronger than expected next salary and age for the respondent's first data science/engineering job and age.
 
 Hours dedicated to learning per week doesn't appear to vary much with gender or continent, though sample size issues exist.
 
-Expected earning varies strongly by continent. Females also appear to have a higher bottom line for expected salary than males. Those who dedicate more than 40 hours a week to learning data science/engineering appear to expect higher salaries as well.
+Expected salary for a respondent's next job varies strongly by continent. Females also appear to have a much higher bottom line for expected salary than males. Those who dedicate more than 40 hours a week to learning expect higher salaries as well.
+
+The majority of respondents for all job roles of interest are male, North American, and have bachelor's degrees. Age, programming experience, hours dedicated to learning, current salary, and expected next salary all vary depending on job role of interest. One or two of the disciplines stands out from the pack for each of the five quantitative variables.
 
 ### What was the strongest relationship you found?
 
-For both subsets of the survey, there is no exceedingly strong relationship. All correlations are below 0.4.
+No exceedingly strong relationship exists. All correlations are below 0.4.
 
-Current salary and expected salary for an individual's first data-related job has the strongest relationship for both subsets with correlations of 0.36 and 0.38.
+Current salary and expected next salary has the strongest relationship for both subsets with correlations of 0.36 and 0.38.
+
+### Of the features you investigated, were there any unusual distributions?
+
+Europe’s 75th percentile for expected next salary is North America’s 25th percentile ($50k USD). Perhaps some European respondents forgot to convert from pounds or euros to US dollars.
 
 ------
 
 ## Multivariate Plots
 
-Let's dig deeper into the two strongest correlations, income against expected salary and student debt owed, using multivariate analysis.
+Let's dig deeper into the strongest correlation: current salary versus expected next salary. Again, this new job is presumably where the respondent will put their new coding skills to use.
 
-```{r Multivariate_Plots}
+Plotting income vs. expected earning across genders, the first impression is that there are a lot of male data points. This abundance makes it hard to tell if the wage gap presents itself in this dataset. Looking at each gender's presence above the $50k lines, my first instinct is that the gap exists. Males definitely have the highest proportion of $150k+ salaries. Stay tuned for the final plots section, where I'll determine the presence of the gap definitively.
+
+```{r Exp_Earn_Income_Gender, fig.height = 6.5}
 nice_scatter_mv <- function(df, xlab, ylab, flab, hline, vline, questions, hue) {
   colnames(df)[1] <- "x"
   colnames(df)[2] <- "y"
@@ -1171,7 +1264,7 @@ nice_scatter_mv <- function(df, xlab, ylab, flab, hline, vline, questions, hue) 
   
   plot <- ggplot(aes(x = x / 1000, y = y / 1000),
        data = df_na_rm) +
-  geom_jitter(aes(colour = f)) +
+  geom_jitter(aes(colour = f), alpha = 0.75) +
   geom_hline(yintercept = hline, colour = "#454545") +
   geom_vline(xintercept = vline, colour = "#454545") +
   theme_minimal() +
@@ -1184,108 +1277,127 @@ nice_scatter_mv <- function(df, xlab, ylab, flab, hline, vline, questions, hue) 
   plot <- arrangeGrob(plot, top = title.grob)
   return(plot)
 }
-```
 
-The male/female wage gap is evident through each gender's presence above the $100k lines. There aren't enough data points for genderqueer and trans individuals to draw conclusions.
-
-```{r Exp_Earn_Income_Gender}
 # Expected Earning by Income by Gender
-fcc_data$Gender <-
-  factor(fcc_data$Gender,
+fcc$Gender <-
+  factor(fcc$Gender,
          levels = c("male", "agender", "genderqueer", "trans", "female"))
 
 g_exp_earn_income_gender <-
-  grid.arrange(nice_scatter_mv(select(fcc_data, Income,
+  grid.arrange(nice_scatter_mv(select(fcc, Income,
                                          ExpectedEarning, Gender),
                                "Income (k)",
                                "ExpectedEarning (k)",
                                "Gender",
-                               100, 100,
+                               50, 50,
                                "About how much do you expect to earn per year at your first new job in USD?\nWhat is your current salary in USD?\nWhat is your gender?",
                                c(0, 225)))
 ```
 
-Ethnic minorities appear to be optimistic about the changing diversity landscape via their expected salaries. They have a notable presence above the $100k expected earning line, but not the $100k current salary line.
+The same multivariate plot is generated below, but for the question "Are you an ethnic minority in your country?" Again, it is difficult to determine definitively if a wage gap is present. Non-ethnic minorities definitely have a higher proportion of $150k+ salaries, but a huge amount of data points are clustered in the bottom left quadrant. It looks like minorities are better represented above the $50k expected salary line, but not as much for the $50k current salary line. We'll see for sure if this is indeed true in the final plots section.
 
-```{r Exp_Earn_Income_EM}
+```{r Exp_Earn_Income_Ethnicity, fig.height = 6.5}
 # Expected Earning by Income by EthnicMinority
-fcc_data$IsEthnicMinority <- order_factor(fcc_data$IsEthnicMinority, "desc")
+fcc$IsEthnicMinority <- order_factor(fcc$IsEthnicMinority, "desc")
 g_exp_earn_income_em <-
-  grid.arrange(nice_scatter_mv(select(fcc_data, Income, ExpectedEarning,
+  grid.arrange(nice_scatter_mv(select(fcc, Income, ExpectedEarning,
                                          IsEthnicMinority),
                                "Income (k)",
                                "ExpectedEarning (k)",
                                "IsEthnicMinority",
-                               100, 100,
+                               50, 50,
                                "About how much do you expect to earn per year at your first new job in USD?\nWhat is your current salary in USD?\nAre you an ethnic minority in your country?",
                                c(0, 150)))
 ```
 
-Current salaries and student debt levels for graduate students are relatively high, as expected. Bachelor's degrees appear to have the worst student debt/current salary balance.
+Let's combine all of the purple/pink boxplots from the bivariate plots section into one [radar chart](https://en.wikipedia.org/wiki/Radar_chart). The mean for each numerical variable normalized between 0 and 1 is plotted for each job role of interest.
 
-```{r Stud_Debt_Income_Degree}
-# StudentDebtOwe by Income by SchoolDegree
-stud_debt_owe_mil_rm$SchoolDegree <-
-  factor(stud_debt_owe_mil_rm$SchoolDegree,
-         levels = c("Ph.D.",
-                    "professional degree (MBA, MD, JD, etc.)",
-                    "master's degree (non-professional)",
-                    "bachelor's degree",
-                    "associate's degree",
-                    "some college credit, no degree",
-                    "trade, technical, or vocational training",
-                    "high school diploma or equivalent (GED)",
-                    "some high school",
-                    "no high school (secondary school)"))
+One thing jumps out immediately: developing data scientists/engineers lead the pack for programming experience, current salary, and expected next salary. Beyond that, however, overplotting is again an issue, which makes it difficult to internalize other patterns in the data. I'll fix that for all three multivariate plots in the final plots section.
 
-stud_debt_owe_mil_rm$SchoolDegree <-
-  revalue(stud_debt_owe_mil_rm$SchoolDegree,
-          c("professional degree (MBA, MD, JD, etc.)" =
-            "professional degree\n(MBA, MD, JD, etc.)",
-            "master's degree (non-professional)" =
-            "master's degree\n(non-professional)",
-            "some college credit, no degree" =
-            "some college credit,\nno degree"))
-g_stud_debt_income_degree <-
-  grid.arrange(nice_scatter_mv(select(stud_debt_owe_mil_rm, Income,
-                                         StudentDebtOwe, SchoolDegree),
-                               "Income (k)",
-                               "StudentDebtOwe (k)",
-                               "SchoolDegree",
-                               25, 50,
-                               "About how much do you owe in student debt loans in USD?\nWhat is your current salary in USD?\nWhat is the highest level of school you have completed?",
-                               c(0, 225)))
-```
+```{r Radar_Job_Role_Interest, fig.height = 6.5}
+# Means for each JobRoleInterest five numerical variables
+mean_table <-
+  fcc_job_lim %>%
+  group_by(JobRoleInterest) %>%
+  summarise(HoursLearning = mean(HoursLearning, na.rm = TRUE),
+            Income = mean(Income, na.rm = TRUE),
+            ExpectedEarning = mean(ExpectedEarning, na.rm = TRUE),
+            Age = mean(Age, na.rm = TRUE),
+            YearsProgramming = mean(MonthsProgramming / 12, na.rm = TRUE)) %>%
+  na.omit()
 
-It appears that the student debt remaining vs. current salary relationship doesn't differ much across hours dedicated to learning brackets.
+# Drop factor variable (JobRoleInterest) to perform normalization
+col_hourslearning = 2
+col_yearsprogramming = 6
+mean_table <- mean_table[ , col_hourslearning:col_yearsprogramming]
 
-```{r Stud_Debt_Income_Hours_Learn}
-g_stud_debt_income_hl <-
-  grid.arrange(nice_scatter_mv(select(stud_debt_owe_mil_rm, Income,
-                                         StudentDebtOwe,
-                                         HoursLearningBucket),
-                               "Income (k)",
-                               "StudentDebtOwe (k)",
-                               "HoursLearning",
-                               25, 50,
-                               "About how much do you owe in student debt loans in USD?\nWhat is your current salary in USD?\nAbout how many hours do you spend learning each week?",
-                               c(0, 225)))
+# Normalize between 0 and 1
+mean_table_scaled <- as.data.frame(lapply(mean_table, ggplot2:::rescale01))
+
+# Add factor variable
+mean_table_scaled$JobRoleInterest <-
+  c("Full-Stack Developer", "Front-End Developer",
+    "Back-End Developer", "Data Scientist / Engineer",
+    "Mobile Developer", "UX Designer")
+mean_table_scaled$JobRoleInterest <- factor(mean_table_scaled$JobRoleInterest)
+mean_table_scaled$JobRoleInterest <-
+  factor(mean_table_scaled$JobRoleInterest,
+         levels = c("Full-Stack Developer", "Front-End Developer",
+                    "Back-End Developer", "Data Scientist / Engineer",
+                    "Mobile Developer", "UX Designer"))
+
+# Convert to long format for radar chart
+mean_table_long <- reshape2::melt(mean_table_scaled)
+
+# Radar coordinates
+coord_radar <- function (theta = "x", start = 0, direction = 1) 
+{
+  theta <- match.arg(theta, c("x", "y"))
+  r <- if (theta == "x") 
+    "y"
+  else "x"
+  ggproto("CordRadar", CoordPolar, theta = theta, r = r, start = start, 
+          direction = sign(direction),
+          is_linear = function(coord) TRUE)
+}
+
+# Radar chart
+g_radar_job_int <-
+  ggplot(mean_table_long, aes(x = variable, y = value)) +
+  geom_polygon(aes(group = JobRoleInterest, color = JobRoleInterest),
+               fill = NA, size = 1, show.legend = FALSE) +
+  geom_line(aes(group = JobRoleInterest, color = JobRoleInterest), size = 1) +
+  #labs(title = "") +
+  theme_minimal() +
+  theme(text = element_text(color="#454545"),
+        title = element_text(color = "#454545"),
+        axis.text.x = element_text(size = rel(0.8)),
+        axis.ticks.y = element_blank(),
+        axis.text.y = element_blank(),
+        axis.title.x = element_blank()) +
+  xlab("") + ylab("Normalized mean ([0,1])") +
+  guides(color = guide_legend(ncol=1)) +
+  coord_radar()
+
+# Radar chart title
+g_radar_job_int.grob <-
+  plot_title("About how many years have you been programming for?\nAbout how many hours do you spend learning each week?\nWhat is your current salary in USD?\nAbout how much do you expect to earn per year at your first new job in USD?\nHow old are you?\nWhich one of these roles are you most interested in?")
+g_radar_job_int <- arrangeGrob(g_radar_job_int, top = g_radar_job_int.grob)
+grid.arrange(g_radar_job_int)
 ```
 
 ## Multivariate Analysis
 
 ### Were there any interesting or surprising interactions between features?
-It's interesting that females expect their next salary to be as relatively low as their current one, but ethnic minorities expect a higher salary.
-
-I'm also surprised more individuals with high levels of student debt aren't dedicating 20+ hours to learning each week. I bet the current jobs of the individuals in lower time brackets are preventing them from increasing their pace.
-
-The affordability of quality education online is a huge reason why I'm in the 40-80 hour bracket for [my personalized data science master's degree](https://medium.com/@venturidb/i-dropped-out-of-school-to-create-my-own-data-science-master-s-here-s-my-curriculum-1b400dcee412#.kl5dis6bb).
+Males and ethnic majorities dominate the $150k+ salary range, but an overall wage gap between genders and ethnicities for this dataset is not definitive when all the data points are plotted together. I thought the gaps would instantly be clear. More exploration needs to be done, and more will be done in the next section.
 
 ------
 
 ## Final Plots
 
-```{r Final_Plots}
+### Plot One
+
+```{r Final_Plot_1, fig.height = 7}
 nice_scatter_mv_facet <- function(df, xlab, ylab, flab, hline, vline, questions, hue) {
   colnames(df)[1] <- "x"
   colnames(df)[2] <- "y"
@@ -1298,90 +1410,111 @@ nice_scatter_mv_facet <- function(df, xlab, ylab, flab, hline, vline, questions,
   
   plot <- ggplot(aes(x = x / 1000, y = y / 1000),
        data = df_na_rm) +
-  geom_jitter(aes(colour = f)) +
-  geom_hline(yintercept = hline, colour = "#454545") +
-  geom_vline(xintercept = vline, colour = "#454545") +
-  theme_minimal() +
-  facet_wrap(~ f) +
-  scale_colour_discrete(h = hue) +
-  labs(title = "", x = paste("\n", xlab), y = paste(ylab, "\n"), colour = flab) +
-  theme(axis.text = element_text(size = 10, color = "#454545"),
-        axis.title = element_text(color = "#454545"),
-        legend.position = "none")
+    geom_jitter(aes(colour = f), alpha = 0.75) +
+    stat_density2d(aes(alpha=..level..), geom="polygon") +
+    geom_hline(yintercept = hline, colour = "#454545") +
+    geom_vline(xintercept = vline, colour = "#454545") +
+    theme_minimal() +
+    facet_wrap(~ f) +
+    scale_colour_discrete(h = hue) +
+    labs(title = "", x = paste("\n", xlab), y = paste(ylab, "\n"), colour = flab) +
+    theme(axis.text = element_text(size = 10, color = "#454545"),
+          axis.title = element_text(color = "#454545"),
+          legend.position = "none")
   
   title.grob <- plot_title(questions)
   plot <- arrangeGrob(plot, top = title.grob)
   return(plot)
 }
-```
 
-### Plot One
-
-```{r Final_Plot_1, fig.height = 7}
-exp_earn_income_gender_mf <- filter(select(fcc_data, Income, ExpectedEarning, Gender), Gender == "male" | Gender == "female")
-exp_earn_income_g_em <- grid.arrange(nice_scatter_mv_facet(exp_earn_income_gender_mf,
-                                    "Income (k)",
-                                    "ExpectedEarning (k)",
-                                    "Gender",
-                                    100, 100,
-                                    "About how much do you expect to earn per year at your first new job in USD?\nWhat is your current salary in USD?\nWhat is your gender?",
-                                    c(0, 150)),
-             nice_scatter_mv_facet(select(fcc_data, Income, ExpectedEarning,
-                                         IsEthnicMinority),
+exp_earn_income_gender_mf <-
+  filter(select(fcc, Income, ExpectedEarning, Gender),
+         Gender == "male" | Gender == "female")
+g_exp_earn_income_g_em <-
+  grid.arrange(nice_scatter_mv_facet(exp_earn_income_gender_mf,
+                                     "Income (k)",
+                                     "ExpectedEarning (k)",
+                                     "Gender",
+                                     50, 50,
+                                     "About how much do you expect to earn per year at your first new job in USD?\nWhat is your current salary in USD?\nWhat is your gender?",
+                                     c(0, 225)),
+               nice_scatter_mv_facet(select(fcc, Income, ExpectedEarning,
+                                            IsEthnicMinority),
                                      "Income (k)",
                                      "ExpectedEarning (k)",
                                      "IsEthnicMinority",
-                                     100, 100,
-                                     "Are you an ethnic minority in your country?",
+                                     50, 50,
+                                     "About how much do you expect to earn per year at your first new job in USD?\nWhat is your current salary in USD?\nAre you an ethnic minority in your country?",
                                      c(0, 150)))
 ```
 
 ### Description One
 
-Males and non-minorities appear most frequently above the $100k lines. The wage gap is evident in current salary for both females and minorities. Though females appear to expect lower salaries than men, minorities are better represented above the $100k expected earning line.
+For males vs. females, the density overlay tells us that the wage gap, i.e. males earn more than females, actually does **not** exist in this dataset. Though males do have the highest proportion of elite ($150k+) current and expected next salaries, it appears that a similar proportion of males and females are in the top right quadrant above both $50k lines. Females expect higher next salaries, while current salaries are similar.
 
-Higher dispersion exists for the majority demographic in both cases. The relationship between expected and current salary is much stronger for the minority demographic.
+An ethnicity-based wage gap does not exist as well, based on the density overlay for the second plot. Current salary densities are nearly identical. Ethnic minorities appear optimistic about the changing diversity landscape via their notable presence in the top left quadrant. This quadrant is where current salaries are below $50k, but expected next salaries are above $50k.
+
+Higher dispersion exists for the majority demographic in both cases, with notable densities near the origin. The relationship between expected and current salary is much stronger for the minority demographic.
+
+Perhaps new coders aren't reflective of the working population in general, where data suggests that [a racial and gender wage gap](http://www.pewresearch.org/fact-tank/2016/07/01/racial-gender-wage-gaps-persist-in-u-s-despite-some-progress/) still exists in 2016.
 
 ### Plot Two
 
-```{r Final_Plot_2}
-g_stud_debt_income_degree_facet <-
-  grid.arrange(nice_scatter_mv_facet(select(stud_debt_owe_mil_rm, Income,
-                                         StudentDebtOwe, SchoolDegree),
-                                    "Income (k)",
-                                    "StudentDebtOwe (k)",
-                                    "SchoolDegree",
-                                    25, 50,
-                                    "About how much do you owe in student debt loans in USD?\nWhat is your current salary in USD?\nWhat is the highest level of school you have completed?",
-                                    c(150, 300)))
+```{r Final_Plot_2, fig.height = 7, fig.width = 7.2}
+g_gender_cont_job_int <- grid.arrange(g_gender_job_int, g_cont_job_int)
 ```
 
 ### Description Two
 
-The majority of individuals who pursued post-secondary education are above the $25k student debt remaining line. Compared to the data science/engineering subset, the lack of correlation between student debt and current salary for the full survey dataset now makes sense. The aforementioned skew towards graduate studies appears to instead be a skew towards post-secondary studies in general, however.
+The dataset's two main categorical variables - gender and citizenship by continent - convey the basic demographics of each job role of interest.
+
+The majority of survey respondents are males and North Americans. Mobile development has the highest percentage of males. User experience design has the highest percentage of North Americans.
+
+User experience designer is the most diverse role in terms of gender, with about the same amount of males as females and the highest percentage of agender, genderqueer, and trans respondents.
+
+Mobile developer is the most diverse role in terms of citizenship, with the lowest percentage of North Americans and relatively high percentages of Asians, South Americans, and Africans.
 
 ### Plot Three
 
-```{r Final_Plot_3}
-g_stud_debt_income_hl_facet <-
-  grid.arrange(nice_scatter_mv_facet(select(stud_debt_owe_mil_rm, Income,
-                                         StudentDebtOwe,
-                                         HoursLearningBucket),
-                                    "Income (k)",
-                                    "StudentDebtOwe (k)",
-                                    "HoursLearning",
-                                    25, 50,
-                                    "About how much do you owe in student debt loans in USD?\nWhat is your current salary in USD?\nAbout how many hours do you spend learning each week?",
-                                    c(150, 300)))
+```{r Final_Plot_3, fig.height = 7.2}
+g_radar_job_int_facet <-
+  ggplot(mean_table_long, aes(x = variable, y = value)) +
+  geom_polygon(aes(group = JobRoleInterest, color = JobRoleInterest),
+               fill = NA, size = 1) +
+  theme_minimal() +
+  labs(title = "") +
+  facet_wrap(~ JobRoleInterest) +
+  theme(text = element_text(color="#454545"),
+        title = element_text(color = "#454545"),
+        axis.ticks = element_blank(),
+        axis.text.x = element_text(size = rel(0.70), colour = "#454545"),
+        axis.text.y = element_blank(),
+        axis.title.x = element_blank(),
+        panel.margin.y = unit(2, "lines")) +
+  # plot.margin = unit(c(0.4,0.65,0,0), "cm")
+  xlab("") + ylab("Normalized mean ([0,1])") +
+  guides(color = "none") +
+  coord_radar()
+
+g_radar_job_int_facet <- arrangeGrob(g_radar_job_int_facet, top = g_radar_job_int.grob)
+grid.arrange(g_radar_job_int_facet)
 ```
 
 ### Description Three
 
-The highest proportion of individuals above the $50k current salary line belongs to the 0-10 hours dedicated to learning bracket. Proportions of individuals above the $25k student debt remaining line are similar across brackets.
+This faceted radar chart, where the normalized mean (between 0 and 1) for each numerical variable is plotted for each job role of interest, clarifies the differences between disciplines.
+
+Developing data scientists/engineers make the most money, expect the most money for their next job, and have the most programming experience. They have the largest amount of area within their polygon.
+
+Full-stack developers are relatively older and dedicate the most amount of time to learning weekly. They also have a large polygon area.
+
+Front-end developers are green in terms of programming experience and have the lowest salary expectations for their first job where they advertise their new web development skills. They also have relatively low current salaries. These three factors contribute to the smallest polygon area.
+
+Mobile developers are the youngest and currently do not make much money. These characteristics are expected of the discipline with the highest proportion of respondents with no, some, or only a high school education. They have the second smallest polygon area.
 
 ------
 
-## Reflection
+## Summary
 
 Developing data scientists and engineers are slightly different than new coders in general.
 
@@ -1398,7 +1531,19 @@ Developing data scientists and engineers are slightly different than new coders 
 
 The two datasets do share plenty of common trends. Demographics are similar. Most are willing to relocate. Most don't use podcasts or attend events yet.
 
-Diversity is still an issue in the workplace, as reflected in current and expected salary for females and ethnic minorities. Student debt owed matches well with current salary and higher levels of education. Most people aren't replacing the traditional college/university route with fulltime online education...yet.
+Older new coders are willing to take a pay cut when transitioning to a job where they advertise their new coding skills. Younger new coders intend to increase their earning potential by capitalizing on demand for coding.
+
+Weekly hours dedicated to learning doesn't differ much across genders and citizenships by continent. Next expected salary does, however. Most people aren't replacing the traditional college/university route with full-time online education...yet. Those that are expect higher salaries.
+
+Gender and continent distributions across job roles of interest vary. Females appear drawn to user experience design. Asians, South Americans, and Africans appear drawn to mobile development. School degree obtained does not vary much by discipline overall, though data science/engineering and mobile development stick out as the most and least seasoned in terms of education, respectively.
+
+Developing data/scientists have the highest current salaries, expect the highest next salaries, and have the most programming experience. Front-end developers are the oldest. Full-stack developers dedicate the most amount of time to learning per week.
+
+Mobile developers are the youngest and have the lowest current salaries. Front-end developers are the least experienced coders and expect the lowest next salaries. UX designers spend the least amount of hours learning weekly.
+
+The gender and racial wage gaps do not present themselves in this dataset. Perhaps new coders aren’t reflective of the working population in general.
+
+## Reflection
 
 The successes of this exploration are largely due to the detailed design of the Free Code Camp survey.
 
