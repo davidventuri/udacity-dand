@@ -1,0 +1,30 @@
+Resources
+
+Free Code Camp's 2016 New Coder Survey
+Kaggle page: https://www.kaggle.com/freecodecamp/2016-new-coder-survey-
+Original article: https://medium.freecodecamp.com/we-asked-15-000-people-who-they-are-and-how-theyre-learning-to-code-4104e29b2781#.ff35ibxrq
+Dataset repo: https://github.com/FreeCodeCamp/2016-new-coder-survey/blob/master/survey-data-dictionary.md
+
+Coding
+https://cran.r-project.org/web/packages/countrycode/countrycode.pdf
+http://stackoverflow.com/questions/11625005/ggplot2-plot-discrete-factors-with-a-set-of-similar-colours
+http://stackoverflow.com/questions/28370249/correct-way-to-specifiy-optional-arguments-in-r-functions
+http://stackoverflow.com/questions/20602908/how-can-i-use-merge-to-cbind-two-dataframes
+https://stat.ethz.ch/R-manual/R-devel/library/base/html/droplevels.html
+http://stackoverflow.com/questions/25401111/left-adjust-title-in-ggplot2-or-absolute-position-for-ggtitle
+http://stackoverflow.com/questions/26684023/how-to-left-align-text-in-annotate-from-ggplot2
+http://www.r-bloggers.com/number-formatting/
+http://stackoverflow.com/questions/10834382/ggplot2-keep-unused-levels-barplot
+https://discussions.udacity.com/t/conditional-labels-for-geom-bar/178395/2
+https://discussions.udacity.com/t/ifelse-problem-prosper-loans-data-set/38980
+https://stat.ethz.ch/R-manual/R-devel/library/base/html/unique.html
+http://stackoverflow.com/questions/7073315/how-do-i-create-a-continuous-density-heatmap-of-2d-scatter-data-in-r
+http://www.cmap.polytechnique.fr/~lepennec/R/Radar/RadarAndParallelPlots.html
+http://stackoverflow.com/questions/38753628/ggplot-boxplot-length-of-whiskers-with-logarithmic-axis
+http://stackoverflow.com/questions/8499378/ggplot2-boxplot-how-do-i-match-the-outliers-color-to-fill-aesthetics
+http://biochemres.com/beautiful-minimalist-boxplots-with-r-and-ggplot2
+http://stackoverflow.com/questions/11889625/annotating-text-on-individual-facet-in-ggplot2
+https://www.r-bloggers.com/r-tutorial-series-one-way-anova-with-pairwise-comparisons/
+
+Miscellaneous
+http://cs.mcgill.ca/~rwest/wikispeedia/wpcd/wp/o/Oceania.htm
