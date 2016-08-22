@@ -1,10 +1,10 @@
 <style>
-h4 {color: #FF6A62;}
 a {color: #38C5FF;}
+h4 {color: #FF6A62;}
 </style>
 
 # Developing Data Scientists: Exploring Free Code Camp's ["2016 New Coder Survey"](https://www.kaggle.com/freecodecamp/2016-new-coder-survey-)
-### By <a href="http://davidventuri.com/">David Venturi</a>
+### By [David Venturi](http://davidventuri.com/)
 
 ------
 
@@ -298,9 +298,9 @@ g_job_int <-
                              6, 9))
 ```
 
-#### The following analysis first explores the characteristics of these developing data scientists/engineers, which complements Free Code Camp's [univariate exploration of new coders](https://medium.freecodecamp.com/we-asked-15-000-people-who-they-are-and-how-theyre-learning-to-code-4104e29b2781#.dbl4sh7q8).
+#### The following analysis first explores the characteristics of these developing data scientists/engineers, which complements Free Code Camp's [univariate exploration](https://medium.freecodecamp.com/we-asked-15-000-people-who-they-are-and-how-theyre-learning-to-code-4104e29b2781#.dbl4sh7q8) of new coders in general.
 
-Free Code Camp's article structure is intentionally mimicked for the purpose of direct comparison. Additional comments are included where the results significantly differ. A few unique plots are included as well.
+Free Code Camp's article structure is intentionally mimicked for the purpose of direct comparison. Additional comments are included where the results significantly differ. A few bonus plots are included too!
 
 #### We'll then dive deeper into the characteristics of new coders in general via bivariate and multivariate exploration.
 
@@ -309,7 +309,7 @@ Free Code Camp's article structure is intentionally mimicked for the purpose of 
 ## Univariate Plots
 
 ### Who Participated
-CodeNewbie and Free Code Camp designed the survey, and dozens of coding-related organizations publicized it to their members.
+[CodeNewbie](http://www.codenewbie.org/) and [Free Code Camp](https://www.freecodecamp.com/) designed the survey, and dozens of coding-related organizations publicized it to their members.
 
 Of the 646 *developing data scientists and data engineers* who responded to the survey:
 
@@ -864,7 +864,7 @@ If the survey asked "*Are you already working as a data scientist/engineer?*" in
 
 Though there isn't a main feature of interest, we can separate the respondents who answered something other than "*Data Scientist/Data Engineer*" to the job role interest question and compare the subsets using bivariate and multivariate plots.
 
-I will also explore several of the smaller features, six of them numerical and three of them categorical.
+I will also explore several of the smaller features, six of them numerical and four of them categorical.
 
 The numerical:
 
@@ -880,6 +880,7 @@ The categorical:
 1. Gender
 2. Citizenship by continent
 3. School degree
+4. Ethnic majority vs. minority
 
 ### Of the features you investigated, were there any unusual distributions?
 
@@ -1138,7 +1139,8 @@ sort(table(fcc$ContinentCitizen), decreasing = TRUE)
 The higher Asian and African means are both significant compared to the other continents' means at a significance level of 0.05.
 
 ```{r Hours_Learn_Continent_p}
-pairwise.t.test(fcc$HoursLearning, fcc$ContinentCitizen, p.adj = "none")$p.value
+pairwise.t.test(fcc$HoursLearning, fcc$ContinentCitizen,
+                p.adj = "none")$p.value
 ```
 
 <br>
@@ -1202,7 +1204,8 @@ table(fcc$HoursLearningBucket)
 This expectations gap, however, might be due to random chance, as the (0,10] and (40,100] means comparison failed to show significance.
 
 ```{r Exp_Earn_Hours_Learn_p}
-pairwise.t.test(fcc$ExpectedEarning, fcc$HoursLearningBucket, p.adj = "none")$p.value
+pairwise.t.test(fcc$ExpectedEarning, fcc$HoursLearningBucket,
+                p.adj = "none")$p.value
 ```
 
 <br>
@@ -1270,7 +1273,8 @@ nice_seg_bar_plot <- function(df, xlab, flab, question) {
     colour_vals <- c("#38C5FF", "#FFBE5D", "#FF6A62", "#42C6AD", "#FF9460")
   }
   if (flab == "ContinentCitizen") {
-    colour_vals <- c("#38C5FF", "#4CC65B", "#FFBE5D", "#FF6A62", "#42C6AD",  "#FF9460")
+    colour_vals <- c("#38C5FF", "#4CC65B", "#FFBE5D",
+                     "#FF6A62", "#42C6AD",  "#FF9460")
   }
   if (flab == "SchoolDegree") {
     colour_vals <- c("#38C5FF", "#3DC5D6", "#42C6AD", "#47C684", "#4CC65B",
@@ -1357,7 +1361,8 @@ with(fcc_job_lim, by(Age, JobRoleInterest, summary))
 Based on the results of a pairwise t-test, we are inclined to conclude that mobile developers are the youngest, but front-end developers being the oldest might be caused by random chance.
 
 ```{r Age_Job_Role_Interest_p}
-pairwise.t.test(fcc_job_lim$Age, fcc_job_lim$JobRoleInterest, p.adj = "none")$p.value
+pairwise.t.test(fcc_job_lim$Age, fcc_job_lim$JobRoleInterest,
+                p.adj = "none")$p.value
 ```
 
 <br>
@@ -1382,7 +1387,8 @@ with(years_prog_job_lim, by(MonthsProgramming, JobRoleInterest, summary))
 For all disciplines except back-end development, the results of the t-tests suggest that those interested in data science and engineering have indeed programmed for longer. Front-end developers have programmed the least, unanimously, according to p-values.
 
 ```{r Years_Prog_Job_Role_Interest_p}
-pairwise.t.test(fcc_job_lim$MonthsProgramming, fcc_job_lim$JobRoleInterest, p.adj = "none")$p.value
+pairwise.t.test(fcc_job_lim$MonthsProgramming, fcc_job_lim$JobRoleInterest,
+                p.adj = "none")$p.value
 ```
 
 <br>
@@ -1405,7 +1411,8 @@ with(fcc_job_lim, by(HoursLearning, JobRoleInterest, summary))
 Statistical significance unanimously supports that full-stack developers spend the most time learning and UX designers the least.
 
 ```{r Hours_Learn_Job_Role_Interest_p}
-pairwise.t.test(fcc_job_lim$HoursLearning, fcc_job_lim$JobRoleInterest, p.adj = "none")$p.value
+pairwise.t.test(fcc_job_lim$HoursLearning, fcc_job_lim$JobRoleInterest,
+                p.adj = "none")$p.value
 ```
 
 <br>
@@ -1428,7 +1435,8 @@ with(fcc_job_lim, by(Income, JobRoleInterest, summary))
 The inference that developing data scientists and engineers have the highest current salaries, as expected, is supported by statistical inference. UX designers having the lowest, on average, might be caused by random chance, however.
 
 ```{r Income_Job_Role_Interest_p}
-pairwise.t.test(fcc_job_lim$Income, fcc_job_lim$JobRoleInterest, p.adj = "none")$p.value
+pairwise.t.test(fcc_job_lim$Income, fcc_job_lim$JobRoleInterest,
+                p.adj = "none")$p.value
 ```
 
 <br>
@@ -1451,7 +1459,8 @@ with(fcc_job_lim, by(ExpectedEarning, JobRoleInterest, summary))
 Interesting. At a significance level of 0.05, future front-end developers *can* be said to expect the lowest next salaries. Data-focused respondents retain their place in the salary-related kingdom.
 
 ```{r Exp_Earn_Job_Role_Interest_p}
-pairwise.t.test(fcc_job_lim$ExpectedEarning, fcc_job_lim$JobRoleInterest, p.adj = "none")$p.value
+pairwise.t.test(fcc_job_lim$ExpectedEarning, fcc_job_lim$JobRoleInterest,
+                p.adj = "none")$p.value
 ```
 
 ## Bivariate Analysis
@@ -1466,7 +1475,7 @@ Hours dedicated to learning doesn't appear to vary much with gender or continent
 
 Expected salary for a new coder's next job varies strongly by continent. Females appear to have a much higher bottom line than males. Those who dedicate more than 40 hours a week to learning might expect higher next salaries, but sample size issues prevent this statement from being definitive.
 
-The majority of new coders for all job roles of interest are male, North American, and have bachelor's degrees. Age, programming experience, hours dedicated to learning, current salary, and expected next salary all vary depending on job role of interest. One or two of the disciplines stands out from the pack for each of the five quantitative variables.
+The majority of new coders for all job roles of interest are male, North American, and have bachelor's degrees. Age, programming experience, hours dedicated to learning, current salary, and expected next salary all vary depending on job role of interest. One or two of the roles stands out from the pack for each of the five quantitative variables.
 
 ### What was the strongest relationship you found?
 
@@ -1553,12 +1562,15 @@ nice_scatter_mv_facet <- function(df, xlab, ylab, flab, med_x, med_y, questions,
     geom_jitter(aes(colour = f), alpha = 0.25) +
     #stat_density2d(aes(alpha=..level..), geom="polygon") +
     geom_smooth(method = 'lm', colour = "#454545") +
-    geom_hline(data = hlines, aes(yintercept = y), colour = "#454545", linetype = "dashed") +
-    geom_vline(data = vlines, aes(xintercept = x), colour = "#454545", linetype = "dashed") +
+    geom_hline(data = hlines, aes(yintercept = y),
+               colour = "#454545", linetype = "dashed") +
+    geom_vline(data = vlines, aes(xintercept = x),
+               colour = "#454545", linetype = "dashed") +
     theme_minimal() +
     facet_wrap(~ f) +
     scale_colour_manual(values = colour_vals) +
-    labs(title = "", x = paste("\n", xlab), y = paste(ylab, "\n"), colour = flab) +
+    labs(title = "", x = paste("\n", xlab), y = paste(ylab, "\n"),
+         colour = flab) +
     theme(text = element_text(color = "#454545"),
           axis.text = element_text(size = 10),
           legend.position = "top",
@@ -1567,10 +1579,12 @@ nice_scatter_mv_facet <- function(df, xlab, ylab, flab, med_x, med_y, questions,
     geom_text(data = ann_text, aes(label = lab),
               colour = "#454545", size = 4) +
     geom_text(data = vlines,
-              aes(med_x, max(df_na_rm[2]) - vline_lab_offset, label = med_x, hjust = -1),
+              aes(med_x, max(df_na_rm[2]) - vline_lab_offset,
+                  label = med_x, hjust = -1),
               colour = "#454545", size = 3) +
     geom_text(data = hlines,
-              aes(max(df_na_rm[1]) - hline_lab_offset, med_y, label = med_y, vjust = -1),
+              aes(max(df_na_rm[1]) - hline_lab_offset, med_y,
+                  label = med_y, vjust = -1),
               colour = "#454545", size = 3)
   
   if (xlab == "Age") {
@@ -1604,12 +1618,14 @@ fcc_mf_u65 <- filter(fcc_mf, Age < 65)
 r_age_income_male <-
   paste("r =",
         as.character(round(with(filter(fcc_u65, Gender == "male"),
-                                cor.test(Age, Income, method = 'pearson'))$estimate,
+                                cor.test(Age, Income,
+                                         method = 'pearson'))$estimate,
                            digits = 3)))
 r_age_income_female <-
   paste("r =",
         as.character(round(with(filter(fcc_u65, Gender == "female"),
-                                cor.test(Age, Income, method = 'pearson'))$estimate,
+                                cor.test(Age, Income,
+                                         method = 'pearson'))$estimate,
                            digits = 3)))
 # Faceted scatter plot
 g_age_income_gender_facet <-
@@ -1641,15 +1657,18 @@ As with current salary, females have a higher median expected next salary. Corre
 r_age_exp_earn_male <-
   paste("r =",
         as.character(round(with(filter(fcc_u65, Gender == "male"),
-                                cor.test(Age, ExpectedEarning, method = 'pearson'))$estimate,
+                                cor.test(Age, ExpectedEarning,
+                                         method = 'pearson'))$estimate,
                            digits = 3)))
 r_age_exp_earn_female <-
   paste("r =",
         as.character(round(with(filter(fcc_u65, Gender == "female"),
-                                cor.test(Age, ExpectedEarning, method = 'pearson'))$estimate,
+                                cor.test(Age, ExpectedEarning,
+                                         method = 'pearson'))$estimate,
                            digits = 3)))
 g_age_exp_earn_gender_facet <-
-  grid.arrange(nice_scatter_mv_facet(select(fcc_mf_u65, Age, ExpectedEarning, Gender),
+  grid.arrange(nice_scatter_mv_facet(select(fcc_mf_u65,
+                                            Age, ExpectedEarning, Gender),
                                      "Age",
                                      "ExpectedEarning (thousands)",
                                      "Gender",
@@ -1677,15 +1696,18 @@ Plotting the two salary-related variables against each other, we are left with t
 r_exp_earn_income_male <-
   paste("r =",
         as.character(round(with(filter(fcc, Gender == "male"),
-                                cor.test(ExpectedEarning, Income, method = 'pearson'))$estimate,
+                                cor.test(ExpectedEarning, Income,
+                                         method = 'pearson'))$estimate,
                            digits = 3)))
 r_exp_earn_income_female <-
   paste("r =",
         as.character(round(with(filter(fcc, Gender == "female"),
-                                cor.test(ExpectedEarning, Income, method = 'pearson'))$estimate,
+                                cor.test(ExpectedEarning, Income,
+                                         method = 'pearson'))$estimate,
                            digits = 3)))
 g_exp_earn_income_gender_facet <-
-  grid.arrange(nice_scatter_mv_facet(select(fcc_mf, Income, ExpectedEarning, Gender),
+  grid.arrange(nice_scatter_mv_facet(select(fcc_mf,
+                                            Income, ExpectedEarning, Gender),
                                      "Income (thousands)",
                                      "ExpectedEarning (thousands)",
                                      "Gender",
@@ -1710,17 +1732,19 @@ fcc$IsEthnicMinority <- order_factor(fcc$IsEthnicMinority, "desc")
 r_age_income_non_em <-
   paste("r =",
         as.character(round(with(filter(fcc_u65, IsEthnicMinority == "No"),
-                                cor.test(Income, Age, method = 'pearson'))$estimate,
+                                cor.test(Income, Age,
+                                         method = 'pearson'))$estimate,
                            digits = 3)))
 r_age_income_em <-
   paste("r =",
         as.character(round(with(filter(fcc_u65, IsEthnicMinority == "Yes"),
-                                cor.test(Income, Age, method = 'pearson'))$estimate,
+                                cor.test(Income, Age,
+                                         method = 'pearson'))$estimate,
                            digits = 3)))
 # Faceted scatter plot
 g_age_income_em_facet <-
-  grid.arrange(nice_scatter_mv_facet(select(fcc_u65, Age, Income,
-                                         IsEthnicMinority),
+  grid.arrange(nice_scatter_mv_facet(select(fcc_u65,
+                                            Age, Income, IsEthnicMinority),
                                "Age",
                                "Income (thousands)",
                                "IsEthnicMinority",
@@ -1748,16 +1772,18 @@ Again, the correlations with age are lower for expected next salary compared to 
 r_age_exp_earn_non_em <-
   paste("r =",
         as.character(round(with(filter(fcc_u65, IsEthnicMinority == "No"),
-                                cor.test(ExpectedEarning, Age, method = 'pearson'))$estimate,
+                                cor.test(ExpectedEarning, Age,
+                                         method = 'pearson'))$estimate,
                            digits = 3)))
 r_age_exp_earn_em <-
   paste("r =",
         as.character(round(with(filter(fcc_u65, IsEthnicMinority == "Yes"),
-                                cor.test(ExpectedEarning, Age, method = 'pearson'))$estimate,
+                                cor.test(ExpectedEarning, Age,
+                                         method = 'pearson'))$estimate,
                            digits = 3)))
 g_age_exp_earn_em_facet <-
-  grid.arrange(nice_scatter_mv_facet(select(fcc_u65, Age, ExpectedEarning,
-                                         IsEthnicMinority),
+  grid.arrange(nice_scatter_mv_facet(select(fcc_u65,
+                                            Age, ExpectedEarning, IsEthnicMinority),
                                "Age",
                                "ExpectedEarning (thousands)",
                                "IsEthnicMinority",
@@ -1785,16 +1811,18 @@ We are again left with the impression that **the wage gap, this time the racial 
 r_exp_earn_income_non_em <-
   paste("r =",
         as.character(round(with(filter(fcc, IsEthnicMinority == "No"),
-                                cor.test(ExpectedEarning, Income, method = 'pearson'))$estimate,
+                                cor.test(ExpectedEarning, Income,
+                                         method = 'pearson'))$estimate,
                            digits = 3)))
 r_exp_earn_income_em <-
   paste("r =",
         as.character(round(with(filter(fcc, IsEthnicMinority == "Yes"),
-                                cor.test(ExpectedEarning, Income, method = 'pearson'))$estimate,
+                                cor.test(ExpectedEarning, Income,
+                                         method = 'pearson'))$estimate,
                            digits = 3)))
 g_exp_earn_income_em_facet <-
   grid.arrange(nice_scatter_mv_facet(select(fcc, Income, ExpectedEarning,
-                                         IsEthnicMinority),
+                                            IsEthnicMinority),
                                "Income (thousands)",
                                "ExpectedEarning (thousands)",
                                "IsEthnicMinority",
@@ -1871,7 +1899,8 @@ g_radar_job_int <-
   geom_line(aes(group = JobRoleInterest, color = JobRoleInterest), size = 1) +
   #labs(title = "") +
   theme_minimal() +
-  scale_colour_manual(values = c("#FF6A62", "#FFBE5D", "#4CC65B", "#38C5FF", "#8C42FF", "#FF2FD7")) +
+  scale_colour_manual(values = c("#FF6A62", "#FFBE5D", "#4CC65B",
+                                 "#38C5FF", "#8C42FF", "#FF2FD7")) +
   theme(text = element_text(color="#454545"),
         title = element_text(color = "#454545"),
         axis.text.x = element_text(size = rel(0.8)),
@@ -1882,7 +1911,8 @@ g_radar_job_int <-
   guides(color = guide_legend(ncol=1)) +
   coord_radar()
 
-g_radar_job_int <- arrangeGrob(g_radar_job_int, top = g_radar_job_int.grob)
+g_radar_job_int <- arrangeGrob(g_radar_job_int,
+                               top = g_radar_job_int.grob)
 grid.arrange(g_radar_job_int)
 ```
 
@@ -1896,7 +1926,8 @@ g_radar_job_int_facet <-
   geom_polygon(aes(group = JobRoleInterest, colour = JobRoleInterest),
                fill = NA, size = 1) +
   theme_minimal() +
-  scale_colour_manual(values = c("#FF6A62", "#FFBE5D", "#4CC65B", "#38C5FF", "#8C42FF", "#FF2FD7")) +
+  scale_colour_manual(values = c("#FF6A62", "#FFBE5D", "#4CC65B",
+                                 "#38C5FF", "#8C42FF", "#FF2FD7")) +
   labs(title = "") +
   facet_wrap(~ JobRoleInterest) +
   theme(text = element_text(color="#454545"),
@@ -1910,13 +1941,15 @@ g_radar_job_int_facet <-
   guides(color = "none") +
   coord_radar()
 
-g_radar_job_int_facet <- arrangeGrob(g_radar_job_int_facet, top = g_radar_job_int.grob)
+g_radar_job_int_facet <- arrangeGrob(g_radar_job_int_facet,
+                                     top = g_radar_job_int.grob)
 grid.arrange(g_radar_job_int_facet)
 ```
 
 ## Multivariate Analysis
 
 ### Were there any interesting or surprising interactions between features?
+
 The wage gaps, both gender and racial, do not present themselves in this new coder dataset via current and expected next salary medians. Maybe new coders aren't an accurate representation of the working population in general. Data suggests that [both wage gaps](http://www.pewresearch.org/fact-tank/2016/07/01/racial-gender-wage-gaps-persist-in-u-s-despite-some-progress/) still exist in 2016.
 
 That the female correlation between income and age (0.192) is lower than the male one (0.267), but the ethnic minority correlation (0.243) is nearly identical to the ethnic majority one (0.253) is interesting as well. I wonder why, all else equal, the minority demographic for race performs better salary-wise as they age compared to the minority demographic for gender.
@@ -1929,7 +1962,7 @@ Though this was previously noted in the bivariate section, the strong current sa
 
 ### Plot One
 
-```{r Final_Plot_2, fig.height = 6, fig.width = 7.5}
+```{r Final_Plot_1, fig.width = 7}
 g_gender_cont_job_int <- grid.arrange(g_gender_job_int)
 ```
 
@@ -1945,7 +1978,7 @@ User experience design is the most diverse discipline, with 52% males and 46% fe
 
 ### Plot Two
 
-```{r Final_Plot_3, fig.height = 7.2}
+```{r Final_Plot_2, fig.height = 7.2}
 grid.arrange(g_radar_job_int_facet)
 ```
 
@@ -1963,7 +1996,7 @@ Mobile developers are the youngest and currently do not make much money. These c
 
 ### Plot Three
 
-```{r Final_Plot_1, fig.height = 6, fig.width = 7.5}
+```{r Final_Plot_3, fig.height = 6, fig.width = 8}
 grid.arrange(g_exp_earn_income_gender_facet)
 ```
 
