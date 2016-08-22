@@ -3,7 +3,7 @@ a {color: #38C5FF;}
 h4 {color: #FF6A62;}
 </style>
 
-# Developing Data Scientists: Exploring Free Code Camp's ["2016 New Coder Survey"](https://www.kaggle.com/freecodecamp/2016-new-coder-survey-)
+# Exploring Free Code Camp's ["2016 New Coder Survey"](https://www.kaggle.com/freecodecamp/2016-new-coder-survey-)
 ### By [David Venturi](http://davidventuri.com/)
 
 ------
