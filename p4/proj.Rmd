@@ -342,8 +342,9 @@ The median of 26 years is clearer once the long-tail data is log transformed.
 # Add 0.01 to ease log10(0)=-inf issue
 # Didn't include grob code in function to permit adding scale_x_log10
 g_age_log10 <-
-  grid.arrange(nice_histogram((fcc_data$Age+0.01), 0.02, "Age") +
-               scale_x_log10(breaks = c(15, 20, 25, 30, 40, 50, 65)),
+  grid.arrange(nice_histogram((fcc_data$Age + 0.01), 0.02, "Age (Log10)") +
+               scale_x_log10(breaks = c(16, 24, 32, 48, 64),
+                             labels = c(16, 24, 32, 48, 64)),
                top = age.grob)
 # ggsave(file="AgeLog10.png", g_age_log10)
 ```
@@ -357,7 +358,7 @@ summary(fcc_data$MonthsProgramming, na.rm = TRUE)
 months_prog.grob <- plot_title("About how many years have you been programming for?")
 g_months_prog <-
   grid.arrange(nice_histogram(fcc_data$MonthsProgramming / 12, 0.5,
-                              "Years Programming"),
+                              "YearsProgramming"),
                top = months_prog.grob)
 # ggsave(file="MonthsProgramming.png", g_months_prog)
 ```
@@ -367,9 +368,10 @@ Like the age plot, the median programming experience of 8 months is much clearer
 ```{r MonthsProgrammingLog10}
 # Add 3/5 of a month to ease log10(0)=-inf issue
 g_months_prog_log10 <-
-  grid.arrange(nice_histogram((fcc_data$MonthsProgramming + 0.6) / 12, 0.25,
-                              "Years Programming") +
-               scale_x_log10(breaks = c(0.1, 0.5, 1, 2.5, 5, 10, 25, 50)),
+  grid.arrange(nice_histogram((fcc_data$MonthsProgramming + 0.6) / 12, 0.3,
+                              "YearsProgramming (Log10)") +
+               scale_x_log10(breaks = c(0, 0.25, 0.5, 1, 2, 4, 8, 16, 32),
+                             labels = c(0, 0.25, 0.5, 1, 2, 4, 8, 16, 32)),
                top = months_prog.grob)
 # ggsave(file="MonthsProgrammingLog10.png", g_months_prog_log10)
 ```
@@ -394,8 +396,10 @@ Again, log transformation makes the right-skewed data's distribution clearer. Th
 # Add 0.5 to ease log10(0)=-inf issue
 # Didn't include grob code in function to permit adding scale_x_log10
 g_hours_learn_log10 <-
-  grid.arrange(nice_histogram((fcc_data$HoursLearning+0.01), 0.1, "HoursLearning") +
-               scale_x_log10(breaks = c(0, 1, 2, 3, 4, 5, 10, 20, 40, 80)) +
+  grid.arrange(nice_histogram((fcc_data$HoursLearning + 0.01), 0.1,
+                              "HoursLearning (Log10)") +
+               scale_x_log10(breaks = c(0, 2.5, 5, 10, 20, 40, 80),
+                             labels = c(0, 2.5, 5, 10, 20, 40, 80)) +
                coord_cartesian(xlim = c(1, 80)),
                top = hours_learn.grob)
 # ggsave(file="HoursLearningLog10.png", g_hours_learn_log10)
@@ -704,7 +708,7 @@ g_school_major <-
 ```
 
 #### Just over one-half are currently working.
-Two-thirds of new coders, in general, are currently working.
+Two-thirds of the new coder population are currently working.
 
 ```{r EmploymentStatus}
 # EmploymentStatus
@@ -717,7 +721,7 @@ g_employment_status <-
 ```
 
 #### A quarter work in the tech industry.
-Employment fields are more spread compared to the full new coder survey, where 50% of respondents work in software development and IT.
+There is a higher variety of employment fields compared to the full dataset, where 50% of respondents work in software development and IT.
 
 ```{r EmploymentField}
 # EmploymentField
@@ -787,6 +791,7 @@ no_spouse / sum(table(fcc_data$MaritalStatus))
 ```
 
 #### 47% consider themselves underemployed (working a job that is below their education level).
+This is 5% higher than new coders in general.
 
 ```{r IsUnderEmployed}
 # IsUnderEmployed
@@ -1030,7 +1035,7 @@ nice_boxplot <- function(df, xlab, ylab, questions) {
   colnames(df_na_rm)[2] <- "y"
   
   # Divide by 1000 to slim y-axis labels
-  if (ylab == "ExpectedEarning (thousands)" | ylab == "Income (thousands)") {
+  if (ylab == "ExpectedEarning (Log10) (thousands)" | ylab == "Income (Log10) (thousands)") {
     df_na_rm[ , 2] <- df_na_rm[ , 2] / 1000
   }
   
@@ -1104,7 +1109,7 @@ hours_learn_gender.grob <-
   plot_title("About how many hours do you spend learning each week?\nWhat is your gender?")
 g_hours_learn_gender <-
   grid.arrange(nice_boxplot(select(fcc, Gender, HoursLearning),
-                            "Gender", "HoursLearning") +
+                            "Gender", "HoursLearning (Log10)") +
                coord_trans(y = "log10", limy = c(1, 110)) +
                scale_y_continuous(breaks = c(5, 10, 20, 40, 80)),
                top = hours_learn_gender.grob)
@@ -1128,7 +1133,7 @@ hours_learn_cont.grob <-
   plot_title("About how many hours do you spend learning each week?\nWhich continent are you a citizen of?")
 g_hours_learn_continent <-
   grid.arrange(nice_boxplot(select(fcc, ContinentCitizen, HoursLearning),
-                            "ContinentCitizen", "HoursLearning") +
+                            "ContinentCitizen", "HoursLearning (Log10)") +
                coord_trans(y = "log10", limy = c(1, 110)) +
                scale_y_continuous(breaks = c(5, 10, 20, 40, 80)),
                top = hours_learn_cont.grob)
@@ -1152,7 +1157,7 @@ exp_earn_gender.grob <-
   plot_title("About how much do you expect to earn per year at your first new job in USD?\nWhat is your gender?")
 g_exp_earn_gender <-
   grid.arrange(nice_boxplot(select(fcc, Gender, ExpectedEarning),
-                            "Gender", "ExpectedEarning (thousands)") +
+                            "Gender", "ExpectedEarning (Log10) (thousands)") +
                coord_trans(y = "log10", limy = c(5, 210)) +
                scale_y_continuous(breaks = c(5, 10, 20, 40, 80, 160)),
                top = exp_earn_gender.grob)
@@ -1177,7 +1182,7 @@ exp_earn_cont.grob <-
   plot_title("About how much do you expect to earn per year at your first new job in USD?\nWhich continent are you a citizen of?")
 g_exp_earn_continent <-
   grid.arrange(nice_boxplot(select(fcc, ContinentCitizen, ExpectedEarning),
-                            "ContinentCitizen", "ExpectedEarning (thousands)") +
+                            "ContinentCitizen", "ExpectedEarning (Log10) (thousands)") +
                coord_trans(y = "log10", limy = c(5, 210)) +
                scale_y_continuous(breaks = c(5, 10, 20, 40, 80, 160)),
                top = exp_earn_cont.grob)
@@ -1193,7 +1198,7 @@ exp_earn_hours_learn.grob <-
 g_exp_earn_hours_learning <-
   grid.arrange(nice_boxplot(select(fcc, HoursLearningBucket,
                                    ExpectedEarning),
-                            "HoursLearning", "ExpectedEarning (thousands)") +
+                            "HoursLearning", "ExpectedEarning (Log10) (thousands)") +
                coord_trans(y = "log10", limy = c(5, 210)) +
                scale_y_continuous(breaks = c(5, 10, 20, 40, 80, 160)),
                top = exp_earn_hours_learn.grob)
@@ -1350,7 +1355,7 @@ age_job_int.grob <-
   plot_title("How old are you?\nWhich one of these roles are you most interested in?")
 g_age_job_int <-
   grid.arrange(nice_boxplot(select(fcc_job_lim, JobRoleInterest, Age),
-                            "JobRoleInterest", "Age") +
+                            "JobRoleInterest", "Age (Log10)") +
                coord_trans(y = "log10", limy = c(10, 90)) +
                scale_y_continuous(breaks = c(10, 20, 40, 80)),
                top = age_job_int.grob)
@@ -1376,9 +1381,10 @@ months_prog_job_int.grob <-
   plot_title("About how many years have you been programming for?\nWhich one of these roles are you most interested in?")
 g_months_prog_job_int <-
   grid.arrange(nice_boxplot(years_prog_job_lim,
-                            "JobRoleInterest", "YearsProgramming") +
+                            "JobRoleInterest", "YearsProgramming (Log10)") +
                coord_trans(y = "log10", limy = c(0.05, 45)) +
-               scale_y_continuous(breaks = c(0.25, 0.5, 1, 2, 4, 8, 16, 32)),
+               scale_y_continuous(breaks = c(0.25, 0.5, 1, 2, 4, 8, 16, 32),
+                                  labels = c(0.25, 0.5, 1, 2, 4, 8, 16, 32)),
                top = months_prog_job_int.grob)
 with(years_prog_job_lim, by(MonthsProgramming, JobRoleInterest, summary))
 ```
@@ -1400,7 +1406,7 @@ hours_learn_job_int.grob <-
   plot_title("About how many hours do you spend learning each week?\nWhich one of these roles are you most interested in?")
 g_hours_learn_job_int <-
   grid.arrange(nice_boxplot(select(fcc_job_lim, JobRoleInterest, HoursLearning),
-                            "JobRoleInterest", "HoursLearning") +
+                            "JobRoleInterest", "HoursLearning (Log10)") +
                coord_trans(y = "log10", limy = c(1, 110)) +
                scale_y_continuous(breaks = c(5, 10, 20, 40, 80)),
                top = hours_learn_job_int.grob)
@@ -1424,7 +1430,7 @@ income_job_int.grob <-
   plot_title("What is your current salary in USD?\nWhich one of these roles are you most interested in?")
 g_income_job_int <-
   grid.arrange(nice_boxplot(select(fcc_job_lim, JobRoleInterest, Income),
-                            "JobRoleInterest", "Income (thousands)") +
+                            "JobRoleInterest", "Income (Log10) (thousands)") +
                coord_trans(y = "log10", limy = c(5, 210)) +
                scale_y_continuous(breaks = c(5, 10, 20, 40, 80, 160)),
                top = income_job_int.grob)
@@ -1448,7 +1454,7 @@ exp_earn_job_int.grob <-
   plot_title("About how much do you expect to earn per year at your first new job in USD?\nWhich one of these roles are you most interested in?")
 g_exp_earn_job_int <-
   grid.arrange(nice_boxplot(select(fcc_job_lim, JobRoleInterest, ExpectedEarning),
-                            "JobRoleInterest", "ExpectedEarning (thousands)") +
+                            "JobRoleInterest", "ExpectedEarning (Log10) (thousands)") +
                coord_trans(y = "log10", limy = c(5, 210)) +
                scale_y_continuous(breaks = c(5, 10, 20, 40, 80, 160)),
                top = exp_earn_job_int.grob)
