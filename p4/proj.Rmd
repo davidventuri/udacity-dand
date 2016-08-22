@@ -1688,7 +1688,7 @@ table(filter(droplevels(fcc_mf), ExpectedEarning >= 150000)$Gender) /
 ```
 
 <br>
-Plotting the two salary-related variables against each other, we are left with the impression that **the gender wage gap does no exist in this dataset**. Females have both a higher median current salary and expected next salary. Male new coders do dominate the elite ($150k+) salary lines but also notice the cluster of blue circles and the absence of red circles near the origin. Pearson's r correlations tell us that a higher percentage of a female new coder's expected salary can be explained by her current salary. Both correlations are still relatively high.
+Plotting the two salary-related variables against each other, we are left with the impression that **the gender wage gap does not exist in this dataset**. Females have both a higher median current salary and expected next salary. Male new coders do dominate the elite ($150k+) salary lines but also notice the cluster of blue circles and the absence of red circles near the origin. Pearson's r correlations tell us that a higher percentage of a female new coder's expected salary can be explained by her current salary. Both correlations are still relatively high.
 
 ```{r Exp_Earn_Income_Gender_Facet, fig.height = 6, fig.width = 8}
 # Expected Earning vs. Income for Gender
