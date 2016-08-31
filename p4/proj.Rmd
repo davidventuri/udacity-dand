@@ -499,7 +499,7 @@ g_code_event <-
 ```
 
 #### On average, they use at least three different resources for learning.
-Those interested in data science and/or engineering use Coursera, edX, and Udacity more frequently than new coders in general. These companies have wider subject area scopes than the some of the coding-specific resources listed.
+Those interested in data science and/or engineering use Coursera, edX, and Udacity more frequently than new coders in general. These companies have a wider range of subject areas than the some of the coding-specific resources listed.
 
 ```{r Resource}
 # Resource
@@ -1110,8 +1110,9 @@ hours_learn_gender.grob <-
 g_hours_learn_gender <-
   grid.arrange(nice_boxplot(select(fcc, Gender, HoursLearning),
                             "Gender", "HoursLearning") +
-               coord_trans(y = "log10", limy = c(1, 110)) +
-               scale_y_continuous(breaks = c(5, 10, 20, 40, 80)),
+               coord_trans(y = "log10", limy = c(1, 160)) +
+               scale_y_continuous(breaks = c(1.25, 2.5, 5, 10, 20, 40, 80, 160),
+                                  labels = c(1.25, 2.5, 5, 10, 20, 40, 80, 160)),
                top = hours_learn_gender.grob)
 sort(table(fcc$Gender), decreasing = TRUE)
 ```
@@ -1134,8 +1135,9 @@ hours_learn_cont.grob <-
 g_hours_learn_continent <-
   grid.arrange(nice_boxplot(select(fcc, ContinentCitizen, HoursLearning),
                             "ContinentCitizen", "HoursLearning") +
-               coord_trans(y = "log10", limy = c(1, 110)) +
-               scale_y_continuous(breaks = c(5, 10, 20, 40, 80)),
+               coord_trans(y = "log10", limy = c(1, 160)) +
+               scale_y_continuous(breaks = c(1.25, 2.5, 5, 10, 20, 40, 80, 160),
+                                  labels = c(1.25, 2.5, 5, 10, 20, 40, 80, 160)),
                top = hours_learn_cont.grob)
 sort(table(fcc$ContinentCitizen), decreasing = TRUE)
 ```
@@ -1158,8 +1160,9 @@ exp_earn_gender.grob <-
 g_exp_earn_gender <-
   grid.arrange(nice_boxplot(select(fcc, Gender, ExpectedEarning),
                             "Gender", "ExpectedEarning (thousands)") +
-               coord_trans(y = "log10", limy = c(5, 210)) +
-               scale_y_continuous(breaks = c(5, 10, 20, 40, 80, 160)),
+               coord_trans(y = "log10", limy = c(5, 240)) +
+               scale_y_continuous(breaks = c(7.5, 15, 30, 60, 120, 240),
+                                  labels = c(7.5, 15, 30, 60, 120, 240)),
                top = exp_earn_gender.grob)
 with(fcc, by(ExpectedEarning, Gender, summary))
 ```
@@ -1183,8 +1186,9 @@ exp_earn_cont.grob <-
 g_exp_earn_continent <-
   grid.arrange(nice_boxplot(select(fcc, ContinentCitizen, ExpectedEarning),
                             "ContinentCitizen", "ExpectedEarning (thousands)") +
-               coord_trans(y = "log10", limy = c(5, 210)) +
-               scale_y_continuous(breaks = c(5, 10, 20, 40, 80, 160)),
+               coord_trans(y = "log10", limy = c(5, 240)) +
+               scale_y_continuous(breaks = c(7.5, 15, 30, 60, 120, 240),
+                                  labels = c(7.5, 15, 30, 60, 120, 240)),
                top = exp_earn_cont.grob)
 ```
 
@@ -1199,8 +1203,9 @@ g_exp_earn_hours_learning <-
   grid.arrange(nice_boxplot(select(fcc, HoursLearningBucket,
                                    ExpectedEarning),
                             "HoursLearning", "ExpectedEarning (thousands)") +
-               coord_trans(y = "log10", limy = c(5, 210)) +
-               scale_y_continuous(breaks = c(5, 10, 20, 40, 80, 160)),
+               coord_trans(y = "log10", limy = c(5, 240)) +
+               scale_y_continuous(breaks = c(7.5, 15, 30, 60, 120, 240),
+                                  labels = c(7.5, 15, 30, 60, 120, 240)),
                top = exp_earn_hours_learn.grob)
 table(fcc$HoursLearningBucket)
 ```
@@ -1356,7 +1361,7 @@ age_job_int.grob <-
 g_age_job_int <-
   grid.arrange(nice_boxplot(select(fcc_job_lim, JobRoleInterest, Age),
                             "JobRoleInterest", "Age") +
-               coord_trans(y = "log10", limy = c(10, 90)) +
+               coord_trans(y = "log10", limy = c(10, 80)) +
                scale_y_continuous(breaks = c(10, 20, 40, 80)),
                top = age_job_int.grob)
 with(fcc_job_lim, by(Age, JobRoleInterest, summary))
@@ -1382,9 +1387,9 @@ months_prog_job_int.grob <-
 g_months_prog_job_int <-
   grid.arrange(nice_boxplot(years_prog_job_lim,
                             "JobRoleInterest", "YearsProgramming") +
-               coord_trans(y = "log10", limy = c(0.05, 45)) +
-               scale_y_continuous(breaks = c(0.25, 0.5, 1, 2, 4, 8, 16, 32),
-                                  labels = c(0.25, 0.5, 1, 2, 4, 8, 16, 32)),
+               coord_trans(y = "log10", limy = c(0.0626, 45)) +
+               scale_y_continuous(breaks = c(0.125, 0.25, 0.5, 1, 2, 4, 8, 16, 32),
+                                  labels = c(0.125, 0.25, 0.5, 1, 2, 4, 8, 16, 32)),
                top = months_prog_job_int.grob)
 with(years_prog_job_lim, by(MonthsProgramming, JobRoleInterest, summary))
 ```
@@ -1407,8 +1412,9 @@ hours_learn_job_int.grob <-
 g_hours_learn_job_int <-
   grid.arrange(nice_boxplot(select(fcc_job_lim, JobRoleInterest, HoursLearning),
                             "JobRoleInterest", "HoursLearning") +
-               coord_trans(y = "log10", limy = c(1, 110)) +
-               scale_y_continuous(breaks = c(5, 10, 20, 40, 80)),
+               coord_trans(y = "log10", limy = c(1, 160)) +
+               scale_y_continuous(breaks = c(1.25, 2.5, 5, 10, 20, 40, 80, 160),
+                                  labels = c(1.25, 2.5, 5, 10, 20, 40, 80, 160)),
                top = hours_learn_job_int.grob)
 with(fcc_job_lim, by(HoursLearning, JobRoleInterest, summary))
 ```
@@ -1431,8 +1437,9 @@ income_job_int.grob <-
 g_income_job_int <-
   grid.arrange(nice_boxplot(select(fcc_job_lim, JobRoleInterest, Income),
                             "JobRoleInterest", "Income (thousands)") +
-               coord_trans(y = "log10", limy = c(5, 210)) +
-               scale_y_continuous(breaks = c(5, 10, 20, 40, 80, 160)),
+               coord_trans(y = "log10", limy = c(5, 240)) +
+               scale_y_continuous(breaks = c(7.5, 15, 30, 60, 120, 240),
+                                  labels = c(7.5, 15, 30, 60, 120, 240)),
                top = income_job_int.grob)
 with(fcc_job_lim, by(Income, JobRoleInterest, summary))
 ```
@@ -1455,8 +1462,9 @@ exp_earn_job_int.grob <-
 g_exp_earn_job_int <-
   grid.arrange(nice_boxplot(select(fcc_job_lim, JobRoleInterest, ExpectedEarning),
                             "JobRoleInterest", "ExpectedEarning (thousands)") +
-               coord_trans(y = "log10", limy = c(5, 210)) +
-               scale_y_continuous(breaks = c(5, 10, 20, 40, 80, 160)),
+               coord_trans(y = "log10", limy = c(5, 240)) +
+               scale_y_continuous(breaks = c(7.5, 15, 30, 60, 120, 240),
+                                  labels = c(7.5, 15, 30, 60, 120, 240)),
                top = exp_earn_job_int.grob)
 with(fcc_job_lim, by(ExpectedEarning, JobRoleInterest, summary))
 ```
