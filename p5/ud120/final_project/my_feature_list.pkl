@@ -1,0 +1,6 @@
+(lp0
+S'poi'
+p1
+aS'salary'
+p2
+a.

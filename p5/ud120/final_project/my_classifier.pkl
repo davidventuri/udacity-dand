@@ -1,0 +1,12 @@
+ccopy_reg
+_reconstructor
+p0
+(csklearn.naive_bayes
+GaussianNB
+p1
+c__builtin__
+object
+p2
+Ntp3
+Rp4
+.
