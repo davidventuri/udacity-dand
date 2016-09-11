@@ -1,12 +1,16 @@
+# Identify Fraud from Enron Email
+## P5 of My Udacity Data Analyst Nanodegree
+**Author: [David Venturi](http://davidventuri.com/)**
 
+**Date: TBD**
 
-#### Summarize for us the goal of this project and how machine learning is useful in trying to accomplish it. As part of your answer, give some background on the dataset and how it can be used to answer the project question. Were there any outliers in the data when you got it, and how did you handle those?  [relevant rubric items: “data exploration”, “outlier investigation”]
+### Summarize for us the goal of this project and how machine learning is useful in trying to accomplish it. As part of your answer, give some background on the dataset and how it can be used to answer the project question. Were there any outliers in the data when you got it, and how did you handle those?  [relevant rubric items: “data exploration”, “outlier investigation”]
 
 The goal of the project is to identify employees from Enron who may have committed fraud based on the public Enron financial and email dataset. Machine learning algorithms are useful in trying to accomplish this goal because they can process the massive dataset way faster than humans and they can pick up on relevant trends in the data that humans would have a hard time realizing manually.
 
 The Enron financial and email dataset is massive in terms of both features and data points.
 
-##### Features
+#### Features
 
 There are 14 financial features, all of which are in US dollars: 
 
