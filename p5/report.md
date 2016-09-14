@@ -1,18 +1,20 @@
-# Identify Fraud from Enron Email
-## P5 of My Udacity Data Analyst Nanodegree
-**Author: [David Venturi](http://davidventuri.com/)**
-
-**Date: TBD**
+# P5: Identify Fraud from Enron Email
+## Udacity Data Analyst Nanodegree
+**By [David Venturi](https://twitter.com/venturidb)**
 
 ### Summarize for us the goal of this project and how machine learning is useful in trying to accomplish it. As part of your answer, give some background on the dataset and how it can be used to answer the project question. Were there any outliers in the data when you got it, and how did you handle those?  [relevant rubric items: “data exploration”, “outlier investigation”]
 
-The goal of the project is to identify employees from Enron who may have committed fraud based on the public Enron financial and email dataset. Machine learning algorithms are useful in trying to accomplish this goal because they can process the massive dataset way faster than humans and they can pick up on relevant trends in the data that humans would have a hard time realizing manually.
+The goal of the project is to identify employees from Enron who may have committed fraud based on the public Enron financial and email dataset, i.e., a person of interest. We define a person of interest (POI) as an individual who was indicted, reached a settlement or plea deal with the government, or testified in exchange for prosecution immunity.
 
-The Enron financial and email dataset is massive in terms of both features and data points.
+Machine learning algorithms are useful in trying to accomplish goals like this one because they can process datasets way faster than humans and they can spot relevant trends that humans would have a hard time realizing manually. Here is some background on the Enron financial and email dataset.
+
+#### Employees
+
+There are 146 Enron employees in the dataset. 18 of them are POIs.
 
 #### Features
 
-There are 14 financial features, all of which are in US dollars: 
+There are fourteen (14) financial features. All units are US dollars.
 
 - salary
 - deferral_payments
@@ -29,10 +31,45 @@ There are 14 financial features, all of which are in US dollars:
 - restricted_stock
 - director_fees
 
-What features did you end up using in your POI identifier, and what selection process did you use to pick them? Did you have to do any scaling? Why or why not? As part of the assignment, you should attempt to engineer your own feature that does not come ready-made in the dataset -- explain what feature you tried to make, and the rationale behind it. (You do not necessarily have to use it in the final analysis, only engineer and test it.) In your feature selection step, if you used an algorithm like a decision tree, please also give the feature importances of the features that you use, and if you used an automated feature selection function like SelectKBest, please report the feature scores and reasons for your choice of parameter values.  [relevant rubric items: “create new features”, “properly scale features”, “intelligently select feature”]
-What algorithm did you end up using? What other one(s) did you try? How did model performance differ between algorithms?  [relevant rubric item: “pick an algorithm”]
-What does it mean to tune the parameters of an algorithm, and what can happen if you don’t do this well?  How did you tune the parameters of your particular algorithm? (Some algorithms do not have parameters that you need to tune -- if this is the case for the one you picked, identify and briefly explain how you would have done it for the model that was not your final choice or a different model that does utilize parameter tuning, e.g. a decision tree classifier).  [relevant rubric item: “tune the algorithm”]
-What is validation, and what’s a classic mistake you can make if you do it wrong? How did you validate your analysis?  [relevant rubric item: “validation strategy”]
-Give at least 2 evaluation metrics and your average performance for each of them.  Explain an interpretation of your metrics that says something human-understandable about your algorithm’s performance. [relevant rubric item: “usage of evaluation metrics”]
+There are six (6) email features. All units are number of emails messages, except for ‘email_address’, which is a text string.
+
+- to_messages
+- email_address
+- from_poi_to_this_person
+- from_messages
+- from_this_person_to_poi
+- shared_receipt_with_poi
+
+There is one (1) other feature, which is a boolean, indicating whether or not the employee is a person of interest.
+ 
+- poi
+
+#### Missing Features
+
+20 of the 21 features have missing values (represented as "NaN"), with the exception being the "poi" feature.
+
+The missing financial features are imputed by <code>featureFormat</code> to zero (0). Imputing to zero makes sense for these features because we have a reasonably complete financial picture through the FindLaw "Payments to Insiders" document. I am assuming that if a feature has a dash ('-'), like several 'bonus' rows do, that means it is zero. That isn't an unreasonable assumption since there are no actual zeros in that document and the dashes take their place.
+
+I imputed the missing email features to each feature's mean. Imputing to zero doesn't make sense in this case because the email data appears incomplete. 60 of the 146 employees in the dataset have "NaN" for all of their email features. A missing feature likely means we couldn't find the data, rather than the value is zero. Though this introduces some bias, we are at the whim of the dataset and imputing to the mean is a fine option.
+
+#### Outliers
+
+Before choosing the features to include in a machine learning learning algorithm, I plotted histograms of all of the features to get a feel for their distributions. These histograms made it easy to spot outliers, as well.
+
+Every financial feature had a huge outlier generated by the "Total" row in the FindLaw "Payments to Insiders" document. I removed those from the dataset immediately. There was another non-employee entry in the dataset belonging to "The Travel Agency in the Park" that I removed as well.
+
+### What features did you end up using in your POI identifier, and what selection process did you use to pick them? Did you have to do any scaling? Why or why not? As part of the assignment, you should attempt to engineer your own feature that does not come ready-made in the dataset -- explain what feature you tried to make, and the rationale behind it. (You do not necessarily have to use it in the final analysis, only engineer and test it.) In your feature selection step, if you used an algorithm like a decision tree, please also give the feature importances of the features that you use, and if you used an automated feature selection function like SelectKBest, please report the feature scores and reasons for your choice of parameter values.  [relevant rubric items: “create new features”, “properly scale features”, “intelligently select feature”]
+
+
+
+### What algorithm did you end up using? What other one(s) did you try? How did model performance differ between algorithms?  [relevant rubric item: “pick an algorithm”]
+
+
+
+### What does it mean to tune the parameters of an algorithm, and what can happen if you don’t do this well?  How did you tune the parameters of your particular algorithm? (Some algorithms do not have parameters that you need to tune -- if this is the case for the one you picked, identify and briefly explain how you would have done it for the model that was not your final choice or a different model that does utilize parameter tuning, e.g. a decision tree classifier).  [relevant rubric item: “tune the algorithm”]
+
+### What is validation, and what’s a classic mistake you can make if you do it wrong? How did you validate your analysis?  [relevant rubric item: “validation strategy”]
+
+### Give at least 2 evaluation metrics and your average performance for each of them.  Explain an interpretation of your metrics that says something human-understandable about your algorithm’s performance. [relevant rubric item: “usage of evaluation metrics”]
 
 
