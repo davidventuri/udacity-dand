@@ -126,7 +126,7 @@ knc = KNeighborsClassifier()
 # Load pipeline steps into list
 steps = [
 		 # Preprocessing
-         ('min_max_scaler', scaler),
+         # ('min_max_scaler', scaler),
          
          # Feature selection
          ('feature_selection', select),
@@ -195,10 +195,15 @@ labels_predictions = gs.predict(features_test)
 clf = gs.best_estimator_
 print "\n", "Best parameters are: ", gs.best_params_, "\n"
 
-# Print features selected
-features_selected_bool = clf.named_steps['feature_selection'].get_support()
-features_selected_list = [x for x, y in zip(features_list[1:], features_selected_bool) if y]
-print "The ", len(features_selected_list), " features selected are: ", features_selected_list, "\n"
+# Print features selected and their importances
+features_selected=[features_list[i+1] for i in clf.named_steps['feature_selection'].get_support(indices=True)]
+scores = clf.named_steps['feature_selection'].scores_
+importances = clf.named_steps['dtc'].feature_importances_
+import numpy as np
+indices = np.argsort(importances)[::-1]
+print 'The ', len(features_selected), " features selected and their importances:"
+for i in range(len(features_selected)):
+    print "feature no. {}: {} ({}) ({})".format(i+1,features_selected[indices[i]],importances[indices[i]], scores[indices[i]])
 
 # Print classification report (focus on precision and recall)
 report = classification_report( labels_test, labels_predictions )
