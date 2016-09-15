@@ -26,3 +26,16 @@ Choose one of Udacity's curated datasets and investigate it using NumPy and Pand
 Choose any area of the world in https://www.openstreetmap.org and use data munging techniques, such as assessing the quality of the data for validity, accuracy, completeness, consistency and uniformity, to clean the OpenStreetMap data for a part of the world that you care about. Choose to learn SQL or MongoDB and apply your chosen schema to the project.
 
 [Link to report](/p3/report.md)
+
+### P4: Explore and Summarize Data
+
+Use R and apply exploratory data analysis techniques to explore a selected data set for distributions, outliers, and anomalies.
+
+[Link to 1st half of report](https://www.kaggle.com/venturidb/d/freecodecamp/2016-new-coder-survey-/developing-data-scientists-engineers)
+[Link to 2nd half of report](https://www.kaggle.com/venturidb/d/freecodecamp/2016-new-coder-survey-/new-coders-a-deeper-dive)
+
+### P5: Identify Fraud from Enron Email
+
+Play detective and put your machine learning skills to use by building an algorithm to identify Enron Employees who may have committed fraud based on the public Enron financial and email dataset.
+
+[Link to report](/p5/report.md)
