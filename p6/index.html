@@ -54,6 +54,13 @@
             .attr("y", 427);
 
           svg.append("svg:image")
+            .attr("xlink:href", "https://openclipart.org/download/259726/1472044712.svg")
+            .attr("width", 110)
+            .attr("height", 110)
+            .attr("x", 527)
+            .attr("y", 300);
+
+          svg.append("svg:image")
             .attr("xlink:href", "http://www.clipartbest.com/cliparts/4i9/zpz/4i9zpz9ET.svg")
             .attr("width", 60)
             .attr("height", 80)
@@ -62,7 +69,7 @@
 
           svg.append("text")
               .attr("x", 320)
-              .attr("y", 157.5)
+              .attr("y", 166)
               .text("US government bans rubber in baseballs during WWII");
 
           svg.append("text")
@@ -74,6 +81,11 @@
               .attr("x", 285)
               .attr("y", 526)
               .text("Dead ball era ends with baseball redesign");
+
+          svg.append("text")
+              .attr("x", 455)
+              .attr("y", 424)
+              .text("Teams start to employ more power hitters");
 
           /*
             Coerce HR strings to floats
@@ -105,7 +117,7 @@
     Use D3 (not dimple.js) to load the TSV file
     and pass the contents of it to the draw function
     */
-  d3.csv("Batting.csv", draw);
+  d3.csv("data/Batting.csv", draw);
   </script>
 </body>
 </html>
