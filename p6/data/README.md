@@ -1,6 +1,8 @@
 # Baseball Reference Batting Encyclopedia
 [Link](http://www.baseball-reference.com/leagues/MLB/bat.shtml)
 
+Note that I created a new variable (HR/game).
+
 ## Glossary
 **Year** -- A Star indicates an all-star that season.
 A Ring indicates the player appeared in WS for winning team.
