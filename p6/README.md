@@ -12,7 +12,7 @@ Grey-blue was chosen for the connected line and red was chosen for the circles f
 The annotations with pictures are included to guide the reader and help explain the large trends in the data. These were added because of reader feedback as well.
 
 ### Feedback
-![test](/udacity-dand/p6/drafts/viz_draft_1.jpg)
+![test](udacity-dand/p6/drafts/viz_draft_1.jpg)
 
 ### Resources
 http://www.baseball-reference.com/leagues/MLB/bat.shtml
