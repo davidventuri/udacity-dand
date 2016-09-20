@@ -1,5 +1,0 @@
-resources.txt
-
-http://www.baseball-reference.com/leagues/MLB/bat.shtml
-http://bleacherreport.com/articles/1676509-the-evolution-of-the-baseball-from-the-dead-ball-era-through-today
-http://jsfiddle.net/am8ZB/
