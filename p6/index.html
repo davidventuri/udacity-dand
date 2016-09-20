@@ -15,91 +15,78 @@
         margin-bottom: 0px;
       }
     </style>
-
-    <script type="text/javascript">
+    <script type = "text/javascript">
       function draw(data) {
-      
         /*
           D3.js setup code
         */
-
         "use strict";
         var margin = 75,
             width = 1000 - margin,
             height = 600 - margin;
-
+        
         d3.select("body")
-          .append("h1")
-          .text("History of the Home Run")
-
+            .append("h1")
+            .text("Power Surge: The Emergence of the Home Run")
+        
         var svg = d3.select("body")
-          .append("svg")
+            .append("svg")
             .attr("width", width + margin)
             .attr("height", height + margin)
-          .append('g')
-              .attr('class','chart');
+            .append('g')
+            .attr('class', 'chart');
+        
         /*
           Chart annotations (text and image)
         */
-
         svg.append("text")
-            .attr("x", 285)
+            .attr("x", 260)
             .attr("y", 526)
-            .text("Dead ball era ends with baseball redesign");
+            .text("Dead ball era ends with baseball redesign (1920)");
         svg.append("svg:image")
-          .attr("xlink:href", "https://s.w.org/images/core/emoji/2/svg/26be.svg")
-          .attr("width", 60)
-          .attr("height", 60)
-          .attr("x", 377)
-          .attr("y", 427);
+            .attr("xlink:href",
+                  "https://s.w.org/images/core/emoji/2/svg/26be.svg")
+            .attr("width", 60)
+            .attr("height", 60)
+            .attr("x", 377)
+            .attr("y", 427);
         
         svg.append("text")
-            .attr("x", 785)
+            .attr("x", 740)
             .attr("y", 305)
-            .text("Steroid era");
+            .text("Steroid era (~1991-2003)");
         svg.append("svg:image")
-          .attr("xlink:href", "http://image.flaticon.com/icons/svg/55/55164.svg")
-          .attr("width", 80)
-          .attr("height", 80)
-          .attr("x", 785)
-          .attr("y", 185);
+            .attr("xlink:href",
+                  "http://image.flaticon.com/icons/svg/55/55164.svg")
+            .attr("width", 80)
+            .attr("height", 80)
+            .attr("x", 785)
+            .attr("y", 185);
 
         svg.append("svg:image")
-          .attr("xlink:href", "http://www.clipartbest.com/cliparts/4i9/zpz/4i9zpz9ET.svg")
-          .attr("width", 60)
-          .attr("height", 80)
-          .attr("x", 470)
-          .attr("y", 220);
+            .attr("xlink:href",
+                  "https://openclipart.org/download/259726/1472044712.svg")
+            .attr("width", 110)
+            .attr("height", 110)
+            .attr("x", 527)
+            .attr("y", 300);
         svg.append("text")
-            .attr("x", 320)
-            .attr("y", 166)
-            .text("US government bans rubber in baseballs during WWII");
-        
-        svg.append("svg:image")
-          .attr("xlink:href", "https://openclipart.org/download/259726/1472044712.svg")
-          .attr("width", 110)
-          .attr("height", 110)
-          .attr("x", 527)
-          .attr("y", 300);
-        svg.append("text")
-            .attr("x", 455)
+            .attr("x", 435)
             .attr("y", 424)
-            .text("Teams start to employ more power hitters");
-
+            .text("Teams start to employ more power hitters (~1950s)");
+        
         /*
           Coerce HR strings to floats
         */
-
         data.forEach(function(d) {
-                  d.HRpergame = +d.HRpergame;
-              });
-
+            d.HRpergame = +d.HRpergame;
+        });
+        
         /*
           Dimple.js Chart construction code
         */
-        
         var myChart = new dimple.chart(svg, data);
-        var x = myChart.addTimeAxis("x", "Year"); 
+        var x = myChart.addTimeAxis("x", "Year");
         var y = myChart.addMeasureAxis("y", "HRpergame");
         x.dateParseFormat = "%Y";
         x.tickFormat = "%Y";
@@ -107,18 +94,17 @@
         y.title = "Home Runs Per Game"
         myChart.addSeries(null, dimple.plot.line);
         myChart.addSeries(null, dimple.plot.scatter);
-        myChart.draw();
+        myChart.draw();    
       };
-
     </script>
   </head>
 <body>
   <script type="text/javascript">
-  /*
-    Use D3 (not dimple.js) to load the TSV file
-    and pass the contents of it to the draw function
+    /*
+      Use D3 (not dimple.js) to load the TSV file
+      and pass the contents of it to the draw function
     */
-  d3.csv("data/Batting.csv", draw);
+    d3.csv("data/Batting.csv", draw);
   </script>
 </body>
 </html>
