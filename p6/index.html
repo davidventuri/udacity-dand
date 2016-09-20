@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <script src="http://d3js.org/d3.v3.min.js"></script>
+    <script src="http://dimplejs.org/dist/dimple.v2.0.0.min.js"></script>
+    <style>
+      circle.dimple-series-1 {
+        fill: red;
+      }
+
+      h1 {
+        text-align: center;
+        margin-top: 40px;
+        margin-bottom: 0px;
+      }
+    </style>
+
+    <script type="text/javascript">
+      function draw(data) {
+      
+      /*
+        D3.js setup code
+      */
+
+          "use strict";
+          var margin = 75,
+              width = 1000 - margin,
+              height = 600 - margin;
+
+          d3.select("body")
+            .append("h1")
+            .text("History of the Home Run")
+
+          var svg = d3.select("body")
+            .append("svg")
+              .attr("width", width + margin)
+              .attr("height", height + margin)
+            .append('g')
+                .attr('class','chart');
+
+          svg.append("svg:image")
+            .attr("xlink:href", "http://image.flaticon.com/icons/svg/55/55164.svg")
+            .attr("width", 80)
+            .attr("height", 80)
+            .attr("x", 785)
+            .attr("y", 185);
+
+          svg.append("svg:image")
+            .attr("xlink:href", "https://s.w.org/images/core/emoji/2/svg/26be.svg")
+            .attr("width", 60)
+            .attr("height", 60)
+            .attr("x", 377)
+            .attr("y", 427);
+
+          svg.append("svg:image")
+            .attr("xlink:href", "http://www.clipartbest.com/cliparts/4i9/zpz/4i9zpz9ET.svg")
+            .attr("width", 60)
+            .attr("height", 80)
+            .attr("x", 470)
+            .attr("y", 220);
+
+          svg.append("text")
+              .attr("x", 320)
+              .attr("y", 157.5)
+              .text("US government bans rubber in baseballs during WWII");
+
+          svg.append("text")
+              .attr("x", 785)
+              .attr("y", 305)
+              .text("Steroid era");
+
+          svg.append("text")
+              .attr("x", 285)
+              .attr("y", 526)
+              .text("Dead ball era ends with baseball redesign");
+
+          /*
+            Coerce HR strings to floats
+          */
+          data.forEach(function(d) {
+                    d.HRpergame = +d.HRpergame;
+                });
+
+          /*
+            Dimple.js Chart construction code
+          */
+          var myChart = new dimple.chart(svg, data);
+          var x = myChart.addTimeAxis("x", "Year"); 
+          var y = myChart.addMeasureAxis("y", "HRpergame");
+          x.dateParseFormat = "%Y";
+          x.tickFormat = "%Y";
+          x.timeInterval = 10;
+          y.title = "Home Runs Per Game"
+          myChart.addSeries(null, dimple.plot.line);
+          myChart.addSeries(null, dimple.plot.scatter);
+          myChart.draw();
+        };
+
+    </script>
+  </head>
+<body>
+  <script type="text/javascript">
+  /*
+    Use D3 (not dimple.js) to load the TSV file
+    and pass the contents of it to the draw function
+    */
+  d3.csv("Batting.csv", draw);
+  </script>
+</body>
+</html>
