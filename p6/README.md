@@ -25,7 +25,7 @@ Another reader suggested changing the colour of the circles to a different colou
 
 ![Draft 2](drafts/viz_draft_2.jpg)
 
-This next chart ended up being the final product, save for a few extra annotations. This sketch was converted to code.
+This next chart ended up being the final product, save for a few extra annotations. The title was also changed to better frame the upwards trend in home runs that I wished to explain. This sketch was converted to code.
 
 ![Draft 3](drafts/viz_draft_3.jpg)
 
