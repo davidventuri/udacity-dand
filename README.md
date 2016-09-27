@@ -40,3 +40,13 @@ Use R and apply exploratory data analysis techniques to explore a selected data 
 Play detective and put your machine learning skills to use by building an algorithm to identify Enron Employees who may have committed fraud based on the public Enron financial and email dataset.
 
 [Link to report](/p5/report.md)
+
+### P6: Make Effective Data Visualization
+Create a data visualization from a data set that tells a story or highlights trends or patterns in the data. Use either dimple.js or d3.js to create the visualization. Your work should be a reflection of the theory and practice of data visualization, such as visual encodings, design principles, and effective communication.
+
+[Link to report](/p6)
+
+### P7: Design an A/B Test
+Make design decisions for an A/B test, including which metrics to measure and how long the test should be run. Analyze the results of an A/B test that was run by Udacity and recommend whether or not to launch the change.
+
+[Link to report](https://github.com/venturidb/udacity-dand/blob/master/p7/P7ProjectABTesting.pdf)
