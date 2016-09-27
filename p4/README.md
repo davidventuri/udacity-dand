@@ -16,8 +16,8 @@ Use R and apply exploratory data analysis techniques to explore a selected data 
 
 [Developing Data Scientists and Engineers](https://medium.freecodecamp.com/developing-data-scientists-engineers-710f4ef5a773#.eelnzef8u)
 
-![Free Code Camp Article 1](imgs/FCC_1)
+![Free Code Camp Article 1](imgs/FCC_1.png)
 
-![Free Code Camp Article 2](imgs/FCC_2)
+![Free Code Camp Article 2](imgs/FCC_2.png)
 
-![Free Code Camp Article 3](imgs/FCC_3)
+![Free Code Camp Article 3](imgs/FCC_3.png)
