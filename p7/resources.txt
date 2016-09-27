@@ -1,0 +1,13 @@
+Resources Used
+
+https://discussions.udacity.com/t/metrics-selections/42440/3
+https://discussions.udacity.com/t/final-project-hypothesis/37176/7
+https://discussions.udacity.com/t/retention-or-net-conversion-metric/187232/9
+http://math.stackexchange.com/questions/838107/relationship-between-binomial-and-bernoulli
+https://discussions.udacity.com/t/unit-of-diversion/179147
+https://discussions.udacity.com/t/when-to-use-bonferroni-correction/37713/6
+https://discussions.udacity.com/t/what-does-success-in-sign-test-means/169553
+https://discussions.udacity.com/t/what-exactly-are-units-of-diversion-and-invariant-metrics/161779
+http://www.evanmiller.org/ab-testing/sample-size.html
+http://graphpad.com/quickcalcs/binomial1/
+https://discussions.udacity.com/t/single-metrics-example-quiz/180337
