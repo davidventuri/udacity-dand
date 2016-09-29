@@ -72,3 +72,5 @@ Make design decisions for an A/B test, including which metrics to measure and ho
 [Link to report](https://github.com/venturidb/udacity-dand/blob/master/p7/P7ProjectABTesting.pdf)
 
 [Link to review](https://review.udacity.com/#!/reviews/238039)
+
+![Udacity Data Analyst Nanodegree certificate](certificate.pdf)
