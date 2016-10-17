@@ -4,4 +4,4 @@ Choose any area of the world in https://www.openstreetmap.org and use data mungi
 
 [Link to report](/p3/report.md)
 
-[Link to review](https://review.udacity.com/#!/reviews/165416)
+[Link to review](https://review.udacity.com/#!/reviews/165416/shared)

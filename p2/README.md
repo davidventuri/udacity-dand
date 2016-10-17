@@ -4,4 +4,4 @@ Choose one of Udacity's curated datasets and investigate it using NumPy and Pand
 
 [Link to report](http://venturidb.github.io/udacity-dand-p2/)
 
-[Link to review](https://review.udacity.com/#!/reviews/145890)
+[Link to review](https://review.udacity.com/#!/reviews/145890/shared)

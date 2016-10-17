@@ -9,7 +9,7 @@ Set up iPython notebook and commonly used data analysis libraries on your own co
 
 [Link to report](http://venturidb.github.io/udacity-dand-p0/)
 
-[Link to review](https://review.udacity.com/#!/reviews/119542)
+[Link to review](https://review.udacity.com/#!/reviews/119542/shared)
 
 ### P1: Test a Perceptual Phenomenon
 
@@ -17,7 +17,7 @@ Use descriptive statistics and a statistical test to analyze the Stroop effect, 
 
 [Link to report](http://venturidb.github.io/udacity-dand-p1/)
 
-[Link to review](https://review.udacity.com/#!/reviews/137257)
+[Link to review](https://review.udacity.com/#!/reviews/137257/shared)
 
 ### P2: Investigate a Dataset
 
@@ -25,7 +25,7 @@ Choose one of Udacity's curated datasets and investigate it using NumPy and Pand
 
 [Link to report](http://venturidb.github.io/udacity-dand-p2/)
 
-[Link to review](https://review.udacity.com/#!/reviews/145890)
+[Link to review](https://review.udacity.com/#!/reviews/145890/shared)
 
 ### P3: Wrangle OpenStreetMap Data
 
@@ -33,7 +33,7 @@ Choose any area of the world in https://www.openstreetmap.org and use data mungi
 
 [Link to report](/p3/report.md)
 
-[Link to review](https://review.udacity.com/#!/reviews/165416)
+[Link to review](https://review.udacity.com/#!/reviews/165416/shared)
 
 ### P4: Explore and Summarize Data
 
@@ -49,7 +49,7 @@ Use R and apply exploratory data analysis techniques to explore a selected data 
 
 [Developing Data Scientists and Engineers](https://medium.freecodecamp.com/developing-data-scientists-engineers-710f4ef5a773#.eelnzef8u)
 
-[Link to review](https://review.udacity.com/#!/reviews/211392)
+[Link to review](https://review.udacity.com/#!/reviews/211392/shared)
 
 ### P5: Identify Fraud from Enron Email
 
@@ -57,20 +57,20 @@ Play detective and put your machine learning skills to use by building an algori
 
 [Link to report](/p5/report.md)
 
-[Link to review](https://review.udacity.com/#!/reviews/228881)
+[Link to review](https://review.udacity.com/#!/reviews/228881/shared)
 
 ### P6: Make Effective Data Visualization
 Create a data visualization from a data set that tells a story or highlights trends or patterns in the data. Use either dimple.js or d3.js to create the visualization. Your work should be a reflection of the theory and practice of data visualization, such as visual encodings, design principles, and effective communication.
 
 [Link to report](/p6)
 
-[Link to review](https://review.udacity.com/#!/reviews/233088)
+[Link to review](https://review.udacity.com/#!/reviews/233088/shared)
 
 ### P7: Design an A/B Test
 Make design decisions for an A/B test, including which metrics to measure and how long the test should be run. Analyze the results of an A/B test that was run by Udacity and recommend whether or not to launch the change.
 
 [Link to report](https://github.com/venturidb/udacity-dand/blob/master/p7/P7ProjectABTesting.pdf)
 
-[Link to review](https://review.udacity.com/#!/reviews/238039)
+[Link to review](https://review.udacity.com/#!/reviews/238039/shared)
 
 ![Udacity Data Analyst Nanodegree certificate](certificate.png)

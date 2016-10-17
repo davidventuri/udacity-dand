@@ -6,7 +6,7 @@ Use R and apply exploratory data analysis techniques to explore a selected data 
 
 [Link to 2nd half of report](https://www.kaggle.com/venturidb/d/freecodecamp/2016-new-coder-survey-/new-coders-a-deeper-dive)
 
-[Link to review](https://review.udacity.com/#!/reviews/211392)
+[Link to review](https://review.udacity.com/#!/reviews/211392/shared)
 
 ### Free Code Camp Articles
 

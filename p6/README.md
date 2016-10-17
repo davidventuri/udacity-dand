@@ -38,4 +38,4 @@ This next chart ended up being the final product, save for one more annotation. 
 - [Loading dataset (Udacity discussion post)](https://discussions.udacity.com/t/why-doesnt-d3-automatically-aggregate-the-numbers-in-this-csv-file/189168/5)
 
 ### Review
-[Link to review](https://review.udacity.com/#!/reviews/233088)
+[Link to review](https://review.udacity.com/#!/reviews/233088/shared)

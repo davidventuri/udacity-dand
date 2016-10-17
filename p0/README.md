@@ -6,4 +6,4 @@ Set up iPython notebook and commonly used data analysis libraries on your own co
 
 [Link to report](http://venturidb.github.io/udacity-dand-p0/)
 
-[Link to review](https://review.udacity.com/#!/reviews/119542)
+[Link to review](https://review.udacity.com/#!/reviews/119542/shared)

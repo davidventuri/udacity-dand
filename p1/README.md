@@ -4,4 +4,4 @@ Use descriptive statistics and a statistical test to analyze the Stroop effect, 
 
 [Link to report](http://venturidb.github.io/udacity-dand-p1/)
 
-[Link to review](https://review.udacity.com/#!/reviews/137257)
+[Link to review](https://review.udacity.com/#!/reviews/137257/shared)

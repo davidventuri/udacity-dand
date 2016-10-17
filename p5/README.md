@@ -4,4 +4,4 @@ Play detective and put your machine learning skills to use by building an algori
 
 [Link to report](/p5/report.md)
 
-[Link to review](https://review.udacity.com/#!/reviews/228881)
+[Link to review](https://review.udacity.com/#!/reviews/228881/shared)
