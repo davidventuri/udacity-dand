@@ -7,13 +7,13 @@ An opportunity to get started with data analysis and receive some quick feedback
 
 Set up iPython notebook and commonly used data analysis libraries on your own computer. Use them to dig into the results of an experiment testing the optimal length of chopsticks and present your findings.
 
-[Link to report](http://venturidb.github.io/udacity-dand-p0/)
+[Link to report](http://davidventuri.github.io/udacity-dand-p0/)
 
 ### P1: Test a Perceptual Phenomenon
 
 Use descriptive statistics and a statistical test to analyze the Stroop effect, a classic result of experimental psychology. Give your readers a good intuition for the data and use statistical inference to draw a conclusion based on the results.
 
-[Link to report](http://venturidb.github.io/udacity-dand-p1/)
+[Link to report](http://davidventuri.github.io/udacity-dand-p1/)
 
 [Link to review](https://review.udacity.com/#!/reviews/137257/shared)
 
@@ -21,7 +21,7 @@ Use descriptive statistics and a statistical test to analyze the Stroop effect, 
 
 Choose one of Udacity's curated datasets and investigate it using NumPy and Pandas. Go through the entire data analysis process, starting by posing a question and finishing by sharing your findings.
 
-[Link to report](http://venturidb.github.io/udacity-dand-p2/)
+[Link to report](http://davidventuri.github.io/udacity-dand-p2/)
 
 [Link to review](https://review.udacity.com/#!/reviews/145890/shared)
 
@@ -67,7 +67,7 @@ Create a data visualization from a data set that tells a story or highlights tre
 ### P7: Design an A/B Test
 Make design decisions for an A/B test, including which metrics to measure and how long the test should be run. Analyze the results of an A/B test that was run by Udacity and recommend whether or not to launch the change.
 
-[Link to report](https://github.com/venturidb/udacity-dand/blob/master/p7/P7ProjectABTesting.pdf)
+[Link to report](https://github.com/davidventuri/udacity-dand/blob/master/p7/P7ProjectABTesting.pdf)
 
 [Link to review](https://review.udacity.com/#!/reviews/238039/shared)
 
